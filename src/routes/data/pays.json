@@ -1,0 +1,52 @@
+[
+	{
+		"code": "FR",
+		"flag": "https://flagcdn.com/w320/fr.png",
+		"libelle": "France"
+	},
+	{
+		"code": "US",
+		"flag": "https://flagcdn.com/w320/us.png",
+		"libelle": "États-Unis"
+	},
+	{
+		"code": "DE",
+		"flag": "https://flagcdn.com/w320/de.png",
+		"libelle": "Allemagne"
+	},
+	{
+		"code": "JP",
+		"flag": "https://flagcdn.com/w320/jp.png",
+		"libelle": "Japon"
+	},
+	{
+		"code": "IT",
+		"flag": "https://flagcdn.com/w320/it.png",
+		"libelle": "Italie"
+	},
+	{
+		"code": "ES",
+		"flag": "https://flagcdn.com/w320/es.png",
+		"libelle": "Espagne"
+	},
+	{
+		"code": "BR",
+		"flag": "https://flagcdn.com/w320/br.png",
+		"libelle": "Brésil"
+	},
+	{
+		"code": "CA",
+		"flag": "https://flagcdn.com/w320/ca.png",
+		"libelle": "Canada"
+	},
+	{
+		"code": "AU",
+		"flag": "https://flagcdn.com/w320/au.png",
+		"libelle": "Australie"
+	},
+	{
+		"code": "IN",
+		"flag": "https://flagcdn.com/w320/in.png",
+		"libelle": "Inde"
+	}
+]

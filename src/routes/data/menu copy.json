@@ -1,0 +1,49 @@
+[
+    {
+        "title": "Dashboard",
+        "icon": "uil uil-apps",
+        "path": "/admin",
+        "exact": true
+    },
+    {
+        "isSectionTitle": true,
+        "title": "PARAMETRAGES"
+    },
+    {
+        "title": "Pays",
+        "icon": "uil uil-apps",
+        "path": "/admin/mall/categorie",
+        "exact": false
+    },
+    
+    
+    {
+        "isSectionTitle": true,
+        "title": "GESTION MALL"
+    },
+    {
+        "title": "Liste catégorie",
+        "icon": "uil uil-apps",
+        "path": "/admin/mall/categorie",
+        "exact": false
+    },
+    {
+        "title": "Gestion mall",
+        "icon": "uil uil-store",
+        "subItems": [
+            {
+                "title": "Liste boutiques",
+                "path": "/admin/mall/boutique"
+            },
+            {
+                "title": "Liste commandes",
+                "path": "/admin/mall/commande"
+            },
+            {
+                "title": "Télécommunication et reseau",
+                "path": "/admin/marchand/categorie"
+            }
+        ]
+    }
+    
+]

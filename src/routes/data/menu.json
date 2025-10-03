@@ -1,0 +1,119 @@
+[
+    {
+        "title": "Dashboard",
+        "icon": "uil uil-apps",
+        "path": "/admin",
+        "exact": true
+    },
+    {
+        "title": "Liste catégorie",
+        "icon": "uil uil-apps",
+        "path": "/admin/mall/categorie",
+        "exact": false
+    },
+    {
+        "title": "Gestion mall",
+        "icon": "uil uil-store",
+        "subItems": [
+            {
+                "title": "Liste boutiques",
+                "path": "/admin/mall/boutique"
+            },
+            {
+                "title": "Liste commandes",
+                "path": "/admin/mall/commande"
+            },
+            {
+                "title": "Télécommunication et reseau",
+                "path": "/admin/marchand/categorie"
+            }
+        ]
+    },
+    {
+        "isSectionTitle": true,
+        "title": "PARAMETRAGES"
+    },
+    {
+        "title": "Pays",
+        "icon": "uil uil-apps",
+        "path": "/admin/pays",
+        "exact": false
+    },
+    {
+        "title": "Devise",
+        "icon": "uil uil-apps",
+        "path": "/admin/devise",
+        "exact": false
+    },
+    {
+        "title": "Features",
+        "icon": "uil uil-apps",
+        "path": "/admin/features",
+        "exact": false
+    },
+    {
+        "title": "Rôles admin",
+        "icon": "uil uil-apps",
+        "path": "/admin/role_admin",
+        "exact": false
+    },
+    {
+        "title": "Rôles marchands",
+        "icon": "uil uil-apps",
+        "path": "/admin/role_marchand",
+        "exact": false
+    },
+    {
+        "isSectionTitle": true,
+        "title": "GESTION UTILISATEURS"
+    },
+    {
+        "title": "Liste admins",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_admin",
+        "exact": false
+    },
+    {
+        "title": "Liste clients",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_client",
+        "exact": false
+    },
+    
+    
+    
+    {
+        "isSectionTitle": true,
+        "title": "GESTION MARCHANDS"
+    },
+    {
+        "title": "Liste ventes",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_vente",
+        "exact": false
+    },
+    {
+        "title": "Liste magasins",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_magasin",
+        "exact": false
+    },
+    {
+        "title": "Liste marchands",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_marchand",
+        "exact": false
+    },
+    {
+        "isSectionTitle": true,
+        "title": "GESTION ABONNEMENTS"
+    },
+    {
+        "title": "Liste abonnements",
+        "icon": "uil uil-apps",
+        "path": "/admin/liste_abonnement",
+        "exact": false
+    }
+    
+    
+]
