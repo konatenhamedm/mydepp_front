@@ -19,7 +19,7 @@
 </script>
 
 <!-- {#if $page.url.pathname.startsWith('/admin')} -->
-{#if $page.url.pathname != '/' && $page.url.pathname != '/login/mot_passe_oublie' && $page.url.pathname != '/login/confirmation'  }
+{#if $page.url.pathname != '/' && $page.url.pathname != '/login/mot_passe_oublie' && $page.url.pathname != '/login/confirmation' && $page.url.pathname != '/login' && $page.url.pathname != '/contact' && $page.url.pathname != '/inscription' && $page.url.pathname != '/connexion' && $page.url.pathname != '/inscription/etablissement'  && $page.url.pathname != '/inscription/professionnel'  }
 	<Side user={"data"} />
 	<div
 		class="bg-normalBG dark:bg-main-dark relative flex flex-1 flex-col !transition-all delay-[0s] !duration-[0.2s] ease-linear xl:ps-[280px] xl:[&.TopExpanded]:ps-[0px] xl:[&.expanded]:ps-[80px]"

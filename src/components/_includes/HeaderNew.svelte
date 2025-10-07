@@ -1,385 +1,60 @@
-<script lang="ts">
-  import FooterNew from "$components/_includes/FooterNew.svelte";
-  import HeaderNew from "$components/_includes/HeaderNew.svelte";
+<script></script>
 
-</script>
-
-<main>
-    <HeaderNew/>
-        <div class="min-h-screen">
-        
-        <section
-          class="relative h-screen flex items-center justify-center overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-100"
-            style="
-              background-image: url(https://readdy.ai/api/search-image?query=Modern%20healthcare%20facility%20with%20medical%20professionals%20in%20white%20coats%2C%20clean%20hospital%20environment%2C%20professional%20medical%20team%2C%20bright%20lighting%2C%20contemporary%20medical%20equipment%2C%20healthcare%20excellence%20and%20innovation&width=1200&height=600&seq=hero1&orientation=landscape);
-              background-size: cover;
-              background-position: center;
-              background-repeat: no-repeat;
-            "
-          >
-            <div class="absolute inset-0 bg-black/40"></div>
+<header class="bg-white shadow-sm fixed w-full top-0 z-50">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a
+              class="flex items-center"
+              href="/"
+              ><img
+                src="images/new_Image/logo-depps.png"
+                alt="MYDEPPS Logo"
+                class="h-10 w-auto"
+            /></a>
           </div>
-          <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
-            style="
-              background-image: url(https://readdy.ai/api/search-image?query=Medical%20quality%20assurance%2C%20healthcare%20safety%20protocols%2C%20modern%20medical%20equipment%2C%20professional%20healthcare%20environment%2C%20medical%20standards%20and%20excellence%2C%20clean%20hospital%20setting&width=1200&height=600&seq=hero2&orientation=landscape);
-              background-size: cover;
-              background-position: center;
-              background-repeat: no-repeat;
-            "
-          >
-            <div class="absolute inset-0 bg-black/40"></div>
-          </div>
-          <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
-            style="
-              background-image: url(https://readdy.ai/api/search-image?query=African%20black%20medical%20professionals%20in%20white%20coats%2C%20diverse%20healthcare%20team%2C%20modern%20hospital%20environment%2C%20professional%20medical%20staff%20with%20dark%20skin%2C%20contemporary%20medical%20facility%2C%20healthcare%20excellence%20and%20diversity&width=1200&height=600&seq=hero3&orientation=landscape);
-              background-size: cover;
-              background-position: center;
-              background-repeat: no-repeat;
-            "
-          >
-            <div class="absolute inset-0 bg-black/40"></div>
-          </div>
-          <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
-            style="
-              background-image: url(https://readdy.ai/api/search-image?query=Black%20African%20healthcare%20professionals%2C%20diverse%20medical%20team%20with%20dark%20skin%2C%20modern%20medical%20equipment%2C%20professional%20hospital%20setting%2C%20medical%20quality%20assurance%20with%20diverse%20staff%2C%20contemporary%20healthcare%20facility&width=1200&height=600&seq=hero4&orientation=landscape);
-              background-size: cover;
-              background-position: center;
-              background-repeat: no-repeat;
-            "
-          >
-            <div class="absolute inset-0 bg-black/40"></div>
-          </div>
-          <div
-            class="relative z-10 text-center text-white max-w-4xl mx-auto px-4"
-          >
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              Direction des Établissements Privés et des Professions Sanitaires
-            </h1>
-            <p class="text-xl md:text-2xl mb-8 opacity-90">
-              Excellence en santé, innovation et collaboration avec les acteurs
-              du secteur
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                class="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                class="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                href="/"
+                >Accueil</a
+              ><a
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                href="/about"
+                >À propos</a
+              ><a
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                href="/services"
+                >E-DEPPS</a
+              ><a
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                href="/contact"
+                >Contact</a
+              ><a
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
+                href="/inscription"
+                >Inscription</a
+              ><a
+                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
+                href="/connexion"
+                >Connexion</a
               >
-                Découvrir nos services</button
-              ><button
-                class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors cursor-pointer whitespace-nowrap"
-              >
-                En savoir plus
-              </button>
             </div>
           </div>
-          <div
-            class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
-          >
+          <div class="md:hidden">
             <button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button>
+              class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 cursor-pointer"
+            >
+              <div class="w-6 h-6 flex items-center justify-center">
+                <i class="ri-menu-line text-xl"></i>
+              </div>
+            </button>
           </div>
-          <button
-            class="absolute right-8 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors cursor-pointer"
-          >
-            <div class="w-6 h-6 flex items-center justify-center">
-              <i class="ri-arrow-right-line text-xl"></i>
-            </div>
-          </button>
-        </section>
-        <section class="py-20 bg-gray-50">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-              <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Nos Domaines d'Excellence
-              </h2>
-              <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                La Direction des Établissements Privés et des Professions
-                Sanitaires s'engage dans trois domaines clés pour garantir la
-                qualité des soins
-              </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div
-                class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group cursor-pointer"
-              >
-                <div class="bg-purple-600 p-8 text-center">
-                  <div
-                    class="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center"
-                  >
-                    <div class="w-12 h-12 flex items-center justify-center">
-                      <i
-                        class="ri-heart-pulse-line text-3xl text-purple-600"
-                      ></i>
-                    </div>
-                  </div>
-                  <h3 class="text-xl font-bold text-white mb-2">
-                    Qualité Médicale
-                  </h3>
-                </div>
-                <div class="p-6">
-                  <p class="text-gray-600 text-center leading-relaxed">
-                    Rôle Central de la Direction des Établissements Privés et
-                    Sanitaires
-                  </p>
-                  <div class="mt-6 text-center">
-                    <button
-                      class="text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                    >
-                      En savoir plus →
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group cursor-pointer"
-              >
-                <div class="bg-blue-500 p-8 text-center">
-                  <div
-                    class="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center"
-                  >
-                    <div class="w-12 h-12 flex items-center justify-center">
-                      <i
-                        class="ri-shield-check-line text-3xl text-blue-600"
-                      ></i>
-                    </div>
-                  </div>
-                  <h3 class="text-xl font-bold text-white mb-2">
-                    Sécurité et Hygiène
-                  </h3>
-                </div>
-                <div class="p-6">
-                  <p class="text-gray-600 text-center leading-relaxed">
-                    Engagement de la Direction dans les Établissements de Santé
-                    Privés
-                  </p>
-                  <div class="mt-6 text-center">
-                    <button
-                      class="text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                    >
-                      En savoir plus →
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group cursor-pointer"
-              >
-                <div class="bg-teal-500 p-8 text-center">
-                  <div
-                    class="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center"
-                  >
-                    <div class="w-12 h-12 flex items-center justify-center">
-                      <i class="ri-award-line text-3xl text-teal-600"></i>
-                    </div>
-                  </div>
-                  <h3 class="text-xl font-bold text-white mb-2">
-                    Mission Essentielle
-                  </h3>
-                </div>
-                <div class="p-6">
-                  <p class="text-gray-600 text-center leading-relaxed">
-                    Professionnalisme sous l'Égide de la Direction Sanitaire
-                  </p>
-                  <div class="mt-6 text-center">
-                    <button
-                      class="text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                    >
-                      En savoir plus →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="py-20 bg-white">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div class="order-2 lg:order-1">
-                <div class="relative">
-                  <img
-                    src="images/new_Image/2150796734-removebg-preview.png"
-                    alt="MYDEPPS About"
-                    class="w-full h-auto max-w-md mx-auto"
-                  />
-                  <div
-                    class="absolute -top-4 -left-4 w-24 h-24 bg-blue-100 rounded-full opacity-50"
-                  ></div>
-                  <div
-                    class="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-100 rounded-full opacity-50"
-                  ></div>
-                </div>
-              </div>
-              <div class="order-1 lg:order-2">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  MY DEPPS
-                </h2>
-                <div class="space-y-6">
-                  <p class="text-lg text-gray-600 leading-relaxed">
-                    Fidèle à notre mission, nous assurons la qualité des soins
-                    avec rigueur. La Direction des Établissements Privés et
-                    Sanitaires veille à chaque étape pour votre bien-être et
-                    votre sécurité, garantissant ainsi des standards élevés dans
-                    tous nos établissements partenaires.
-                  </p>
-                  <p class="text-lg text-gray-600 leading-relaxed">
-                    Leaders en santé, nous nous engageons à maintenir des normes
-                    élevées. La Direction des Établissements Privés et
-                    Sanitaires met tout en œuvre pour offrir des soins
-                    d'excellence, en collaboration avec nos partenaires,
-                    assurant ainsi votre confiance et votre bien-être à chaque
-                    instant.
-                  </p>
-                </div>
-                <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                  <button
-                    class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    Voir plus →</button
-                  ><button
-                    class="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:border-blue-600 hover:text-blue-600 transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    Nos services
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section
-          class="py-20 relative"
-          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        >
-          <div class="absolute inset-0 bg-black/20"></div>
-          <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-              <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Nos Réalisations
-              </h2>
-              <p class="text-xl text-white/90 max-w-3xl mx-auto">
-                Nous sommes très heureux de vous servir. Nous sommes heureux de
-                continuer notre route
-              </p>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
-              <div class="text-center group">
-                <div
-                  class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
-                >
-                  <div
-                    class="w-16 h-16 mx-auto mb-4 bg-black rounded-full flex items-center justify-center"
-                  >
-                    <img
-                      src="images/new_Image/awards1.png"
-                      alt="Médecins"
-                      class="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    20
-                  </div>
-                  <div class="text-white/80 font-medium">Médecins</div>
-                </div>
-              </div>
-              <div class="text-center group">
-                <div
-                  class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
-                >
-                  <div
-                    class="w-16 h-16 mx-auto mb-4 bg-black rounded-full flex items-center justify-center"
-                  >
-                    <img
-                      src="images/new_Image/awards2.png"
-                      alt="Patients"
-                      class="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    10
-                  </div>
-                  <div class="text-white/80 font-medium">Patients</div>
-                </div>
-              </div>
-              <div class="text-center group">
-                <div
-                  class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
-                >
-                  <div
-                    class="w-16 h-16 mx-auto mb-4 bg-black rounded-full flex items-center justify-center"
-                  >
-                    <img
-                      src="images/new_Image/awards3.png"
-                      alt="Chirurgies"
-                      class="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    20
-                  </div>
-                  <div class="text-white/80 font-medium">Chirurgies</div>
-                </div>
-              </div>
-              <div class="text-center group">
-                <div
-                  class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
-                >
-                  <div
-                    class="w-16 h-16 mx-auto mb-4 bg-black rounded-full flex items-center justify-center"
-                  >
-                    <img
-                      src="images/new_Image/awards4.png"
-                      alt="Membres"
-                      class="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    10
-                  </div>
-                  <div class="text-white/80 font-medium">Membres</div>
-                </div>
-              </div>
-              <div class="text-center group">
-                <div
-                  class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
-                >
-                  <div
-                    class="w-16 h-16 mx-auto mb-4 bg-black rounded-full flex items-center justify-center"
-                  >
-                    <img
-                      src="images/new_Image/awards5.png"
-                      alt="Récompenses"
-                      class="w-10 h-10 object-contain"
-                    />
-                  </div>
-                  <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    20
-                  </div>
-                  <div class="text-white/80 font-medium">Récompenses</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-       
-      </div>
-    <FooterNew/>
+        </div>
+      </nav>
+    </header>
 
-</main>
 
 <style> 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css");
