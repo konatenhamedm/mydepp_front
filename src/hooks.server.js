@@ -8,7 +8,8 @@ export async function handle({event, resolve}) {
   if (cookies) {
     try {
       const auth = JSON.parse(cookies.auth);
-      user = {id: auth.id, role: auth.role, token: auth.token, email: auth.email,nom: auth.nom,prenoms: auth.prenoms};
+      user = {id: auth.id, role: auth.role, token: auth.token, email: auth.email};
+    
 
      
     } catch (e) {

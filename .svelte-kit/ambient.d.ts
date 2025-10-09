@@ -21,71 +21,71 @@
  * 
  * You can override `.env` values from the command line like so:
  * 
- * ```sh
+ * ```bash
  * MY_FEATURE_FLAG="enabled" npm run dev
  * ```
  */
 declare module '$env/static/private' {
-	export const ALLUSERSPROFILE: string;
-	export const APPDATA: string;
-	export const APPLICATION_INSIGHTS_NO_STATSBEAT: string;
-	export const CHROME_CRASHPAD_PIPE_NAME: string;
-	export const CommonProgramFiles: string;
-	export const CommonProgramW6432: string;
-	export const COMPUTERNAME: string;
-	export const ComSpec: string;
-	export const DriverData: string;
-	export const ELECTRON_NO_ASAR: string;
-	export const ELECTRON_NO_ATTACH_CONSOLE: string;
-	export const ELECTRON_RUN_AS_NODE: string;
-	export const HOMEDRIVE: string;
-	export const HOMEPATH: string;
-	export const LOCALAPPDATA: string;
-	export const LOGONSERVER: string;
-	export const NODE_ENV: string;
-	export const NODE_TLS_REJECT_UNAUTHORIZED: string;
-	export const NUMBER_OF_PROCESSORS: string;
-	export const OneDrive: string;
+	export const TERM_PROGRAM: string;
+	export const NODE: string;
+	export const INIT_CWD: string;
+	export const SHELL: string;
+	export const TERM: string;
+	export const TMPDIR: string;
+	export const HOMEBREW_REPOSITORY: string;
+	export const npm_config_global_prefix: string;
+	export const TERM_PROGRAM_VERSION: string;
+	export const VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
+	export const MallocNanoZone: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
-	export const OS: string;
-	export const Path: string;
-	export const PATHEXT: string;
-	export const PROCESSOR_ARCHITECTURE: string;
-	export const PROCESSOR_IDENTIFIER: string;
-	export const PROCESSOR_LEVEL: string;
-	export const PROCESSOR_REVISION: string;
-	export const ProgramData: string;
-	export const ProgramFiles: string;
-	export const ProgramW6432: string;
-	export const PROMPT: string;
-	export const PSModulePath: string;
-	export const PT8HOME: string;
-	export const PUBLIC: string;
-	export const SESSIONNAME: string;
-	export const SystemDrive: string;
-	export const SystemRoot: string;
-	export const TEMP: string;
-	export const TMP: string;
-	export const USERDOMAIN: string;
-	export const USERDOMAIN_ROAMINGPROFILE: string;
-	export const USERNAME: string;
-	export const USERPROFILE: string;
-	export const VBOX_MSI_INSTALL_PATH: string;
-	export const VSCODE_CLI: string;
-	export const VSCODE_CODE_CACHE_PATH: string;
-	export const VSCODE_CRASH_REPORTER_PROCESS_TYPE: string;
-	export const VSCODE_CWD: string;
-	export const VSCODE_ESM_ENTRYPOINT: string;
-	export const VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
-	export const VSCODE_IPC_HOOK: string;
-	export const VSCODE_L10N_BUNDLE_LOCATION: string;
-	export const VSCODE_NLS_CONFIG: string;
-	export const VSCODE_PID: string;
-	export const windir: string;
-	export const WSLENV: string;
-	export const WT_PROFILE_ID: string;
-	export const WT_SESSION: string;
-	export const ZES_ENABLE_SYSMAN: string;
+	export const ZDOTDIR: string;
+	export const COLOR: string;
+	export const npm_config_noproxy: string;
+	export const npm_config_local_prefix: string;
+	export const USER: string;
+	export const COMMAND_MODE: string;
+	export const npm_config_globalconfig: string;
+	export const SSH_AUTH_SOCK: string;
+	export const __CF_USER_TEXT_ENCODING: string;
+	export const VSCODE_PROFILE_INITIALIZED: string;
+	export const npm_execpath: string;
+	export const PATH: string;
+	export const npm_package_json: string;
+	export const __CFBundleIdentifier: string;
+	export const USER_ZDOTDIR: string;
+	export const npm_config_init_module: string;
+	export const npm_config_userconfig: string;
+	export const PWD: string;
+	export const npm_command: string;
+	export const EDITOR: string;
+	export const npm_lifecycle_event: string;
+	export const LANG: string;
+	export const npm_package_name: string;
+	export const NODE_PATH: string;
+	export const XPC_FLAGS: string;
+	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
+	export const npm_config_npm_version: string;
+	export const npm_config_node_gyp: string;
+	export const XPC_SERVICE_NAME: string;
+	export const npm_package_version: string;
+	export const VSCODE_INJECTION: string;
+	export const HOME: string;
+	export const SHLVL: string;
+	export const VSCODE_GIT_ASKPASS_MAIN: string;
+	export const HOMEBREW_PREFIX: string;
+	export const LOGNAME: string;
+	export const npm_config_cache: string;
+	export const npm_lifecycle_script: string;
+	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const npm_config_user_agent: string;
+	export const HOMEBREW_CELLAR: string;
+	export const INFOPATH: string;
+	export const GIT_ASKPASS: string;
+	export const VSCODE_GIT_ASKPASS_NODE: string;
+	export const COLORTERM: string;
+	export const npm_config_prefix: string;
+	export const npm_node_execpath: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -106,75 +106,77 @@ declare module '$env/static/public' {
  * 
  * This module cannot be imported into client-side code.
  * 
+ * Dynamic environment variables cannot be used during prerendering.
+ * 
  * ```ts
  * import { env } from '$env/dynamic/private';
  * console.log(env.DEPLOYMENT_SPECIFIC_VARIABLE);
  * ```
  * 
- * > [!NOTE] In `dev`, `$env/dynamic` always includes environment variables from `.env`. In `prod`, this behavior will depend on your adapter.
+ * > In `dev`, `$env/dynamic` always includes environment variables from `.env`. In `prod`, this behavior will depend on your adapter.
  */
 declare module '$env/dynamic/private' {
 	export const env: {
-		ALLUSERSPROFILE: string;
-		APPDATA: string;
-		APPLICATION_INSIGHTS_NO_STATSBEAT: string;
-		CHROME_CRASHPAD_PIPE_NAME: string;
-		CommonProgramFiles: string;
-		CommonProgramW6432: string;
-		COMPUTERNAME: string;
-		ComSpec: string;
-		DriverData: string;
-		ELECTRON_NO_ASAR: string;
-		ELECTRON_NO_ATTACH_CONSOLE: string;
-		ELECTRON_RUN_AS_NODE: string;
-		HOMEDRIVE: string;
-		HOMEPATH: string;
-		LOCALAPPDATA: string;
-		LOGONSERVER: string;
-		NODE_ENV: string;
-		NODE_TLS_REJECT_UNAUTHORIZED: string;
-		NUMBER_OF_PROCESSORS: string;
-		OneDrive: string;
+		TERM_PROGRAM: string;
+		NODE: string;
+		INIT_CWD: string;
+		SHELL: string;
+		TERM: string;
+		TMPDIR: string;
+		HOMEBREW_REPOSITORY: string;
+		npm_config_global_prefix: string;
+		TERM_PROGRAM_VERSION: string;
+		VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
+		MallocNanoZone: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
-		OS: string;
-		Path: string;
-		PATHEXT: string;
-		PROCESSOR_ARCHITECTURE: string;
-		PROCESSOR_IDENTIFIER: string;
-		PROCESSOR_LEVEL: string;
-		PROCESSOR_REVISION: string;
-		ProgramData: string;
-		ProgramFiles: string;
-		ProgramW6432: string;
-		PROMPT: string;
-		PSModulePath: string;
-		PT8HOME: string;
-		PUBLIC: string;
-		SESSIONNAME: string;
-		SystemDrive: string;
-		SystemRoot: string;
-		TEMP: string;
-		TMP: string;
-		USERDOMAIN: string;
-		USERDOMAIN_ROAMINGPROFILE: string;
-		USERNAME: string;
-		USERPROFILE: string;
-		VBOX_MSI_INSTALL_PATH: string;
-		VSCODE_CLI: string;
-		VSCODE_CODE_CACHE_PATH: string;
-		VSCODE_CRASH_REPORTER_PROCESS_TYPE: string;
-		VSCODE_CWD: string;
-		VSCODE_ESM_ENTRYPOINT: string;
-		VSCODE_HANDLES_UNCAUGHT_ERRORS: string;
-		VSCODE_IPC_HOOK: string;
-		VSCODE_L10N_BUNDLE_LOCATION: string;
-		VSCODE_NLS_CONFIG: string;
-		VSCODE_PID: string;
-		windir: string;
-		WSLENV: string;
-		WT_PROFILE_ID: string;
-		WT_SESSION: string;
-		ZES_ENABLE_SYSMAN: string;
+		ZDOTDIR: string;
+		COLOR: string;
+		npm_config_noproxy: string;
+		npm_config_local_prefix: string;
+		USER: string;
+		COMMAND_MODE: string;
+		npm_config_globalconfig: string;
+		SSH_AUTH_SOCK: string;
+		__CF_USER_TEXT_ENCODING: string;
+		VSCODE_PROFILE_INITIALIZED: string;
+		npm_execpath: string;
+		PATH: string;
+		npm_package_json: string;
+		__CFBundleIdentifier: string;
+		USER_ZDOTDIR: string;
+		npm_config_init_module: string;
+		npm_config_userconfig: string;
+		PWD: string;
+		npm_command: string;
+		EDITOR: string;
+		npm_lifecycle_event: string;
+		LANG: string;
+		npm_package_name: string;
+		NODE_PATH: string;
+		XPC_FLAGS: string;
+		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
+		npm_config_npm_version: string;
+		npm_config_node_gyp: string;
+		XPC_SERVICE_NAME: string;
+		npm_package_version: string;
+		VSCODE_INJECTION: string;
+		HOME: string;
+		SHLVL: string;
+		VSCODE_GIT_ASKPASS_MAIN: string;
+		HOMEBREW_PREFIX: string;
+		LOGNAME: string;
+		npm_config_cache: string;
+		npm_lifecycle_script: string;
+		VSCODE_GIT_IPC_HANDLE: string;
+		npm_config_user_agent: string;
+		HOMEBREW_CELLAR: string;
+		INFOPATH: string;
+		GIT_ASKPASS: string;
+		VSCODE_GIT_ASKPASS_NODE: string;
+		COLORTERM: string;
+		npm_config_prefix: string;
+		npm_node_execpath: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}
@@ -184,6 +186,8 @@ declare module '$env/dynamic/private' {
  * Similar to [`$env/dynamic/private`](https://svelte.dev/docs/kit/$env-dynamic-private), but only includes variables that begin with [`config.kit.env.publicPrefix`](https://svelte.dev/docs/kit/configuration#env) (which defaults to `PUBLIC_`), and can therefore safely be exposed to client-side code.
  * 
  * Note that public dynamic environment variables must all be sent from the server to the client, causing larger network requests — when possible, use `$env/static/public` instead.
+ * 
+ * Dynamic environment variables cannot be used during prerendering.
  * 
  * ```ts
  * import { env } from '$env/dynamic/public';

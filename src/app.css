@@ -37,7 +37,56 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  --color-bg: #ffffff;
+  --color-surface: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-info: #3b82f6;
+  --font-base: 'Geist Sans', system-ui, sans-serif;
 }
+
+
+.card {
+  background: var(--color-bg);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 0.75rem;
+  font-size: 18px !important;
+  border-top: 1px solid var(--color-border);
+  color: #1e293b;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-weight: 500;
+}
+
+.badge.success { background-color: #dcfce7; color: var(--color-success); }
+.badge.warning { background-color: #fef9c3; color: var(--color-warning); }
+.badge.info { background-color: #dbeafe; color: var(--color-info); }
 
 .dark {
   --background: oklch(0.129 0.042 264.695);
@@ -115,7 +164,37 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+ /*  body {
     @apply bg-background text-foreground;
-  }
+  } */
+   html, body {
+	font-family: var(--font-geist-mono);
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #111;
+	background-color: #fff;
+	margin: 0;
+	padding: 0;
+}
+
+/* Optionnel : harmoniser tous les éléments */
+h1, h2, h3, h4, h5, h6, p, span, a, input, button,td {
+	font-family: var(--font-geist-mono);
+}
+
+/* Bonus : adoucir le rendu des caractères */
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-base);
+}
+
+/* Exemple pour dark mode (si tu en as un) */
+body.dark {
+	background-color: #0f0f0f;
+	color: #eee;
+}
+
+
 }
