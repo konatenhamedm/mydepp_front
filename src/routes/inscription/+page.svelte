@@ -8,7 +8,8 @@
 <main>
     <HeaderNew/>
 <div
-        class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pt-16"
+        class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pt-50"
+        
       >
         <div class="py-12 px-4 sm:px-6 lg:px-8">
           <div class="max-w-4xl mx-auto">

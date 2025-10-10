@@ -1,0 +1,1 @@
+export { default as component } from "../../../../src/routes/login/nouveau_mot_de_passe/[id]/+page.svelte";

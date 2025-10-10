@@ -7,7 +7,7 @@
     <!-- Footer content -->
     <div class="flex justify-between flex-wrap py-[22px] gap-x-[30px] gap-y-[15px] max-ssm:gap-y-[8px] items-center max-md:flex-col">
        <!-- Copyright information -->
-       <div class="flex items-center gap-[4px] text-[14px] font-medium max-md:text-center text-body dark:text-subtitle-dark">© <span class="current-year">2025</span> <a href="#" class="text-primary">Moomen pro</a></div>
+       <div class="flex items-center gap-[4px] text-[14px] font-medium max-md:text-center text-body dark:text-subtitle-dark">© <span class="current-year">2025</span> <a href="#" class="text-primary">MYDEPPS</a></div>
 
        <!-- Footer navigation links -->
        <div class="justify-end md:justify-center items-center flex gap-[15px]">

@@ -212,7 +212,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div class="order-2 lg:order-1">
                 <div class="relative">
-                  <img
+                  <img style="height: 6.5rem !important;"
                     src="images/new_Image/2150796734-removebg-preview.png"
                     alt="MYDEPPS About"
                     class="w-full h-auto max-w-md mx-auto"
