@@ -391,7 +391,9 @@
         <LoaderTable colspan={5} />
       {:else}
         <div class="overflow-x-auto rounded-xl border border-gray-200">
-          <table class="min-w-full divide-y divide-gray-200">
+            <table
+            class="min-w-full border border-gray-200 rounded-xl shadow-sm text-sm"
+          >
             <HeaderTable afficheAction={false}
               item={activeTab === 'professionnel' || activeTab === 'pro'
                 ? ['Nom', 'Prénoms', 'Téléphone', 'Email', 'Profession']
