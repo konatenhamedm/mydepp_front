@@ -49,7 +49,7 @@
 
   let actions: Action[] = [];
 
-  const path: string = '/admin/direction';
+  const path: string = '/admin/genre';
 
   // Configuration des permissions
   const PERMISSION_MAP: Record<ActionType, Permission[]> = {

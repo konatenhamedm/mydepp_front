@@ -11,7 +11,7 @@
   import Pagination from '$components/Pagination.svelte';
   import {pageSize} from '../../../store';
   import {get} from 'svelte/store';
-  import type {Civilite} from '../../../types';
+  import type {Commune} from '../../../types';
   import Add from './Add.svelte';
   import Show from './Show.svelte';
   import Delete from './Delete.svelte';
@@ -33,7 +33,7 @@
   // Données
   let user: any = [];
 
-  let main_data: Civilite[] = [];
+  let main_data: Commune[] = [];
   let searchQuery = '';
   let currentPage = 1;
   let totalItems = 0;
@@ -48,7 +48,7 @@
 
   let actions: Action[] = [];
 
-  const path: string = '/admin/civilite';
+  const path: string = '/admin/commune';
 
   // Configuration des permissions
   const PERMISSION_MAP: Record<ActionType, Permission[]> = {
@@ -90,12 +90,12 @@
   async function fetchData() {
     loading = true;
     try {
-      const res = await apiFetch(true, `/civilite/`);
+      const res = await apiFetch(true, `/commune/`);
 
       console.log(res);
 
       if (res) {
-        main_data = res.data as Civilite[];
+        main_data = res.data as Commune[];
 
         // Infos pagination venant de Laravel
         currentPage = 1;
@@ -149,7 +149,7 @@
 
   // Réactivité
   $: filteredData = main_data.filter((item) => {
-    return item.code.toLowerCase().includes(searchQuery.toLowerCase());
+    return item.libelle.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   $: totalPages = Math.max(1, Math.ceil(filteredData.length / get(pageSize)));
@@ -232,7 +232,7 @@
             class="min-w-full border border-gray-200 rounded-xl shadow-sm text-sm"
           >
             <!-- Header -->
-            <HeaderTable item={['Code', 'Libelle']} />
+            <HeaderTable item={['Libelle', 'Ville']} />
             <!-- Body -->
             <tbody class="text-gray-700">
               {#if loading && paginatedData.length === 0}
@@ -250,10 +250,10 @@
               {:else}
                 {#each paginatedData as item, i}
                   <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-4 text-[14px]  py-3 border border-gray-200">{item.code}</td
+                    <td class="px-4 text-[14px]  py-3 border border-gray-200">{item.libelle}</td
                     >
                     <td class="px-4 text-[14px]  py-3 border border-gray-200"
-                      >{item.libelle}</td
+                      >{item.ville.libelle}</td
                     >
                     <td class="px-4 text-[12px]  py-3 border border-gray-200 text-right">
                       <Menu {item} onAction={handleAction} {actions} />

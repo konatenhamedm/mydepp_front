@@ -758,22 +758,22 @@ export interface GetEtablissementData {
   personne: PersonneGetEtablissementData;
 }
 
-interface PersonneGetEtablissementData {
+export interface PersonneGetEtablissementData {
   id: number;
-  code: null;
+  code: any;
   type: string;
   status: string;
-  createdAt: null;
-  dateExamenRapport: null;
-  rapportExamen: null;
+  createdAt: any;
+  dateExamenRapport: any;
+  rapportExamen: any;
   niveauIntervention: NiveauInterventionGetEtablissementData;
-  dateVisite: null;
+  dateVisite: any;
   typePersonne: NiveauInterventionGetEtablissementData;
   imputationData: null;
-  denomination: null;
-  typeSociete: null;
-  nomRepresentant: null;
-  adresse: null;
+  denomination: any;
+  typeSociete: any;
+  nomRepresentant: any;
+  adresse: any;
   telephone: string;
   emailAutre: string;
   bp: string;
