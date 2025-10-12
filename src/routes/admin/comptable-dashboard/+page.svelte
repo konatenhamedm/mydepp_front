@@ -607,31 +607,31 @@
                 : ['N°', 'Nom', 'Adresse', 'Téléphone', 'Email', 'Profession']} 
             />
             
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="text-gray-700">
               {#each paginatedData as item, index}
                 <tr class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
-                  <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
                     {item.personne?.nom ?? item.username ?? 'N/A'}
                   </td>
                   {#if activeTab === 'professionnel' || activeTab === 'pro'}
-                    <td class="px-6 py-4 text-sm text-gray-500">
+                    <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                       {item.personne?.prenoms ?? 'N/A'}
                     </td>
                   {:else}
-                    <td class="px-6 py-4 text-sm text-gray-500">
+                    <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                       {item.adresse ?? 'N/A'}
                     </td>
                   {/if}
-                  <td class="px-6 py-4 text-sm text-gray-500">
+                  <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                     {item.personne?.number ?? item.number ?? 'N/A'}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500">
+                  <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                     {item.personne?.email ?? item.email ?? 'N/A'}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500">
+                  <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                     {item.personne?.profession?.libelle ?? 'N/A'}
                   </td>
                 </tr>

@@ -458,7 +458,7 @@
                 : ['N°', 'Nom & Prénoms', 'Téléphone/Adresse', 'Email', 'Profession / Entité Juridique', 'Statut']} 
             />
             
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="text-gray-700">
               {#if paginatedData.length === 0}
                 <tr>
                   <td colspan="6" class="px-6 py-12 text-center">
@@ -479,33 +479,33 @@
                 {#each paginatedData as item, index}
                   <tr class="hover:bg-gray-50 transition-colors duration-150">
                     {#if dossierFilter === 'etablissement'}
-                      <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
                         {item.personne?.typePersonne?.libelle ?? 'N/A'}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.email ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.email ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.personne?.telephone ? item.personne.telephone : item.personne.adresse ? item.personne.adresse : item.personne.number}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.created_at ? new Date(item.created_at).toLocaleDateString('fr-FR') : 'N/A'}
                       </td>
                     {:else}
-                      <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
                         {(currentPage - 1) * itemsPerPage + index + 1}
                       </td>
-                      <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
                         {item.personne?.nom ? item.personne.nom + ' ' + item.personne?.prenoms : item.personne.denomination}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.personne?.telephone ? item.personne.telephone : item.personne.adresse ? item.personne.adresse : item.personne.number}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.personne?.email ?? item.email}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.personne?.profession ? item.personne?.profession?.libelle : item.personne?.typePersonne ? item.personne?.typePersonne?.libelle : 'N/A'}
                       </td>
-                      <td class="px-6 py-4 text-sm text-gray-500">
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                         {item.personne?.status ?? 'N/A'}
                       </td>
                     {/if}

@@ -400,7 +400,7 @@
                 : ['Entité Juridique', 'Email', 'Imputation', 'Créé le']} 
             />
             
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="text-gray-700">
               {#if paginatedData.length === 0}
                 <tr>
                   <td colspan="5" class="px-6 py-12 text-center">
@@ -421,16 +421,16 @@
                 {#each paginatedData as item}
                   <tr class="hover:bg-gray-50 transition-colors duration-150">
                     {#if activeTab === 'professionnel' || activeTab === 'pro'}
-                      <td class="px-6 py-4 text-sm font-medium text-gray-900">{item.personne?.nom ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.personne?.prenoms ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.personne?.number ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.personne?.email ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.personne?.profession?.libelle ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">{item.personne?.nom ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.personne?.prenoms ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.personne?.number ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.personne?.email ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.personne?.profession?.libelle ?? 'N/A'}</td>
                     {:else}
-                      <td class="px-6 py-4 text-sm font-medium text-gray-900">{item.personne?.profession ? item.personne?.profession?.libelle : item.personne?.typePersonne ? item.personne?.typePersonne?.libelle : 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.email ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.personne?.imputationData?.username ?? 'N/A'}</td>
-                      <td class="px-6 py-4 text-sm text-gray-500">{item.created_at ? new Date(item.created_at).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">{item.personne?.profession ? item.personne?.profession?.libelle : item.personne?.typePersonne ? item.personne?.typePersonne?.libelle : 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.email ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.personne?.imputationData?.username ?? 'N/A'}</td>
+                      <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">{item.created_at ? new Date(item.created_at).toLocaleDateString('fr-FR') : 'N/A'}</td>
                     {/if}
                   </tr>
                 {/each}
