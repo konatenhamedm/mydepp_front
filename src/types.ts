@@ -66,6 +66,12 @@ export interface Civilite {
   code: string;
   libelle: string;
 }
+export interface GroupeLibelle {
+  id: number;
+  code: string;
+  type: string;
+  libelle: string;
+}
 
 /* export interface Etablissement {
   id: number;

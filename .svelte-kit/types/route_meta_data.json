@@ -1,21 +1,28 @@
 {
 	"/": [],
 	"/admin": [],
+	"/admin/accord_de_principe": [],
+	"/admin/admin_document": [],
 	"/admin/administrateur": [
 		"src/routes/admin/administrateur/+page.server.ts"
 	],
 	"/admin/civilite": [],
+	"/admin/code_generateur": [],
 	"/admin/commune": [],
 	"/admin/comptable-dashboard": [],
 	"/admin/dashboard/user": [],
+	"/admin/destinataire": [],
 	"/admin/directeur-dashboard": [],
 	"/admin/direction": [],
 	"/admin/district": [],
+	"/admin/etablissements": [],
 	"/admin/genre": [],
+	"/admin/groupeLibelle": [],
 	"/admin/inspecteur-dashboard": [],
 	"/admin/instructeur-dashboard": [],
 	"/admin/instructeur-second-dashboard": [],
 	"/admin/lieu_diplome": [],
+	"/admin/niveau_intervention": [],
 	"/admin/ouverture_exploitation_instructeur": [],
 	"/admin/ouverture_exploitation": [],
 	"/admin/pays": [],
@@ -28,6 +35,7 @@
 	"/admin/professionnel_renouvellement": [],
 	"/admin/professionnel_valide": [],
 	"/admin/professionnel": [],
+	"/admin/profession": [],
 	"/admin/racine_sequence": [],
 	"/admin/region": [],
 	"/admin/situation_professionnelle": [
@@ -38,6 +46,9 @@
 	"/admin/statistique/general": [],
 	"/admin/status_pro": [],
 	"/admin/type_diplome": [],
+	"/admin/type_document": [],
+	"/admin/type_personne": [],
+	"/admin/type_profession": [],
 	"/admin/utilisateur_externe": [
 		"src/routes/admin/utilisateur_externe/+page.server.ts"
 	],
