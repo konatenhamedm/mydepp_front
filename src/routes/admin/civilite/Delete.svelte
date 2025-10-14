@@ -22,7 +22,7 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,`/devises/delete/` + data?.id,"DELETE");
+			const res = await apiFetch(true,`/civilite/delete/` + data?.id,"DELETE");
 
 			if (res) {
 				isLoad = false;
