@@ -1,310 +1,501 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { CookieManager } from "$lib/auth";
+  import axios from "axios";
+  import { onMount } from "svelte";
 
+  let isAuth = false;
+  let totalNotif = 0;
+  let userData = null;
+  const checkLogin = () => {
+    const token = CookieManager.get("auth");
+    userData = token;
+    isAuth = !!token;
+  };
+
+  const countNotif =async () => {
+    await axios.get("https://prodmydepps.leadagro.net/api/notification/by/" + userData.id)
+     .then(response => {
+       response.data.data.forEach(element => {
+        if(!element.isRead){
+          totalNotif +=1;
+        }
+       });
+       
+     })
+     .catch(error => {
+       console.error("Error fetching notifications:", error);
+     });  
+  };
+
+onMount(() => {
+    checkLogin();
+    if (isAuth) {
+      countNotif();
+    }
+  });
 </script>
-
 <main>
     <HeaderNew />
     <div
-      class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+      class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-16"
+      style="background-image: linear-gradient(to bottom right, #eff6ff, #fff, #faf5ff); min-height: 100vh;"
     >
-      <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div class="flex items-center justify-between">
+    <!-- Header apres connexion, a reprendre -->
+      <!-- <div class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
               <a
-                class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
-                ><i class="ri-arrow-left-line text-xl"></i
-              ></a>
-              <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                  Suivi de mon dossier
-                </h1>
-                <p class="text-gray-600">État d'avancement de votre dossier</p>
-              </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span
-                class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"
-                >En cours</span
+                class="flex items-center space-x-2"
+                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3062495"
+                ><div
+                  class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"
+                >
+                  <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-hospital-line text-white text-sm"></i>
+                  </div>
+                </div>
+                <span class="font-['Pacifico'] text-xl text-blue-600"
+                  >E-DEPPS</span
+                ></a
               >
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-              <h2 class="text-lg font-semibold text-gray-900 mb-4">
-                Informations générales
-              </h2>
-              <div class="space-y-4">
-                <div>
-                  <span class="text-sm text-gray-500">Statut</span>
-                  <p class="font-medium text-gray-900">En cours</p>
-                </div>
-                <div>
-                  <span class="text-sm text-gray-500">Progression</span>
-                  <div class="mt-2">
-                    <div class="flex justify-between text-sm mb-1">
-                      <span>75<!-- -->%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style="width: 75%"
-                      ></div>
-                    </div>
+            <div class="flex items-center space-x-6">
+              <div class="flex items-center space-x-2">
+                <div
+                  class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"
+                >
+                  <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-building-line text-blue-600"></i>
                   </div>
                 </div>
-                <div>
-                  <span class="text-sm text-gray-500">Date de création</span>
-                  <p class="font-medium text-gray-900">10/01/2024</p>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-gray-900">
+                    Clinique de la Santé
+                  </p>
+                  <p class="text-xs text-gray-500">ÉTABLISSEMENT DE SANTÉ</p>
                 </div>
+              </div>
+              <div
+                class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-user-line text-gray-600"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <main>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div class="mb-8">
+            <div
+              class="bg-white rounded-2xl shadow-lg p-8 border border-blue-100"
+            >
+              <div class="flex items-center justify-between">
                 <div>
-                  <span class="text-sm text-gray-500"
-                    >Dernière modification</span
+                  <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    Bienvenue sur la plateforme MYDEPPS
+                  </h1>
+                  <p class="text-lg text-gray-600 mb-4">
+                    Gérez facilement vos démarches administratives et suivez
+                    l'état de vos dossiers
+                  </p>
+                  <div
+                    class="flex items-center space-x-6 text-sm text-gray-500"
                   >
-                  <p class="font-medium text-gray-900">15/01/2024</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-              <h2 class="text-lg font-semibold text-gray-900 mb-6">
-                Étapes du processus
-              </h2>
-              <div class="space-y-6">
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-green-600 bg-green-100"
-                    >
-                      <i class="ri-check-line text-lg"></i>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-4 h-4 flex items-center justify-center">
+                        <i class="ri-building-line"></i>
+                      </div>
+                      <span>{(userData?.type).toLowerCase()} de  Santé</span>
                     </div>
-                    <div class="w-0.5 h-12 mt-2 bg-green-300"></div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Création du dossier
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Dossier créé et informations de base renseignées
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >10/01/2024</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-green-600 bg-green-100"
-                    >
-                      <i class="ri-check-line text-lg"></i>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-4 h-4 flex items-center justify-center">
+                        <i class="ri-map-pin-line"></i>
+                      </div>
+                      <span>Côte d'Ivoire</span>
                     </div>
-                    <div class="w-0.5 h-12 mt-2 bg-green-300"></div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Soumission des documents
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Documents requis téléchargés et soumis
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >12/01/2024</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-blue-600 bg-blue-100"
-                    >
-                      <i class="ri-time-line text-lg"></i>
-                    </div>
-                    <div class="w-0.5 h-12 mt-2 bg-gray-300"></div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Validation des documents
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Vérification en cours par nos équipes
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >15/01/2024</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 bg-gray-100"
-                    >
-                      <span class="text-sm font-medium">4</span>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-4 h-4 flex items-center justify-center">
+                        <i class="ri-calendar-line"></i>
+                      </div>
+                      <span>Inscrit depuis N/A</span>
                     </div>
                   </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Approbation finale
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Validation finale et activation du dossier
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >En attente</span
-                    >
+                </div>
+                <div class="hidden lg:block">
+                  <div
+                    class="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center"
+                  >
+                    <div class="w-16 h-16 flex items-center justify-center">
+                      <i class="ri-dashboard-line text-white text-4xl"></i>
+                      <h1>icone etablissement</h1>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="mt-8">
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-6">
-              Documents du dossier
-            </h2>
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead>
-                  <tr class="border-b border-gray-200">
-                    <th class="text-left py-3 px-4 font-medium text-gray-700">
-                      Document
-                    </th>
-                    <th class="text-left py-3 px-4 font-medium text-gray-700">
-                      Statut
-                    </th>
-                    <th class="text-left py-3 px-4 font-medium text-gray-700">
-                      Date d'upload
-                    </th>
-                    <th class="text-left py-3 px-4 font-medium text-gray-700">
-                      Taille
-                    </th>
-                    <th class="text-left py-3 px-4 font-medium text-gray-700">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-3">
-                        <i class="ri-file-text-line text-gray-400"></i
-                        ><span class="font-medium text-gray-900"
-                          >Certificat d'assurance</span
-                        >
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <span
-                        class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                        >Validé</span
-                      >
-                    </td>
-                    <td class="py-4 px-4 text-gray-600">12/01/2024</td>
-                    <td class="py-4 px-4 text-gray-600">2.3 MB</td>
-                    <td class="py-4 px-4">
-                      <button
-                        class="text-gray-500 hover:text-gray-700 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-3">
-                        <i class="ri-file-text-line text-gray-400"></i
-                        ><span class="font-medium text-gray-900"
-                          >Justificatif de domicile</span
-                        >
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <span
-                        class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                        >Validé</span
-                      >
-                    </td>
-                    <td class="py-4 px-4 text-gray-600">12/01/2024</td>
-                    <td class="py-4 px-4 text-gray-600">1.8 MB</td>
-                    <td class="py-4 px-4">
-                      <button
-                        class="text-gray-500 hover:text-gray-700 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-3">
-                        <i class="ri-file-text-line text-gray-400"></i
-                        ><span class="font-medium text-gray-900"
-                          >Attestation SIRET</span
-                        >
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <span
-                        class="px-2 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
-                        >En attente</span
-                      >
-                    </td>
-                    <td class="py-4 px-4 text-gray-600">13/01/2024</td>
-                    <td class="py-4 px-4 text-gray-600">1.2 MB</td>
-                    <td class="py-4 px-4">
-                      <button
-                        class="text-gray-500 hover:text-gray-700 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir
-                      </button>
-                    </td>
-                  </tr>
-                  <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-3">
-                        <i class="ri-file-text-line text-gray-400"></i
-                        ><span class="font-medium text-gray-900"
-                          >Diplômes du personnel</span
-                        >
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <span
-                        class="px-2 py-1 rounded-full text-xs font-medium text-red-600 bg-red-100"
-                        >Manquant</span
-                      >
-                    </td>
-                    <td class="py-4 px-4 text-gray-600">-</td>
-                    <td class="py-4 px-4 text-gray-600">-</td>
-                    <td class="py-4 px-4">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+          >
+            <div
+            onclick="{() => window.location.href = '/dashboard/mon_dossier'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-folder-line text-blue-600 text-xl"></i>
+                  </div>
+                </div>
+                <span
+                  class="text-xs px-3 py-1 rounded-full font-medium bg-green-100 text-green-800 border-green-200"
+                  >À jour</span
+                >
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Mise à jour du dossier
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Mettre à jour vos informations
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
+            </div>
+            <div
+             onclick="{() => window.location.href = '/dashboard/alerts'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-notification-line text-orange-600 text-xl"></i>
+                  </div>
+                </div>
+                <span
+                  class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium"
+                  >{totalNotif}</span
+                >
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Alertes
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Notifications importantes
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
+            </div>
+            <div
+             onclick="{() => window.location.href = '/dashboard/suivi_dossier'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-file-list-line text-green-600 text-xl"></i>
+                  </div>
+                </div>
+                <span
+                  class="text-xs px-3 py-1 rounded-full font-medium bg-green-100 text-green-800 border-green-200"
+                  >En cours</span
+                >
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Suivi de mon dossier
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                État d'avancement du dossier
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
+            </div>
+            <div
+             onclick="{() => window.location.href = '/dashboard/historique_payment'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-file-text-line text-purple-600 text-xl"></i>
+                  </div>
+                </div>
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Historique paiements
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Consulter vos paiements
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
+            </div>
+            <div
+             onclick="{() => window.location.href = '/dashboard/documentheque'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-file-pdf-line text-red-600 text-xl"></i>
+                  </div>
+                </div>
+                <span
+                  class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium"
+                  >12</span
+                >
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Documenthèque
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Accéder aux documents
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
+            </div>
+            <div
+             onclick="{() => window.location.href = '/dashboard/forum'}"
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div
+                  class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                >
+                  <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-group-line text-indigo-600 text-xl"></i>
+                  </div>
+                </div>
+                <span
+                  class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium"
+                  >5</span
+                >
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+              >
+                Forum
+              </h3>
+              <p class="text-gray-600 text-sm leading-relaxed">
+                Échanger avec la communauté
+              </p>
+              <div
+                class="mt-4 flex items-center text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <span>Accéder</span>
+                <div class="w-4 h-4 flex items-center justify-center ml-1">
+                  <i class="ri-arrow-right-line"></i>
+                </div>
+              </div>
             </div>
           </div>
+          <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">
+                    Documents validés
+                  </p>
+                  <p class="text-2xl font-bold text-green-600">8</p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-check-circle-line text-green-600"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">En attente</p>
+                  <p class="text-2xl font-bold text-yellow-600">2</p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-time-line text-yellow-600"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Paiements</p>
+                  <p class="text-2xl font-bold text-blue-600">3</p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-bank-card-line text-blue-600"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Messages</p>
+                  <p class="text-2xl font-bold text-purple-600">5</p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-message-line text-purple-600"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <!-- <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold text-gray-900">
+                Activité récente
+              </h3>
+              <a
+                class="text-blue-600 hover:text-blue-700 text-sm font-medium cursor-pointer"
+                href="/dashboard"
+                >Voir tout</a
+              >
+            </div>
+            <div class="space-y-4">
+              <div
+                class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg border border-green-100"
+              >
+                <div
+                  class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mt-0.5"
+                >
+                  <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-check-line text-green-600"></i>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium text-green-900">Document validé</p>
+                  <p class="text-green-700 text-sm">
+                    Votre certificat d'assurance a été approuvé
+                  </p>
+                  <p class="text-green-600 text-xs mt-1">Il y a 2 heures</p>
+                </div>
+              </div>
+              <div
+                class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg border border-blue-100"
+              >
+                <div
+                  class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mt-0.5"
+                >
+                  <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-upload-line text-blue-600"></i>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium text-blue-900">
+                    Nouveau document ajouté
+                  </p>
+                  <p class="text-blue-700 text-sm">
+                    Justificatif de domicile téléchargé
+                  </p>
+                  <p class="text-blue-600 text-xs mt-1">Il y a 1 jour</p>
+                </div>
+              </div>
+              <div
+                class="flex items-start space-x-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100"
+              >
+                <div
+                  class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5"
+                >
+                  <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-alert-line text-yellow-600"></i>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium text-yellow-900">Action requise</p>
+                  <p class="text-yellow-700 text-sm">
+                    Veuillez mettre à jour vos informations de contact
+                  </p>
+                  <p class="text-yellow-600 text-xs mt-1">Il y a 3 jours</p>
+                </div>
+              </div>
+            </div>
+          </div> -->
         </div>
-      </div>
+      </main>
     </div>
-<FooterNew />
+    <FooterNew />
+
 </main>
 
 <style>
-    @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
+
+    @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css");
 *,
 :after,
 :before {
@@ -626,21 +817,11 @@ video {
 [hidden]:where(:not([hidden="until-found"])) {
   display: none;
 }
-.pointer-events-none {
-  pointer-events: none;
-}
 .absolute {
   position: absolute;
 }
 .relative {
   position: relative;
-}
-.inset-0 {
-  inset: 0;
-}
-.inset-y-0 {
-  top: 0;
-  bottom: 0;
 }
 .-right-1 {
   right: -0.25rem;
@@ -654,41 +835,21 @@ video {
 .-top-2 {
   top: -0.5rem;
 }
-.left-0 {
-  left: 0;
-}
-.left-3 {
-  left: 0.75rem;
-}
 .right-0 {
   right: 0;
-}
-.top-1\/2 {
-  top: 50%;
 }
 .z-50 {
   z-index: 50;
 }
-.mx-4 {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
-}
-.my-6 {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
 }
 .mb-1 {
   margin-bottom: 0.25rem;
 }
 .mb-2 {
   margin-bottom: 0.5rem;
-}
-.mb-3 {
-  margin-bottom: 0.75rem;
 }
 .mb-4 {
   margin-bottom: 1rem;
@@ -701,18 +862,6 @@ video {
 }
 .ml-1 {
   margin-left: 0.25rem;
-}
-.ml-2 {
-  margin-left: 0.5rem;
-}
-.ml-4 {
-  margin-left: 1rem;
-}
-.mr-1 {
-  margin-right: 0.25rem;
-}
-.mr-2 {
-  margin-right: 0.5rem;
 }
 .mt-0\.5 {
   margin-top: 0.125rem;
@@ -732,35 +881,14 @@ video {
 .mt-8 {
   margin-top: 2rem;
 }
-.line-clamp-2 {
-  -webkit-line-clamp: 2;
-}
-.line-clamp-2,
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-}
-.line-clamp-3 {
-  -webkit-line-clamp: 3;
-}
-.block {
-  display: block;
-}
 .flex {
   display: flex;
-}
-.table {
-  display: table;
 }
 .grid {
   display: grid;
 }
 .hidden {
   display: none;
-}
-.h-1 {
-  height: 0.25rem;
 }
 .h-10 {
   height: 2.5rem;
@@ -770,9 +898,6 @@ video {
 }
 .h-16 {
   height: 4rem;
-}
-.h-2 {
-  height: 0.5rem;
 }
 .h-32 {
   height: 8rem;
@@ -789,23 +914,14 @@ video {
 .h-8 {
   height: 2rem;
 }
-.h-full {
-  height: 100%;
-}
 .h-screen {
   height: 100vh;
 }
 .max-h-64 {
   max-height: 16rem;
 }
-.min-h-\[calc\(100vh-4rem\)\] {
-  min-height: calc(100vh - 4rem);
-}
 .min-h-screen {
   min-height: 100vh;
-}
-.w-0\.5 {
-  width: 0.125rem;
 }
 .w-10 {
   width: 2.5rem;
@@ -815,12 +931,6 @@ video {
 }
 .w-16 {
   width: 4rem;
-}
-.w-2 {
-  width: 0.5rem;
-}
-.w-24 {
-  width: 6rem;
 }
 .w-32 {
   width: 8rem;
@@ -846,40 +956,11 @@ video {
 .min-w-0 {
   min-width: 0;
 }
-.max-w-4xl {
-  max-width: 56rem;
-}
-.max-w-6xl {
-  max-width: 72rem;
-}
 .max-w-7xl {
   max-width: 80rem;
 }
-.max-w-md {
-  max-width: 28rem;
-}
 .flex-1 {
   flex: 1 1 0%;
-}
-.flex-shrink-0 {
-  flex-shrink: 0;
-}
-.-translate-y-1\/2 {
-  --tw-translate-y: -50%;
-}
-.-translate-y-1\/2,
-.transform {
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-@keyframes spin {
-  to {
-    transform: rotate(1turn);
-  }
-}
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 .cursor-pointer {
   cursor: pointer;
@@ -887,14 +968,8 @@ video {
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
 .flex-col {
   flex-direction: column;
-}
-.flex-wrap {
-  flex-wrap: wrap;
 }
 .items-start {
   align-items: flex-start;
@@ -902,17 +977,11 @@ video {
 .items-center {
   align-items: center;
 }
-.justify-end {
-  justify-content: flex-end;
-}
 .justify-center {
   justify-content: center;
 }
 .justify-between {
   justify-content: space-between;
-}
-.gap-2 {
-  gap: 0.5rem;
 }
 .gap-4 {
   gap: 1rem;
@@ -922,11 +991,6 @@ video {
 }
 .gap-8 {
   gap: 2rem;
-}
-.space-x-1 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.25rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
 }
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
@@ -953,11 +1017,6 @@ video {
   margin-right: calc(2rem * var(--tw-space-x-reverse));
   margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)));
 }
-.space-y-1 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
-}
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
@@ -968,39 +1027,8 @@ video {
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
-.space-y-6 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
-}
-.space-y-8 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
-}
-.divide-y > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-y-reverse: 0;
-  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
-  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
-}
-.divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-opacity: 1;
-  border-color: rgb(243 244 246 / var(--tw-divide-opacity, 1));
-}
-.overflow-hidden {
-  overflow: hidden;
-}
-.overflow-x-auto {
-  overflow-x: auto;
-}
 .overflow-y-auto {
   overflow-y: auto;
-}
-.whitespace-nowrap {
-  white-space: nowrap;
-}
-.rounded {
-  border-radius: 0.25rem;
 }
 .rounded-2xl {
   border-radius: 1rem;
@@ -1023,26 +1051,12 @@ video {
 .border-b {
   border-bottom-width: 1px;
 }
-.border-b-2 {
-  border-bottom-width: 2px;
-}
-.border-l-4 {
-  border-left-width: 4px;
-}
 .border-t {
   border-top-width: 1px;
 }
 .border-blue-100 {
   --tw-border-opacity: 1;
   border-color: rgb(219 234 254 / var(--tw-border-opacity, 1));
-}
-.border-blue-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
-}
-.border-blue-500 {
-  --tw-border-opacity: 1;
-  border-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
 }
 .border-gray-100 {
   --tw-border-opacity: 1;
@@ -1052,10 +1066,6 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
-.border-gray-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
 .border-green-100 {
   --tw-border-opacity: 1;
   border-color: rgb(220 252 231 / var(--tw-border-opacity, 1));
@@ -1064,38 +1074,9 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(187 247 208 / var(--tw-border-opacity, 1));
 }
-.border-red-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(254 202 202 / var(--tw-border-opacity, 1));
-}
-.border-transparent {
-  border-color: transparent;
-}
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
-}
 .border-yellow-100 {
   --tw-border-opacity: 1;
   border-color: rgb(254 249 195 / var(--tw-border-opacity, 1));
-}
-.border-yellow-200 {
-  --tw-border-opacity: 1;
-  border-color: rgb(254 240 138 / var(--tw-border-opacity, 1));
-}
-.border-l-blue-500 {
-  --tw-border-opacity: 1;
-  border-left-color: rgb(59 130 246 / var(--tw-border-opacity, 1));
-}
-.border-l-gray-300 {
-  --tw-border-opacity: 1;
-  border-left-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
-.border-t-transparent {
-  border-top-color: transparent;
-}
-.bg-black\/20 {
-  background-color: rgb(0 0 0/0.2);
 }
 .bg-blue-100 {
   --tw-bg-opacity: 1;
@@ -1113,10 +1094,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
 }
-.bg-gray-100 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
 .bg-gray-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
@@ -1129,17 +1106,9 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
-.bg-gray-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
-}
 .bg-green-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1));
-}
-.bg-green-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(134 239 172 / var(--tw-bg-opacity, 1));
 }
 .bg-green-50 {
   --tw-bg-opacity: 1;
@@ -1148,10 +1117,6 @@ video {
 .bg-green-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
-}
-.bg-green-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
 }
 .bg-indigo-50 {
   --tw-bg-opacity: 1;
@@ -1201,12 +1166,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-.bg-white\/10 {
-  background-color: rgb(255 255 255/0.1);
-}
-.bg-white\/20 {
-  background-color: rgb(255 255 255/0.2);
-}
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
@@ -1214,10 +1173,6 @@ video {
 .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1));
-}
-.bg-yellow-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(202 138 4 / var(--tw-bg-opacity, 1));
 }
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
@@ -1232,21 +1187,10 @@ video {
   --tw-gradient-to: rgb(239 246 255/0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
-.from-blue-600 {
-  --tw-gradient-from: #2563eb var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(37 99 235/0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
 .via-white {
   --tw-gradient-to: rgb(255 255 255/0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from),
     #fff var(--tw-gradient-via-position), var(--tw-gradient-to);
-}
-.to-blue-50 {
-  --tw-gradient-to: #eff6ff var(--tw-gradient-to-position);
-}
-.to-blue-800 {
-  --tw-gradient-to: #1e40af var(--tw-gradient-to-position);
 }
 .to-indigo-100 {
   --tw-gradient-to: #e0e7ff var(--tw-gradient-to-position);
@@ -1256,17 +1200,6 @@ video {
 }
 .to-purple-500 {
   --tw-gradient-to: #a855f7 var(--tw-gradient-to-position);
-}
-.object-cover {
-  -o-object-fit: cover;
-  object-fit: cover;
-}
-.object-center {
-  -o-object-position: center;
-  object-position: center;
-}
-.p-12 {
-  padding: 3rem;
 }
 .p-2 {
   padding: 0.5rem;
@@ -1282,10 +1215,6 @@ video {
 }
 .p-8 {
   padding: 2rem;
-}
-.px-1 {
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
 }
 .px-2 {
   padding-left: 0.5rem;
@@ -1303,25 +1232,13 @@ video {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
-.py-12 {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
 }
 .py-4 {
   padding-top: 1rem;
@@ -1331,32 +1248,8 @@ video {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.pl-10 {
-  padding-left: 2.5rem;
-}
-.pl-3 {
-  padding-left: 0.75rem;
-}
-.pr-12 {
-  padding-right: 3rem;
-}
-.pr-3 {
-  padding-right: 0.75rem;
-}
-.pr-4 {
-  padding-right: 1rem;
-}
-.pr-8 {
-  padding-right: 2rem;
-}
 .pt-4 {
   padding-top: 1rem;
-}
-.pt-6 {
-  padding-top: 1.5rem;
-}
-.text-left {
-  text-align: left;
 }
 .text-center {
   text-align: center;
@@ -1381,10 +1274,6 @@ video {
 }
 .text-5xl {
   font-size: 3rem;
-  line-height: 1;
-}
-.text-6xl {
-  font-size: 3.75rem;
   line-height: 1;
 }
 .text-lg {
@@ -1415,14 +1304,6 @@ video {
 .leading-relaxed {
   line-height: 1.625;
 }
-.text-blue-100 {
-  --tw-text-opacity: 1;
-  color: rgb(219 234 254 / var(--tw-text-opacity, 1));
-}
-.text-blue-500 {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
-}
 .text-blue-600 {
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
@@ -1431,10 +1312,6 @@ video {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity, 1));
 }
-.text-blue-800 {
-  --tw-text-opacity: 1;
-  color: rgb(30 64 175 / var(--tw-text-opacity, 1));
-}
 .text-blue-900 {
   --tw-text-opacity: 1;
   color: rgb(30 58 138 / var(--tw-text-opacity, 1));
@@ -1442,14 +1319,6 @@ video {
 .text-gray-100 {
   --tw-text-opacity: 1;
   color: rgb(243 244 246 / var(--tw-text-opacity, 1));
-}
-.text-gray-300 {
-  --tw-text-opacity: 1;
-  color: rgb(209 213 219 / var(--tw-text-opacity, 1));
-}
-.text-gray-400 {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
 }
 .text-gray-500 {
   --tw-text-opacity: 1;
@@ -1466,10 +1335,6 @@ video {
 .text-gray-900 {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity, 1));
-}
-.text-green-500 {
-  --tw-text-opacity: 1;
-  color: rgb(34 197 94 / var(--tw-text-opacity, 1));
 }
 .text-green-600 {
   --tw-text-opacity: 1;
@@ -1499,17 +1364,9 @@ video {
   --tw-text-opacity: 1;
   color: rgb(147 51 234 / var(--tw-text-opacity, 1));
 }
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity, 1));
-}
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity, 1));
-}
-.text-red-800 {
-  --tw-text-opacity: 1;
-  color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 .text-white {
   --tw-text-opacity: 1;
@@ -1547,24 +1404,6 @@ video {
 .shadow-sm {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0/0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-}
-.filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast)
-    var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate)
-    var(--tw-sepia) var(--tw-drop-shadow);
-}
-.backdrop-blur-sm {
-  --tw-backdrop-blur: blur(4px);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness)
-    var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale)
-    var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert)
-    var(--tw-backdrop-opacity) var(--tw-backdrop-saturate)
-    var(--tw-backdrop-sepia);
-  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness)
-    var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale)
-    var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert)
-    var(--tw-backdrop-opacity) var(--tw-backdrop-saturate)
-    var(--tw-backdrop-sepia);
 }
 .transition-all {
   transition-property: all;
@@ -1608,33 +1447,13 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(147 197 253 / var(--tw-border-opacity, 1));
 }
-.hover\:border-gray-300:hover {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
 .hover\:bg-blue-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
 }
-.hover\:bg-blue-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
-}
-.hover\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
-}
-.hover\:bg-gray-300:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
-}
 .hover\:bg-gray-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-}
-.hover\:bg-gray-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
 }
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
@@ -1647,30 +1466,6 @@ video {
 .hover\:text-blue-700:hover {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity, 1));
-}
-.hover\:text-blue-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(30 64 175 / var(--tw-text-opacity, 1));
-}
-.hover\:text-gray-600:hover {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
-}
-.hover\:text-gray-700:hover {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
-}
-.hover\:text-green-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(22 101 52 / var(--tw-text-opacity, 1));
-}
-.hover\:text-orange-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(154 52 18 / var(--tw-text-opacity, 1));
-}
-.hover\:text-red-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 .hover\:shadow-md:hover {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0/0.1), 0 2px 4px -2px rgb(0 0 0/0.1);
@@ -1686,40 +1481,6 @@ video {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0/0.1), 0 8px 10px -6px rgb(0 0 0/0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color),
     0 8px 10px -6px var(--tw-shadow-color);
-}
-.focus\:border-transparent:focus {
-  border-color: transparent;
-}
-.focus\:ring-2:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-}
-.focus\:ring-2:focus,
-.focus\:ring-4:focus {
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
-    var(--tw-shadow, 0 0 #0000);
-}
-.focus\:ring-4:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-}
-.focus\:ring-blue-200:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(191 219 254 / var(--tw-ring-opacity, 1));
-}
-.focus\:ring-blue-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
-}
-.disabled\:cursor-not-allowed:disabled {
-  cursor: not-allowed;
-}
-.disabled\:opacity-50:disabled {
-  opacity: 0.5;
 }
 .group:hover .group-hover\:scale-110 {
   --tw-scale-x: 1.1;
@@ -1742,37 +1503,14 @@ video {
   }
 }
 @media (min-width: 768px) {
-  .md\:col-span-2 {
-    grid-column: span 2 / span 2;
-  }
   .md\:flex {
     display: flex;
-  }
-  .md\:w-80 {
-    width: 20rem;
   }
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .md\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   .md\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .md\:flex-row {
-    flex-direction: row;
-  }
-  .md\:items-center {
-    align-items: center;
-  }
-  .md\:justify-between {
-    justify-content: space-between;
-  }
-  .md\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-y-reverse: 0;
-    margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
-    margin-bottom: calc(0px * var(--tw-space-y-reverse));
   }
   .md\:text-2xl {
     font-size: 1.5rem;
@@ -1796,12 +1534,6 @@ video {
   }
   .lg\:block {
     display: block;
-  }
-  .lg\:flex {
-    display: flex;
-  }
-  .lg\:w-1\/2 {
-    width: 50%;
   }
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1864,12 +1596,12 @@ video {
   line-gap-override: 0%;
   size-adjust: 94.89%;
 }
-.__className_4bc638 {
+.__className_9b37a1 {
   font-family: Pacifico, Pacifico Fallback;
   font-weight: 400;
   font-style: normal;
 }
-.__variable_4bc638 {
+.__variable_9b37a1 {
   --font-pacifico: "Pacifico", "Pacifico Fallback";
 }
 @font-face {
@@ -1905,11 +1637,11 @@ video {
   line-gap-override: 0%;
   size-adjust: 104.76%;
 }
-.__className_1ea6cb {
+.__className_5bace4 {
   font-family: Geist, Geist Fallback;
   font-style: normal;
 }
-.__variable_1ea6cb {
+.__variable_5bace4 {
   --font-geist-sans: "Geist", "Geist Fallback";
 }
 @font-face {
@@ -1945,11 +1677,11 @@ video {
   line-gap-override: 0%;
   size-adjust: 134.59%;
 }
-.__className_0caaa8 {
+.__className_04d8b1 {
   font-family: Geist Mono, Geist Mono Fallback;
   font-style: normal;
 }
-.__variable_0caaa8 {
+.__variable_04d8b1 {
   --font-geist-mono: "Geist Mono", "Geist Mono Fallback";
 }
 

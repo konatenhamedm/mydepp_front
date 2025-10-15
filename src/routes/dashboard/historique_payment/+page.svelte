@@ -1,7 +1,11 @@
-<script></script>
+<script>
+  import FooterNew from "$components/_includes/FooterNew.svelte";
+  import HeaderNew from "$components/_includes/HeaderNew.svelte";
+
+</script>
 
 <main>
-    
+    <HeaderNew />
     <div
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
     >
@@ -11,22 +15,15 @@
             <div class="flex items-center space-x-4">
               <a
                 class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
+                href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">Forum</h1>
-                <p class="text-gray-600">
-                  Échangez avec la communauté des professionnels de santé
-                </p>
+                <h1 class="text-2xl font-bold text-gray-900">
+                  Historique des paiements
+                </h1>
+                <p class="text-gray-600">Consultez vos paiements et factures</p>
               </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-              >
-                Nouvelle discussion
-              </button>
             </div>
           </div>
         </div>
@@ -36,360 +33,306 @@
           <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center space-x-3">
               <div
-                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-chat-3-line text-blue-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Discussions</p>
-                <p class="text-2xl font-bold text-gray-900">5</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
                 class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
               >
-                <i class="ri-pulse-line text-green-600 text-xl"></i>
+                <i class="ri-check-line text-green-600 text-xl"></i>
               </div>
               <div>
-                <p class="text-sm text-gray-600">Actives</p>
-                <p class="text-2xl font-bold text-gray-900">4</p>
+                <p class="text-sm text-gray-600">Total payé</p>
+                <p class="text-2xl font-bold text-gray-900">
+                  1295.00<!-- -->
+                  €
+                </p>
               </div>
             </div>
           </div>
           <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center space-x-3">
               <div
-                class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"
+                class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center"
               >
-                <i class="ri-message-3-line text-purple-600 text-xl"></i>
+                <i class="ri-time-line text-yellow-600 text-xl"></i>
               </div>
               <div>
-                <p class="text-sm text-gray-600">Réponses</p>
-                <p class="text-2xl font-bold text-gray-900">50</p>
+                <p class="text-sm text-gray-600">En attente</p>
+                <p class="text-2xl font-bold text-gray-900">
+                  450.00<!-- -->
+                  €
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
+              >
+                <i class="ri-file-list-line text-blue-600 text-xl"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Total factures</p>
+                <p class="text-2xl font-bold text-gray-900">5</p>
               </div>
             </div>
           </div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div
-            class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
-          >
-            <div class="flex flex-wrap gap-2">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-900">
+              Filtrer par statut
+            </h2>
+            <div class="flex space-x-2">
               <button
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-blue-600 text-white"
               >
-                Toutes</button
+                Tous</button
               ><button
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
               >
-                Réglementation</button
+                Payé</button
               ><button
                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
               >
-                Procédures</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Formation</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Support technique</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Documentation
+                En attente
               </button>
-            </div>
-            <div class="relative">
-              <i
-                class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              ></i
-              ><input
-                type="text"
-                placeholder="Rechercher une discussion..."
-                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-80"
-                value=""
-              />
             </div>
           </div>
         </div>
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="divide-y divide-gray-100">
-            <div class="p-6 hover:bg-gray-50 transition-colors">
-              <div class="flex items-start space-x-4">
-                <div
-                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <i class="ri-user-line text-blue-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <i class="ri-pushpin-line text-red-500"></i>
-                        <h3
-                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
-                        >
-                          Nouvelles réglementations 2024 - Questions et réponses
-                        </h3>
-                      </div>
-                      <div
-                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Référence
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Description
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Montant
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Statut
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Échéance
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Date paiement
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Méthode
+                  </th>
+                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">PAY-2024-001</span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-700"
+                      >Cotisation mensuelle - Janvier 2024</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-semibold text-gray-900"
+                      >450.00<!-- -->
+                      €</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                      >Payé</span
+                    >
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">2024-01-31</td>
+                  <td class="py-4 px-6 text-gray-600">2024-01-28</td>
+                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
                       >
-                        <span>Par <strong>Dr. Marie Dupont</strong></span
-                        ><span>•</span><span>Clinique Saint-Jean</span
-                        ><span>•</span><span>2024-01-15</span>
-                      </div>
-                      <div class="flex items-center space-x-4">
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-red-600 bg-red-100"
-                          >Réglementation</span
-                        ><span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                          >Actif</span
-                        >
-                      </div>
-                    </div>
-                    <div class="text-right text-sm text-gray-500 ml-4">
-                      <div class="flex items-center space-x-4 mb-2">
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-message-3-line"></i><span>12</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-eye-line"></i><span>156</span>
-                        </div>
-                      </div>
-                      <div>
-                        Dernière réponse:
-                        <!-- -->2024-01-16
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="p-6 hover:bg-gray-50 transition-colors">
-              <div class="flex items-start space-x-4">
-                <div
-                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <i class="ri-user-line text-blue-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <h3
-                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
-                        >
-                          Partage d'expérience : Mise en place du protocole
-                          d'hygiène
-                        </h3>
-                      </div>
-                      <div
-                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                        Voir</button
+                      ><button
+                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
                       >
-                        <span>Par <strong>Infirmière Chef Martin</strong></span
-                        ><span>•</span><span>Hôpital Central</span><span>•</span
-                        ><span>2024-01-14</span>
-                      </div>
-                      <div class="flex items-center space-x-4">
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-blue-600 bg-blue-100"
-                          >Procédures</span
-                        ><span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                          >Actif</span
-                        >
-                      </div>
+                        Télécharger
+                      </button>
                     </div>
-                    <div class="text-right text-sm text-gray-500 ml-4">
-                      <div class="flex items-center space-x-4 mb-2">
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-message-3-line"></i><span>8</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-eye-line"></i><span>89</span>
-                        </div>
-                      </div>
-                      <div>
-                        Dernière réponse:
-                        <!-- -->2024-01-16
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="p-6 hover:bg-gray-50 transition-colors">
-              <div class="flex items-start space-x-4">
-                <div
-                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <i class="ri-user-line text-blue-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <h3
-                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
-                        >
-                          Formation du personnel - Recommandations
-                        </h3>
-                      </div>
-                      <div
-                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">PAY-2024-002</span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-700"
+                      >Frais de dossier - Mise à jour</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-semibold text-gray-900"
+                      >75.00<!-- -->
+                      €</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                      >Payé</span
+                    >
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">2024-01-15</td>
+                  <td class="py-4 px-6 text-gray-600">2024-01-12</td>
+                  <td class="py-4 px-6 text-gray-600">Carte bancaire</td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
                       >
-                        <span>Par <strong>Responsable RH</strong></span
-                        ><span>•</span><span>Clinique de la Santé</span
-                        ><span>•</span><span>2024-01-13</span>
-                      </div>
-                      <div class="flex items-center space-x-4">
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                          >Formation</span
-                        ><span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                          >Actif</span
-                        >
-                      </div>
-                    </div>
-                    <div class="text-right text-sm text-gray-500 ml-4">
-                      <div class="flex items-center space-x-4 mb-2">
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-message-3-line"></i><span>15</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-eye-line"></i><span>203</span>
-                        </div>
-                      </div>
-                      <div>
-                        Dernière réponse:
-                        <!-- -->2024-01-15
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="p-6 hover:bg-gray-50 transition-colors">
-              <div class="flex items-start space-x-4">
-                <div
-                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <i class="ri-user-line text-blue-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <h3
-                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
-                        >
-                          Problème avec la plateforme de déclaration
-                        </h3>
-                      </div>
-                      <div
-                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                        Voir</button
+                      ><button
+                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
                       >
-                        <span>Par <strong>Admin Système</strong></span
-                        ><span>•</span><span>Centre Médical Nord</span
-                        ><span>•</span><span>2024-01-12</span>
-                      </div>
-                      <div class="flex items-center space-x-4">
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-purple-600 bg-purple-100"
-                          >Support technique</span
-                        ><span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-100"
-                          >Résolu</span
-                        >
-                      </div>
+                        Télécharger
+                      </button>
                     </div>
-                    <div class="text-right text-sm text-gray-500 ml-4">
-                      <div class="flex items-center space-x-4 mb-2">
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-message-3-line"></i><span>6</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-eye-line"></i><span>67</span>
-                        </div>
-                      </div>
-                      <div>
-                        Dernière réponse:
-                        <!-- -->2024-01-14
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="p-6 hover:bg-gray-50 transition-colors">
-              <div class="flex items-start space-x-4">
-                <div
-                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <i class="ri-user-line text-blue-600"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                      <div class="flex items-center space-x-2 mb-2">
-                        <h3
-                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
-                        >
-                          Échange sur les bonnes pratiques de documentation
-                        </h3>
-                      </div>
-                      <div
-                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">PAY-2024-003</span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-700"
+                      >Cotisation mensuelle - Février 2024</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-semibold text-gray-900"
+                      >450.00<!-- -->
+                      €</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
+                      >En attente</span
+                    >
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">2024-02-28</td>
+                  <td class="py-4 px-6 text-gray-600">-</td>
+                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
                       >
-                        <span>Par <strong>Secrétaire Médicale</strong></span
-                        ><span>•</span><span>Polyclinique Sud</span
-                        ><span>•</span><span>2024-01-11</span>
-                      </div>
-                      <div class="flex items-center space-x-4">
-                        <span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
-                          >Documentation</span
-                        ><span
-                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                          >Actif</span
-                        >
-                      </div>
+                        Voir</button
+                      ><button
+                        class="text-orange-600 hover:text-orange-800 text-sm font-medium whitespace-nowrap"
+                      >
+                        Payer
+                      </button>
                     </div>
-                    <div class="text-right text-sm text-gray-500 ml-4">
-                      <div class="flex items-center space-x-4 mb-2">
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-message-3-line"></i><span>9</span>
-                        </div>
-                        <div class="flex items-center space-x-1">
-                          <i class="ri-eye-line"></i><span>134</span>
-                        </div>
-                      </div>
-                      <div>
-                        Dernière réponse:
-                        <!-- -->2024-01-13
-                      </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">PAY-2023-012</span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-700"
+                      >Cotisation mensuelle - Décembre 2023</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-semibold text-gray-900"
+                      >450.00<!-- -->
+                      €</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                      >Payé</span
+                    >
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">2023-12-31</td>
+                  <td class="py-4 px-6 text-gray-600">2023-12-29</td>
+                  <td class="py-4 px-6 text-gray-600">
+                    Prélèvement automatique
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
+                      >
+                        Voir</button
+                      ><button
+                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
+                      >
+                        Télécharger
+                      </button>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">PAY-2023-011</span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-700"
+                      >Formation continue - Personnel</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-semibold text-gray-900"
+                      >320.00<!-- -->
+                      €</span
+                    >
+                  </td>
+                  <td class="py-4 px-6">
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                      >Payé</span
+                    >
+                  </td>
+                  <td class="py-4 px-6 text-gray-600">2023-11-30</td>
+                  <td class="py-4 px-6 text-gray-600">2023-11-25</td>
+                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
+                  <td class="py-4 px-6">
+                    <div class="flex space-x-2">
+                      <button
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
+                      >
+                        Voir</button
+                      ><button
+                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
+                      >
+                        Télécharger
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
- 
+<FooterNew />
 </main>
 
 <style>
-    @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css");
+  @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
 *,
 :after,
 :before {

@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/etablissement/documentheque/+page.svelte";
+export { default as component } from "../../../../src/routes/dashboard/documentheque/+page.svelte";

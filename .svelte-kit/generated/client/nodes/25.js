@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/etablissement/suvi_dossier/+page.svelte";
+export { default as component } from "../../../../src/routes/dashboard/suvi_dossier/+page.svelte";

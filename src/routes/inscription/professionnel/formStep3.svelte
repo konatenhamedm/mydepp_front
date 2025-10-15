@@ -1,78 +1,35 @@
 <script>
   export let formData;
-  export let values;
-  export let uploadedFiles;
-  export let handleDocumentChange;
-    let fileInputs = [];
-
+  let fileInputs = [];
 </script>
 
 <main>
   <div>
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-4">
-        Documents de l'établissement (étape 3/3)
-      </h1>
+      
       <p class="text-gray-600">
         Charger tous les documents requis pour finaliser votre dossier
       </p>
     </div>
     <div>
       <form id="document-upload">
-        {#each values.typeDocument as document}
+        
           <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-              {document.libelle}
-            </h3>
+          
             <div class="grid grid-cols-1 gap-6">
-              {#each document.typeDocuments as requiredFile, i}
+              {#each [{ key: "photo", label: "Photo d'identité", type: "file" }, { key: "cni", label: "Copie CNI(Carte nationale d’identité)", type: "file" }, { key: "casier", label: "Extrait Casier judiciaire(Datant de moins 3 mois)", type: "file" }, { key: "diplomeFile", label: "Diplôme légalisé", type: "file" }, { key: "certificat", label: "Certificat de residence (Datant de moins 3 mois)", type: "file" }, { key: "cv", label: "CV", type: "file" }] as field}
                 <div class="border border-gray-200 rounded-lg p-4">
                   <div class="flex items-start gap-4">
-                    <div class="w-32 h-32 flex-shrink-0">
-                      <div
-                        class="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
-                      >
-                    
-
-                        {#if uploadedFiles && uploadedFiles[requiredFile.libelle + document.id]}
-                          {#if formData.documents
-                            .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
-                            ?.path.startsWith("data:image")}
-                            <img
-                              src={formData.documents.find(
-                                (d) =>
-                                  d.libelle === requiredFile.libelle &&
-                                  d.libelleGroupe === document.id
-                              )?.path}
-                              alt="miniature"
-                             
-                            />
-                          {:else}
-                            <span class="doc-filename">
-                              {uploadedFiles[
-                                requiredFile.libelle + document.id
-                              ]}
-                            </span>
-                          {/if}
-                        {:else}
-                          <div class="text-center">
-                            <i class="ri-image-line text-gray-400 text-2xl"></i>
-                            <p class="text-xs text-gray-400 mt-1">
-                              Aperçu VIde
-                            </p>
-                          </div>
-                        {/if}
-                      </div>
-                    </div>
                     <div class="flex-1">
                       <div class="flex items-center gap-2 mb-2">
                         <label class="text-sm font-medium text-gray-700"
-                          >{requiredFile.libelle}</label
+                          >{field.label}</label
                         ><span class="text-red-500">*</span>
                       </div>
                       <div
-                        onclick={() => {fileInputs[requiredFile.libelle+i].click()}}
-
+                        onclick={() => {
+                          fileInputs[field.key].click();
+                        }}
                         class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer border-gray-300 hover:border-gray-400"
                       >
                         <div
@@ -92,15 +49,17 @@
                         type="file"
                         accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                         class="hidden"
-                            bind:this={fileInputs[requiredFile.libelle+i]}
-                        name={requiredFile.libelle}
-                         onchange={(e) =>
-          {  handleDocumentChange(
-              e,
-              requiredFile.libelle,
-              document.id,
-              i
-            ), console.log("Document changé:",  requiredFile.libelle, document.id)}}                      />
+                        bind:this={fileInputs[field.key]}
+                        name={field.key}
+                        onchange={(e) => {
+                          formData[field.key] = e.target.files[0];
+                          console.log(
+                            "Document changé:",
+                            field.label,
+                            field.key
+                          );
+                        }}
+                      />
                       <p class="text-xs text-gray-500 mt-1">
                         Parcourir... Aucun fichier sélectionné.
                       </p>
@@ -110,7 +69,7 @@
               {/each}
             </div>
           </div>
-        {/each}
+       
       </form>
     </div>
   </div>

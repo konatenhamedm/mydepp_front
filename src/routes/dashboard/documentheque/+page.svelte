@@ -16,7 +16,7 @@
             <div class="flex items-center space-x-4">
               <a
                 class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
+                href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>

@@ -41,7 +41,7 @@
           CookieManager.set("auth", authData, 1);
           // sessionStorage.setItem("auth", JSON.stringify(authData));
 
-          window.location.href = "/etablissement";
+          window.location.href = "/dashboard";
         })
         .catch((error) => {
           console.log(error);

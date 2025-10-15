@@ -1,166 +1,113 @@
 <script>
-  import FooterNew from "$components/_includes/FooterNew.svelte";
-  import HeaderNew from "$components/_includes/HeaderNew.svelte";
+    let selectedProfile = null;
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (selectedProfile) {
+            // Rediriger vers la page d'inscription appropriée
+            if (selectedProfile === "etablissement") {
+                window.location.href = "/inscription/etablissement";
+            } else if (selectedProfile === "professionnel") {
+                window.location.href = "/inscription/professionnel";
+            }
+        } else {
+            alert("Veuillez sélectionner un type de profil.");
+        }
+    };
 </script>
 
 <main>
-<HeaderNew />
-    
-    <div
-      class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
-    >
-      <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-              <a
-                class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
-                ><i class="ri-arrow-left-line text-xl"></i
-              ></a>
-              <div>
-                <h1 class="text-2xl font-bold text-gray-900">
-                  Mise à jour du dossier
-                </h1>
-                <p class="text-gray-600">Gérez votre profil et vos documents</p>
-              </div>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <form on:submit={handleSubmit}>
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Créer votre compte
+              </h1>
+              <p class="text-gray-600">
+                Sélectionnez votre type de profil pour commencer
+              </p>
             </div>
-            <div class="flex items-center space-x-2">
-              <span
-                class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
-                >1<!-- -->
-                document(s) manquant(s)</span
+            <div class="grid md:grid-cols-2 gap-6">
+              <div
+                on:click={() => (selectedProfile = "etablissement")}
+                class="p-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md border-gray-200 hover:border-gray-300"
               >
+                <div class="flex items-start space-x-4">
+                  <div
+                    class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
+                  >
+                    <i class="ri-hospital-line text-blue-600 text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-2">
+                      Établissement de Santé
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      Structure organisée pour fournir des services de santé
+                    </p>
+                  </div>
+                  {#if selectedProfile == "etablissement"}
+                    <div
+                      class="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-300 bg-blue-600"
+                    ></div>
+                  {:else}
+                    <div
+                      class="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-300"
+                    ></div>
+                  {/if}
+                 
+                </div>
+              </div>
+              <div
+                on:click={() => (selectedProfile = "professionnel")}
+                class="p-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md border-gray-200 hover:border-gray-300"
+              >
+                <div class="flex items-start space-x-4">
+                  <div
+                    class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
+                  >
+                    <i class="ri-user-heart-line text-green-600 text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900 mb-2">
+                      Professionnel de Santé
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                      Personne qualifiée pour fournir des soins médicaux
+                    </p>
+                  </div>
+                   {#if selectedProfile == "professionnel"}
+                    <div
+                      class="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-300 bg-blue-600"
+                    ></div>
+                  {:else}
+                    <div
+                      class="w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-300"
+                    ></div>
+                  {/if}
+                </div>
+              </div>
+              
+             
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-xl shadow-lg mb-8">
-          <div class="border-b border-gray-200">
-            <nav class="flex space-x-8 px-6">
+            <div class="flex justify-end mt-8">
               <button
-                class="py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap border-blue-500 text-blue-600"
+                type="submit"
+                
+                class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
-                <i class="ri-user-line mr-2"></i>Informations du profil</button
-              ><button
-                class="py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              >
-                <i class="ri-file-list-line mr-2"></i>Documents soumis<span
-                  class="ml-2 px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs"
-                  >1</span
-                >
+                Continuer<i class="ri-arrow-right-line ml-2"></i>
               </button>
-            </nav>
+            </div>
           </div>
-          <div class="p-6">
-            <form class="space-y-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Nom de l'établissement</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="nom"
-                    value="Clinique de la Santé"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >SIRET</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="siret"
-                    value="12345678901234"
-                  />
-                </div>
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Adresse</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="adresse"
-                    value="123 Avenue de la Santé"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Ville</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="ville"
-                    value="Toulouse"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Code postal</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="codePostal"
-                    value="31000"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Téléphone</label
-                  ><input
-                    type="tel"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="telephone"
-                    value="05 61 00 00 00"
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Email</label
-                  ><input
-                    type="email"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="email"
-                    value="contact@clinique-sante.fr"
-                  />
-                </div>
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700 mb-2"
-                    >Directeur/Responsable</label
-                  ><input
-                    type="text"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="directeur"
-                    value="Dr. Martin Dubois"
-                  />
-                </div>
-              </div>
-              <div class="flex justify-end space-x-4 pt-6">
-                <a
-                  class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
-                  href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
-                  >Annuler</a
-                ><button
-                  type="submit"
-                  class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-                >
-                  Sauvegarder les modifications
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        </form>
+       
       </div>
-    </div>
- 
-<FooterNew />
 </main>
 
 <style>
-    @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css");
+@import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
 *,
 :after,
 :before {
@@ -525,6 +472,10 @@ video {
 .z-50 {
   z-index: 50;
 }
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -606,6 +557,9 @@ video {
 .flex {
   display: flex;
 }
+.inline-flex {
+  display: inline-flex;
+}
 .table {
   display: table;
 }
@@ -614,6 +568,9 @@ video {
 }
 .hidden {
   display: none;
+}
+.h-0\.5 {
+  height: 0.125rem;
 }
 .h-1 {
   height: 0.25rem;
@@ -642,14 +599,14 @@ video {
 .h-6 {
   height: 1.5rem;
 }
+.h-60 {
+  height: 15rem;
+}
 .h-8 {
   height: 2rem;
 }
 .h-full {
   height: 100%;
-}
-.h-screen {
-  height: 100vh;
 }
 .max-h-64 {
   max-height: 16rem;
@@ -702,6 +659,9 @@ video {
 .min-w-0 {
   min-width: 0;
 }
+.max-w-2xl {
+  max-width: 42rem;
+}
 .max-w-4xl {
   max-width: 56rem;
 }
@@ -742,6 +702,9 @@ video {
 }
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -813,6 +776,11 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -919,6 +887,10 @@ video {
 .border-green-200 {
   --tw-border-opacity: 1;
   border-color: rgb(187 247 208 / var(--tw-border-opacity, 1));
+}
+.border-purple-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(147 51 234 / var(--tw-border-opacity, 1));
 }
 .border-red-200 {
   --tw-border-opacity: 1;
@@ -1041,6 +1013,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(168 85 247 / var(--tw-bg-opacity, 1));
 }
+.bg-purple-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(147 51 234 / var(--tw-bg-opacity, 1));
+}
 .bg-red-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 226 226 / var(--tw-bg-opacity, 1));
@@ -1063,6 +1039,9 @@ video {
 .bg-white\/20 {
   background-color: rgb(255 255 255/0.2);
 }
+.bg-white\/70 {
+  background-color: rgb(255 255 255/0.7);
+}
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
@@ -1078,6 +1057,9 @@ video {
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
 .from-blue-400 {
   --tw-gradient-from: #60a5fa var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(96 165 250/0) var(--tw-gradient-to-position);
@@ -1086,6 +1068,11 @@ video {
 .from-blue-50 {
   --tw-gradient-from: #eff6ff var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(239 246 255/0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-blue-500 {
+  --tw-gradient-from: #3b82f6 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(59 130 246/0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 .from-blue-600 {
@@ -1107,11 +1094,21 @@ video {
 .to-indigo-100 {
   --tw-gradient-to: #e0e7ff var(--tw-gradient-to-position);
 }
+.to-indigo-500 {
+  --tw-gradient-to: #6366f1 var(--tw-gradient-to-position);
+}
+.to-indigo-600 {
+  --tw-gradient-to: #4f46e5 var(--tw-gradient-to-position);
+}
 .to-purple-50 {
   --tw-gradient-to: #faf5ff var(--tw-gradient-to-position);
 }
 .to-purple-500 {
   --tw-gradient-to: #a855f7 var(--tw-gradient-to-position);
+}
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 .object-cover {
   -o-object-fit: cover;
@@ -1235,13 +1232,17 @@ video {
   font-size: 2.25rem;
   line-height: 2.5rem;
 }
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
-}
 .text-6xl {
   font-size: 3.75rem;
   line-height: 1;
+}
+.text-8xl {
+  font-size: 6rem;
+  line-height: 1;
+}
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 .text-lg {
   font-size: 1.125rem;
@@ -1295,10 +1296,6 @@ video {
   --tw-text-opacity: 1;
   color: rgb(30 58 138 / var(--tw-text-opacity, 1));
 }
-.text-gray-100 {
-  --tw-text-opacity: 1;
-  color: rgb(243 244 246 / var(--tw-text-opacity, 1));
-}
 .text-gray-300 {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity, 1));
@@ -1318,6 +1315,10 @@ video {
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+}
+.text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 .text-gray-900 {
   --tw-text-opacity: 1;
@@ -1367,6 +1368,9 @@ video {
   --tw-text-opacity: 1;
   color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
+.text-transparent {
+  color: transparent;
+}
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
@@ -1382,6 +1386,9 @@ video {
 .text-yellow-900 {
   --tw-text-opacity: 1;
   color: rgb(113 63 18 / var(--tw-text-opacity, 1));
+}
+.underline {
+  text-decoration-line: underline;
 }
 .antialiased {
   -webkit-font-smoothing: antialiased;
@@ -1492,6 +1499,22 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
 }
+.hover\:bg-green-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-orange-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-purple-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(126 34 206 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-red-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
+}
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -1523,6 +1546,10 @@ video {
 .hover\:text-orange-800:hover {
   --tw-text-opacity: 1;
   color: rgb(154 52 18 / var(--tw-text-opacity, 1));
+}
+.hover\:text-purple-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(126 34 206 / var(--tw-text-opacity, 1));
 }
 .hover\:text-red-800:hover {
   --tw-text-opacity: 1;
@@ -1571,6 +1598,14 @@ video {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
 }
+.focus\:ring-purple-200:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(233 213 255 / var(--tw-ring-opacity, 1));
+}
+.focus\:ring-purple-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(168 85 247 / var(--tw-ring-opacity, 1));
+}
 .disabled\:cursor-not-allowed:disabled {
   cursor: not-allowed;
 }
@@ -1592,6 +1627,9 @@ video {
   opacity: 1;
 }
 @media (min-width: 640px) {
+  .sm\:flex-row {
+    flex-direction: row;
+  }
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -1630,16 +1668,12 @@ video {
     margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0px * var(--tw-space-y-reverse));
   }
-  .md\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
+  .md\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
   }
-  .md\:text-3xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
-  .md\:text-5xl {
-    font-size: 3rem;
+  .md\:text-9xl {
+    font-size: 8rem;
     line-height: 1;
   }
 }
@@ -1720,12 +1754,12 @@ video {
   line-gap-override: 0%;
   size-adjust: 94.89%;
 }
-.__className_4bc638 {
+.__className_6ee574 {
   font-family: Pacifico, Pacifico Fallback;
   font-weight: 400;
   font-style: normal;
 }
-.__variable_4bc638 {
+.__variable_6ee574 {
   --font-pacifico: "Pacifico", "Pacifico Fallback";
 }
 @font-face {
@@ -1761,11 +1795,11 @@ video {
   line-gap-override: 0%;
   size-adjust: 104.76%;
 }
-.__className_1ea6cb {
+.__className_efcb2f {
   font-family: Geist, Geist Fallback;
   font-style: normal;
 }
-.__variable_1ea6cb {
+.__variable_efcb2f {
   --font-geist-sans: "Geist", "Geist Fallback";
 }
 @font-face {
@@ -1801,12 +1835,11 @@ video {
   line-gap-override: 0%;
   size-adjust: 134.59%;
 }
-.__className_0caaa8 {
+.__className_579c01 {
   font-family: Geist Mono, Geist Mono Fallback;
   font-style: normal;
 }
-.__variable_0caaa8 {
+.__variable_579c01 {
   --font-geist-mono: "Geist Mono", "Geist Mono Fallback";
 }
-
 </style>

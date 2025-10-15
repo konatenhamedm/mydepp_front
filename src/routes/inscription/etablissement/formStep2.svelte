@@ -1,4 +1,12 @@
-<script></script>
+<script>
+
+    export let typePersonne;
+    export let niveauIntervention;
+    export let formdata;
+
+    console.log(typePersonne);
+    console.log(niveauIntervention);
+</script>
 
 <main>
     <form >
@@ -10,16 +18,19 @@
                 <div class="relative">
                   <select
                     name="niveauIntervention"
-                    required={true}
+                    
+                    bind:value={formdata.niveauIntervention}
                     class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200 pr-8"
                   >
-                    <option value="" selected={true}>
+                   <option value="" selected={true}>
                       Sélectionnez le niveau d'intervention
                     </option>
-                    <option value="primaire">Soins Primaires</option>
-                    <option value="secondaire">Soins Secondaires</option>
-                    <option value="tertiaire">Soins Tertiaires</option>
-                    <option value="urgence">Services d'Urgence</option>
+                  {#each niveauIntervention as intervention}
+                    <option value={intervention.id}>{intervention.libelle}</option>
+                  {/each}
+                 
+                   
+                   
                   </select>
                   <div
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center"
@@ -35,11 +46,14 @@
                 <div class="relative">
                   <select
                     name="entiteJuridique"
-                    required=""
+                    
+                    bind:value={formdata.typePersonne}
                     class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200 pr-8"
                   >
-                    <option value="PHYSIQUE" selected="">PHYSIQUE</option>
-                    <option value="MORALE">MORALE</option>
+                    <option value="" selected={true}>Choisir l'entité</option>
+                    {#each typePersonne as type}
+                    <option value={type.libelle}>{type.libelle}</option>
+                  {/each}
                   </select>
                   <div
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center"
@@ -49,17 +63,19 @@
                 </div>
               </div>
             </div>
+            {#if formdata.typePersonne == "PHYSIQUE"}
             <div class="grid md:grid-cols-2 gap-8">
               <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-3"
                   >Nom *</label
                 ><input
                   type="text"
-                  required=""
+                  
+                  bind:value={formdata.nom}
                   placeholder="Nom"
                   class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
                   name="nom"
-                  value=""
+                  
                 />
               </div>
               <div>
@@ -67,11 +83,11 @@
                   >Prénoms *</label
                 ><input
                   type="text"
-                  required=""
+                  
                   placeholder="Prénoms"
                   class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
                   name="prenoms"
-                  value=""
+                  bind:value={formdata.prenoms}
                 />
               </div>
             </div>
@@ -81,11 +97,11 @@
                   >Téléphone *</label
                 ><input
                   type="tel"
-                  required=""
+                  
                   placeholder="Téléphone"
                   class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
                   name="telephone"
-                  value=""
+                  bind:value={formdata.telephone}
                 />
               </div>
               <div>
@@ -93,11 +109,11 @@
                   >Boîte Postale *</label
                 ><input
                   type="text"
-                  required=""
+                  
                   placeholder="Boîte Postale"
                   class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
                   name="boitePostale"
-                  value=""
+                  bind:value={formdata.bp}
                 />
               </div>
             </div>
@@ -106,13 +122,55 @@
                 >Autre E-mail *</label
               ><input
                 type="email"
-                required=""
+                
                 placeholder="Autre E-mail"
                 class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
                 name="email"
-                value=""
+                bind:value={formdata.emailAutre}
               />
             </div>
+            {:else if formdata.typePersonne == "MORALE"}
+
+<div class="grid md:grid-cols-2 gap-8">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-3"
+                  >Adresse *</label
+                ><input
+                  type="text"
+                  
+                  placeholder="Adresse"
+                  class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                  name="adresse"
+                  bind:value={formdata.adresse}
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-3"
+                  >Nom Representant *</label
+                ><input
+                  type="text"
+                  
+                  placeholder="Nom Representant"
+                  class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                  name="nomRepresentant"
+                  bind:value={formdata.nomRepresentant}
+                />
+              </div>
+            
+            </div>
+             <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-3"
+                >Denomination *</label
+              ><input
+                type="text"
+                
+                placeholder="Denomination"
+                class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                name="denomination"
+                bind:value={formdata.denomination}
+              />
+            </div>
+            {/if}
            
           </form>
 </main>

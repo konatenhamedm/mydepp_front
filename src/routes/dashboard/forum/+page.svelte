@@ -1,11 +1,7 @@
-<script>
-  import FooterNew from "$components/_includes/FooterNew.svelte";
-  import HeaderNew from "$components/_includes/HeaderNew.svelte";
-
-</script>
+<script></script>
 
 <main>
-    <HeaderNew />
+    
     <div
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
     >
@@ -15,204 +11,381 @@
             <div class="flex items-center space-x-4">
               <a
                 class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
+                href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">Alertes</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Forum</h1>
                 <p class="text-gray-600">
-                  Notifications importantes et mises à jour
+                  Échangez avec la communauté des professionnels de santé
                 </p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <span
-                class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
-                >2<!-- -->
-                non lues</span
+              <button
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
+                Nouvelle discussion
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="space-y-4">
-          <div
-            class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-blue-500"
-          >
-            <div class="flex items-start space-x-4">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-3">
               <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-red-600 bg-red-50 border-red-200"
+                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
               >
-                <i class="ri-error-warning-line text-lg"></i>
+                <i class="ri-chat-3-line text-blue-600 text-xl"></i>
               </div>
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-900">Document manquant</h3>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">2024-01-15</span>
-                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                  Votre certificat d'assurance expire dans 7 jours. Veuillez le
-                  renouveler.
-                </p>
-                <div class="mt-4 flex space-x-3">
-                  <button
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Voir détails</button
-                  ><button
-                    class="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Marquer comme lu
-                  </button>
-                </div>
+              <div>
+                <p class="text-sm text-gray-600">Discussions</p>
+                <p class="text-2xl font-bold text-gray-900">5</p>
               </div>
             </div>
           </div>
-          <div
-            class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-blue-500"
-          >
-            <div class="flex items-start space-x-4">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-3">
               <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-blue-600 bg-blue-50 border-blue-200"
+                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
               >
-                <i class="ri-information-line text-lg"></i>
+                <i class="ri-pulse-line text-green-600 text-xl"></i>
               </div>
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-900">
-                    Mise à jour réglementaire
-                  </h3>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">2024-01-14</span>
-                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                  Nouvelles directives concernant les protocoles de sécurité
-                  sanitaire.
-                </p>
-                <div class="mt-4 flex space-x-3">
-                  <button
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Voir détails</button
-                  ><button
-                    class="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Marquer comme lu
-                  </button>
-                </div>
+              <div>
+                <p class="text-sm text-gray-600">Actives</p>
+                <p class="text-2xl font-bold text-gray-900">4</p>
               </div>
             </div>
           </div>
-          <div
-            class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-gray-300"
-          >
-            <div class="flex items-start space-x-4">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center space-x-3">
               <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-yellow-600 bg-yellow-50 border-yellow-200"
+                class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"
               >
-                <i class="ri-alert-line text-lg"></i>
+                <i class="ri-message-3-line text-purple-600 text-xl"></i>
               </div>
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-700">
-                    Paiement en attente
-                  </h3>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">2024-01-13</span>
-                  </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                  Votre facture de janvier est en attente de règlement.
-                </p>
-                <div class="mt-4 flex space-x-3">
-                  <button
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Voir détails
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-gray-300"
-          >
-            <div class="flex items-start space-x-4">
-              <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-green-600 bg-green-50 border-green-200"
-              >
-                <i class="ri-check-line text-lg"></i>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-700">
-                    Validation effectuée
-                  </h3>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">2024-01-12</span>
-                  </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                  Votre dossier de conformité a été validé avec succès.
-                </p>
-                <div class="mt-4 flex space-x-3">
-                  <button
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Voir détails
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-gray-300"
-          >
-            <div class="flex items-start space-x-4">
-              <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-blue-600 bg-blue-50 border-blue-200"
-              >
-                <i class="ri-information-line text-lg"></i>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-700">
-                    Formation disponible
-                  </h3>
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">2024-01-11</span>
-                  </div>
-                </div>
-                <p class="text-gray-600 leading-relaxed">
-                  Nouvelle formation sur les protocoles d'urgence disponible.
-                </p>
-                <div class="mt-4 flex space-x-3">
-                  <button
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Voir détails
-                  </button>
-                </div>
+              <div>
+                <p class="text-sm text-gray-600">Réponses</p>
+                <p class="text-2xl font-bold text-gray-900">50</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="mt-8 text-center">
-          <button
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div
+            class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
           >
-            Marquer tout comme lu
-          </button>
+            <div class="flex flex-wrap gap-2">
+              <button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-blue-600 text-white"
+              >
+                Toutes</button
+              ><button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Réglementation</button
+              ><button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Procédures</button
+              ><button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Formation</button
+              ><button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Support technique</button
+              ><button
+                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Documentation
+              </button>
+            </div>
+            <div class="relative">
+              <i
+                class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              ></i
+              ><input
+                type="text"
+                placeholder="Rechercher une discussion..."
+                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-80"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="divide-y divide-gray-100">
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ri-user-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-2">
+                        <i class="ri-pushpin-line text-red-500"></i>
+                        <h3
+                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                        >
+                          Nouvelles réglementations 2024 - Questions et réponses
+                        </h3>
+                      </div>
+                      <div
+                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                      >
+                        <span>Par <strong>Dr. Marie Dupont</strong></span
+                        ><span>•</span><span>Clinique Saint-Jean</span
+                        ><span>•</span><span>2024-01-15</span>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-red-600 bg-red-100"
+                          >Réglementation</span
+                        ><span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                          >Actif</span
+                        >
+                      </div>
+                    </div>
+                    <div class="text-right text-sm text-gray-500 ml-4">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-message-3-line"></i><span>12</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-eye-line"></i><span>156</span>
+                        </div>
+                      </div>
+                      <div>
+                        Dernière réponse:
+                        <!-- -->2024-01-16
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ri-user-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-2">
+                        <h3
+                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                        >
+                          Partage d'expérience : Mise en place du protocole
+                          d'hygiène
+                        </h3>
+                      </div>
+                      <div
+                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                      >
+                        <span>Par <strong>Infirmière Chef Martin</strong></span
+                        ><span>•</span><span>Hôpital Central</span><span>•</span
+                        ><span>2024-01-14</span>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-blue-600 bg-blue-100"
+                          >Procédures</span
+                        ><span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                          >Actif</span
+                        >
+                      </div>
+                    </div>
+                    <div class="text-right text-sm text-gray-500 ml-4">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-message-3-line"></i><span>8</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-eye-line"></i><span>89</span>
+                        </div>
+                      </div>
+                      <div>
+                        Dernière réponse:
+                        <!-- -->2024-01-16
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ri-user-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-2">
+                        <h3
+                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                        >
+                          Formation du personnel - Recommandations
+                        </h3>
+                      </div>
+                      <div
+                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                      >
+                        <span>Par <strong>Responsable RH</strong></span
+                        ><span>•</span><span>Clinique de la Santé</span
+                        ><span>•</span><span>2024-01-13</span>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                          >Formation</span
+                        ><span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                          >Actif</span
+                        >
+                      </div>
+                    </div>
+                    <div class="text-right text-sm text-gray-500 ml-4">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-message-3-line"></i><span>15</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-eye-line"></i><span>203</span>
+                        </div>
+                      </div>
+                      <div>
+                        Dernière réponse:
+                        <!-- -->2024-01-15
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ri-user-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-2">
+                        <h3
+                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                        >
+                          Problème avec la plateforme de déclaration
+                        </h3>
+                      </div>
+                      <div
+                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                      >
+                        <span>Par <strong>Admin Système</strong></span
+                        ><span>•</span><span>Centre Médical Nord</span
+                        ><span>•</span><span>2024-01-12</span>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-purple-600 bg-purple-100"
+                          >Support technique</span
+                        ><span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-100"
+                          >Résolu</span
+                        >
+                      </div>
+                    </div>
+                    <div class="text-right text-sm text-gray-500 ml-4">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-message-3-line"></i><span>6</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-eye-line"></i><span>67</span>
+                        </div>
+                      </div>
+                      <div>
+                        Dernière réponse:
+                        <!-- -->2024-01-14
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start space-x-4">
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="ri-user-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                      <div class="flex items-center space-x-2 mb-2">
+                        <h3
+                          class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer"
+                        >
+                          Échange sur les bonnes pratiques de documentation
+                        </h3>
+                      </div>
+                      <div
+                        class="flex items-center space-x-4 text-sm text-gray-600 mb-3"
+                      >
+                        <span>Par <strong>Secrétaire Médicale</strong></span
+                        ><span>•</span><span>Polyclinique Sud</span
+                        ><span>•</span><span>2024-01-11</span>
+                      </div>
+                      <div class="flex items-center space-x-4">
+                        <span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
+                          >Documentation</span
+                        ><span
+                          class="px-2 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
+                          >Actif</span
+                        >
+                      </div>
+                    </div>
+                    <div class="text-right text-sm text-gray-500 ml-4">
+                      <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-message-3-line"></i><span>9</span>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                          <i class="ri-eye-line"></i><span>134</span>
+                        </div>
+                      </div>
+                      <div>
+                        Dernière réponse:
+                        <!-- -->2024-01-13
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-<FooterNew />
+ 
 </main>
 
 <style>

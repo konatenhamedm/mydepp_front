@@ -2,27 +2,47 @@
   
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import axios from "axios";
   import FormStep2 from "./formStep2.svelte";
+  import { onMount } from "svelte";
+  import FormStep3 from "./formStep3.svelte";
+  import Modal from "./Modal.svelte";
 let step = 1;
 let done = false;
 let lastStep = false;
+let showPassword = false;
+let isPaiementProcessing = false;
+let authenticating = false;
+let isPaiementDone = false;
+let message = "";
+let isModalOpen = false;
+
+ let pdfUrl:any;
+   function openModal(reference: any) {
+    pdfUrl = reference; // ✅ Met à jour la variable réactive
+    isModalOpen = true;
+  }
+
+  function closeModal() {
+    isModalOpen = false;
+    localStorage.clear();
+  }
+
+
 const nextStep = () => {
-  alert(step);
+  
   step += 1;
   if (step === 3) {
     lastStep = true;
   }
+  console.log(formData);
 };
 const prevStep = () => {
   if (step > 1) {
     step -= 1;
   }
-  alert(step);
-};
-const finish = () => {
-  // Logique de finalisation de l'inscription
-  alert("Inscription terminée !");
-  done = true;
+  lastStep = false;
+  
 };
 
 let formData = {
@@ -42,15 +62,263 @@ let formData = {
   documents: [],
 };
 
+ let values = {
+    typePersonne: [],
+    niveauIntervention: [],
+    typeDocument: [],
+  };
+  let objects = [
+    { name: "typePersonne", url: "/typePersonne/" },
+    { name: "niveauIntervention", url: "/niveauIntervention/" },
+    {
+      name: "typeDocument",
+      url: "/libelleGroupe/all",
+      id: formData.typePersonne || "PHYSIQUE",
+    },
+  ];
+////on recupere le type de personne et les autres trucs a mettre dans le formulaire
+ async function fetchDataFirst() {
+    try {
+      let res = null;
+      objects.forEach(async (element) => {
+        if (!element.id) {
+          res = await axios.get(`https://prodmydepps.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+            console.error("Erreur lors de la récupération des données:", error);
+            values[element.name as keyof typeof values] = [];
+          });
+        } 
+
+       
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données:", error);
+    }
+  }
+
+   async function fetchDataSecond() {
+    console.log("fetchDataSecond called", formData.typePersonne);
+    try {
+      let res = null;
+      objects.forEach(async (element) => {
+        if (element.id) {
+            res = await axios.get(`https://prodmydepps.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+            console.error("Erreur lors de la récupération des données:", error);
+            values[element.name as keyof typeof values] = [];
+          });
+        } 
+
+       
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données:", error);
+    }
+  }
 
 
+  let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
+
+  function handleDocumentChange(
+    event,
+    libelle,
+    libelleGroupe,
+    index
+  ) {
+    console.log("Document changed:", event, libelleGroupe);
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+
+      // On ajoute l'objet formaté dans formData.documents
+      formData.documents[index]= {
+        libelle: libelle,
+        path: base64, // ou file.name si tu veux juste le nom
+        libelleGroupe: libelleGroupe,
+      };
+      uploadedFiles[libelle + libelleGroupe] = file.name;
+      console.log("Updated formData.documents:", formData.documents);
+      console.log("Uploaded files:", uploadedFiles);
+      // Sauvegarde dans localStorage si besoin
+      localStorage.setItem("formData", JSON.stringify(formData));
+    };
+    reader.readAsDataURL(file);
+  }
+
+$: step ==2 && fetchDataFirst();
+$: step ==3 && fetchDataSecond();
+
+
+
+onMount(() => {
+  fetchDataFirst();
+  console.log(values);
+  let references = localStorage.getItem("reference");
+  if (references) {
+    checkTransactionID(references);
+  }
+  console.log("references", references);
+});
+
+
+function clickPaiement() {
+    console.log("click payment");
+    isPaiementProcessing = true;
+    
+
+    initPaiement();
+  }
+ async function initPaiement() {
+    authenticating = true;
+    console.log("formdata", formData);
+
+    let formDatas = new FormData();
+
+    const simpleFields = [
+      "password",
+      "confirmPassword",
+      "email",
+      "niveauIntervention",
+      "typePersonne",
+      "nom",
+      "prenoms",
+      "telephone",
+      "bp",
+      "emailAutre",
+      "adresse",
+      "nomRepresentant",
+      "denomination",
+    ];
+
+    simpleFields.forEach((key) => {
+      if (formData[key] !== undefined && formData[key] !== null) {
+        formDatas.append(key, formData[key]);
+      }
+    });
+
+    // Ajouter les documents dans le format souhaité
+    if (formData.documents && Array.isArray(formData.documents)) {
+      console.log("formData.documents", formData.documents);
+      formData.documents.forEach((doc, index) => {
+        formDatas.append(`documents[${index}][libelle]`, doc.libelle);
+        formDatas.append(`documents[${index}][path]`, doc.path);
+        if (doc.libelleGroupe) {
+          formDatas.append(
+            `documents[${index}][libelleGroupe]`,
+            doc.libelleGroupe
+          );
+        }
+      });
+    }
+
+    // Ajouter la référence et le type
+    const reference = localStorage.getItem("reference");
+    if (reference) {
+      formDatas.append("reference", reference);
+    }
+    formDatas.append("type", "etablissement");
+
+    const selectedFilesFromStorage = JSON.parse(
+      localStorage.getItem("selectedFiles") || "{}"
+    );
+
+    if (selectedFilesFromStorage) {
+      Object.keys(selectedFilesFromStorage).forEach((fieldName) => {
+        const fileData = selectedFilesFromStorage[fieldName];
+        if (fileData && fileData.data) {
+          const base64Data = fileData.data.split(",")[1];
+          const byteCharacters = atob(base64Data);
+          const byteArrays = [];
+
+          for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            const slice = byteCharacters.slice(offset, offset + 512);
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+              byteNumbers[i] = slice.charCodeAt(i);
+            }
+            byteArrays.push(new Uint8Array(byteNumbers));
+          }
+
+          const blob = new Blob(byteArrays, {
+            type: fileData.type || "application/octet-stream",
+          });
+          formDatas.append(fieldName, blob, fileData.name);
+        }
+      });
+    }
+
+    console.log("Contenu de formDatas:");
+    for (let [key, value] of formDatas.entries()) {
+      if (value instanceof Blob) {
+        console.log(
+          key,
+          `[Fichier: ${value.name || "sans nom"}, type: ${value.type}, taille: ${value.size} octets]`
+        );
+      } else {
+        console.log(key, value);
+      }
+    }
+
+    console.log("formDatas", formDatas);
+
+    try {
+      const response = await fetch(`https://prodmydepps.leadagro.net/api/paiement/paiement`, {
+        method: "POST",
+        body: formDatas,
+      });
+
+      const result = await response.json();
+      console.log("Réponse du serveur:", result);
+
+      authenticating = false;
+
+      if (result.data && result.data.url) {
+        localStorage.setItem("reference", result.data.reference);
+        window.location.href = result.data.url + "?return=1";
+      }
+    } catch (error) {
+      console.error("Erreur lors du paiement:", error);
+      isPaiementProcessing = false;
+      authenticating = false;
+    }
+  }
+ async function checkTransactionID(idtransaction: any) {
+    if (!idtransaction) return false;
+    console.log("idtransaction", idtransaction);
+    try {
+      const res = await fetch(
+        `https://prodmydepps.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+      );
+      const data = await res.json();
+      isPaiementDone = data.data.state;
+
+      console.log("data.data", data.data);
+      if (data.data.state == true) {
+       openModal(idtransaction);
+        
+      } else {
+        message = "Le paiement n'a pas été effectué. Veuillez réessayer.";
+      }
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé `valid`
+    } catch (error) {
+      console.error(
+        'Erreur lors de la vérification de la transaction :',
+        error
+      );
+      return false;
+    }
+  }
 </script>
 
 <main>
   <HeaderNew />
  
     <div
-      class="min-h-screen bg-gray-50 flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8 "
+      class="min-h-screen  flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8 "
+      style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
     >
       <div class="max-w-2xl w-full">
         <div class="text-center mb-8">
@@ -146,7 +414,7 @@ let formData = {
               <div class="space-y-6">
                 <div>
                   <label
-                    for="email"
+                    for="email" 
                     class="block text-sm font-medium text-gray-700 mb-2"
                     >E-mail *</label
                   ><input
@@ -168,14 +436,16 @@ let formData = {
                     >
                     <div class="relative">
                       <input
-                        type="password"
+                        type="{showPassword ? 'text' : 'password'}"
                         id="password"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                         placeholder="Votre mot de passe"
                         required={true}
+                        
                         name="password"
                         bind:value={formData.password}
                       /><button
+                        onclick={()=>{showPassword = !showPassword}}
                         type="button"
                         class="absolute inset-y-0 right-0 pr-3 flex items-center"
                       >
@@ -193,7 +463,7 @@ let formData = {
                     >
                     <div class="relative">
                       <input
-                        type="password"
+                        type="{showPassword ? 'text' : 'password'}"
                         id="confirmPassword"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                         placeholder="Confirmez votre mot de passe"
@@ -201,6 +471,7 @@ let formData = {
                         name="confirmPassword"
                         bind:value={formData.confirmPassword}
                       /><button
+                      onclick={()=>{showPassword = !showPassword}}
                         type="button"
                         class="absolute inset-y-0 right-0 pr-3 flex items-center"
                       >
@@ -214,11 +485,15 @@ let formData = {
               </div>
             </div>
             {:else if step === 2}
-               
-          <FormStep2 />
-        
-      
+
+          <FormStep2 typePersonne={values.typePersonne} niveauIntervention={values.niveauIntervention} formdata={formData} />
+
             {:else if step === 3}
+            {#if values.typeDocument.length > 0}
+              <FormStep3 formData={formData} uploadedFiles={uploadedFiles} values={values} handleDocumentChange={handleDocumentChange} />
+            {:else}
+              <p class="text-red-500"></p>
+              {/if}
             {/if}
             
             <div class="flex justify-between mt-8 pt-6 border-t">
@@ -230,7 +505,19 @@ let formData = {
                 class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Précédent</button
-              ><button
+              >
+              {#if lastStep}
+                <button
+                onclick={()=>{clickPaiement()}}
+                type="button"
+                
+                class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                Terminer
+              </button>
+             
+              {:else}
+             <button
                 onclick={()=>{nextStep()}}
                 type="button"
                 disabled={done || lastStep}
@@ -238,6 +525,7 @@ let formData = {
               >
                 Suivant
               </button>
+              {/if}
             </div>
           </form>
         </div>
@@ -256,7 +544,9 @@ let formData = {
  
   <FooterNew />
 </main>
-
+{#if isModalOpen == true}
+  <Modal isOpen={isModalOpen} pdfUrl={pdfUrl} onClose={closeModal} />
+{/if}
 <style>
   @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
   *,

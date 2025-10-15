@@ -1,11 +1,48 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { CookieManager } from "$lib/auth";
+  import { onMount } from "svelte";
+  let isAuth = false;
+  let totalNotif = 0;
+  let userData = null;
+  let userInfo = null;
+  const checkLogin = () => {
+    const token = CookieManager.get("auth");
+    userData = token;
+    isAuth = !!token;
+  };
 
+  const getUserInfo = async () => {
+    try {
+      const response = await fetch("https://prodmydepps.leadagro.net/api/user/get/one/" + userData.id, {
+        method: "GET",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        userInfo = data.data;
+        console.log("User Info:", userInfo);
+      } else {
+        console.error("Failed to fetch user info:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
+onMount(() => {
+    checkLogin();
+    if (isAuth) {
+      getUserInfo();
+    }else {
+      window.location.href = "/";
+    }
+  });
 </script>
 
 <main>
-    <HeaderNew />
+<!-- <HeaderNew /> -->
+    
     <div
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
     >
@@ -15,324 +52,152 @@
             <div class="flex items-center space-x-4">
               <a
                 class="text-blue-600 hover:text-blue-800 transition-colors"
-                href="/preview/9742213d-fe1d-4d27-aba4-f4ac9a2c4158/3063058/dashboard-v2"
+                href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
                 <h1 class="text-2xl font-bold text-gray-900">
-                  Historique des paiements
+                  Mise à jour du dossier
                 </h1>
-                <p class="text-gray-600">Consultez vos paiements et factures</p>
+                <p class="text-gray-600">Gérez votre profil et vos documents</p>
               </div>
             </div>
+            <!-- <div class="flex items-center space-x-2">
+              <span
+                class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
+                >1
+                document(s) manquant(s)</span
+              >
+            </div> -->
           </div>
         </div>
       </div>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-check-line text-green-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Total payé</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  1295.00<!-- -->
-                  €
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-time-line text-yellow-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">En attente</p>
-                <p class="text-2xl font-bold text-gray-900">
-                  450.00<!-- -->
-                  €
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-file-list-line text-blue-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Total factures</p>
-                <p class="text-2xl font-bold text-gray-900">5</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">
-              Filtrer par statut
-            </h2>
-            <div class="flex space-x-2">
+        <div class="bg-white rounded-xl shadow-lg mb-8">
+          <div class="border-b border-gray-200">
+            <nav class="flex space-x-8 px-6">
               <button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-blue-600 text-white"
+                class="py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap border-blue-500 text-blue-600"
               >
-                Tous</button
+                <i class="ri-user-line mr-2"></i>Informations du profil</button
               ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+                class="py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               >
-                Payé</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                En attente
+                <i class="ri-file-list-line mr-2"></i>Documents soumis<span
+                  class="ml-2 px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs"
+                  >1</span
+                >
               </button>
-            </div>
+            </nav>
           </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Référence
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Description
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Montant
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Statut
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Échéance
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Date paiement
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Méthode
-                  </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-001</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Cotisation mensuelle - Janvier 2024</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-31</td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-28</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-002</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Frais de dossier - Mise à jour</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >75.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-15</td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-12</td>
-                  <td class="py-4 px-6 text-gray-600">Carte bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-003</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Cotisation mensuelle - Février 2024</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
-                      >En attente</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2024-02-28</td>
-                  <td class="py-4 px-6 text-gray-600">-</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-orange-600 hover:text-orange-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Payer
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2023-012</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Cotisation mensuelle - Décembre 2023</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2023-12-31</td>
-                  <td class="py-4 px-6 text-gray-600">2023-12-29</td>
-                  <td class="py-4 px-6 text-gray-600">
-                    Prélèvement automatique
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2023-011</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Formation continue - Personnel</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >320.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2023-11-30</td>
-                  <td class="py-4 px-6 text-gray-600">2023-11-25</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="p-6">
+            <form class="space-y-6" onsubmit={()=>{alert("Mise a jour soumise"), window.location.href = "/dashboard"}}>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Nom de l'établissement</label
+                  ><input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="nom"
+                    value={userInfo ? userInfo.personne.denomination : 'Chargement...'}
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Type</label
+                  ><input
+                    type="text"
+                    disabled
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="Type"
+                    value={userInfo ? userInfo.typeUser : 'Chargement...'}
+                  />
+                </div>
+                <!-- <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Adresse</label
+                  ><input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="adresse"
+                    value="123 Avenue de la Santé"
+                  />
+                </div> -->
+                <!-- <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Ville</label
+                  ><input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="ville"
+                    value="Toulouse"
+                  />
+                </div> -->
+                <!-- <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Code postal</label
+                  ><input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="codePostal"
+                    value="31000"
+                  />
+                </div> -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Téléphone</label
+                  ><input
+                    type="tel"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="telephone"
+                    value="N/A"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Email</label
+                  ><input
+                    type="email"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="email"
+                    value={userInfo ? userInfo.email : 'Chargement...'}
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Directeur/Responsable</label
+                  ><input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="directeur"
+                    value={userInfo ? userInfo.username : 'Chargement...'}
+                  />
+                </div>
+              </div>
+              <div class="flex justify-end space-x-4 pt-6">
+                <a
+                  class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
+                  href="/dashboard"
+                  >Annuler</a
+                ><button
+                  type="submit"
+                  class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+                >
+                  Sauvegarder les modifications
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
+ 
 <FooterNew />
 </main>
 
 <style>
-  @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
+    @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css");
 *,
 :after,
 :before {
