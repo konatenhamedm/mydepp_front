@@ -133,7 +133,8 @@ onMount(() => {
                   >
                     <div class="w-16 h-16 flex items-center justify-center">
                       <i class="ri-dashboard-line text-white text-4xl"></i>
-                      <h1>icone etablissement</h1>
+                      
+                      <h1>Avatar</h1>
                     </div>
                   </div>
                 </div>

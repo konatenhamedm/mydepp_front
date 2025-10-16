@@ -158,9 +158,10 @@ onMount(() => {
   console.log(values);
   let references = localStorage.getItem("reference");
   if (references) {
+    console.log("references", references);
     checkTransactionID(references);
   }
-  console.log("references", references);
+  // console.log("references", references);
 });
 
 
@@ -317,7 +318,7 @@ function clickPaiement() {
   <HeaderNew />
  
     <div
-      class="min-h-screen  flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8 "
+      class="min-h-screen   flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8 "
       style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
     >
       <div class="max-w-2xl w-full">
