@@ -184,7 +184,7 @@
 <div
   class=" ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
-  <Abercrome titre="civilité" parent="Dashbord" current="civilité" />
+  <Abercrome titre="Parametres" parent="Dashbord" current="civilite" />
   <!-- Responsive Toggler -->
   <div class="col-span-12">
     <div
@@ -283,7 +283,7 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="full" title="Créer une civilité">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
 <Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
