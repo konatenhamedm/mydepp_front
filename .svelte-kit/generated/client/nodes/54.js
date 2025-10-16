@@ -1,1 +1,0 @@
-export { default as component } from "../../../../src/routes/admin/status_pro/+page.svelte";

@@ -1,1 +1,0 @@
-export { default as component } from "../../../../src/routes/admin/professionnel_instructeur_second/+page.svelte";

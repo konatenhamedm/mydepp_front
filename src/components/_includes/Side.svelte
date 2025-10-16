@@ -48,15 +48,22 @@
 
   const normalize = (p: string) => (p || '').replace(/\/+$/, '');
   
-  const isActive = (path: string, exact = false) => {
-    if (!path) return false;
-    
-    if (immediatelyActivePath === path) return true;
-    
-    const normalizedPath = normalize(path);
-    const normalizedCurrent = normalize(currentPath);
-    return exact ? normalizedCurrent === normalizedPath : normalizedCurrent.startsWith(normalizedPath);
-  };
+ const isActive = (path: string, exact = false) => {
+  if (!path) return false;
+
+  const normalizedPath = normalize(path);
+  const normalizedCurrent = normalize(currentPath);
+
+  if (exact) return normalizedCurrent === normalizedPath;
+
+  // doit commencer pareil...
+  if (!normalizedCurrent.startsWith(normalizedPath)) return false;
+
+  // ...mais ne pas être un faux positif (ex: /profession vs /professionnel)
+  const nextChar = normalizedCurrent.charAt(normalizedPath.length);
+  return nextChar === '' || nextChar === '/' || nextChar === '?';
+};
+
   
   const hasActiveChild = (subItems: Array<{ path: string }>) =>
     subItems?.some((item) => isActive(item.path)) || false;
