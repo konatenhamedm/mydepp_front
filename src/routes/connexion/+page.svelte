@@ -15,9 +15,10 @@
     console.log("Password:", password);
     if (email && password) {
       axios
-        .post("https://prodmydepps.leadagro.net/api/login_check", {
-          username: email,
+        .post("http://backend.leadagro.net/api/login", {
+          email: email,
           password: password,
+          plateforme: "front",
         })
         .then((success) => {
           console.log(success);
@@ -148,7 +149,7 @@
                 >
               </div>
               <a
-                href="#"
+                href="/connexion/forgot_password"
                 class="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
                 >Mot de passe oublié ?</a
               >

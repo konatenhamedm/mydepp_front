@@ -137,7 +137,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`https://prodmydepps.leadagro.net/api${element.url}`)
+          .get(`http://backend.leadagro.net/api${element.url}`)
           .then((response) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -237,7 +237,7 @@
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `https://prodmydepps.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
