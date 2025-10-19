@@ -60,9 +60,10 @@ export async function login(login: string, password: string) {
   try {
     console.log('Tentative de connexion pour:', login);
     
-    const response = await axios.post(`${BASE_URL_API}/auth/login_check`, {
-      username: login,
-      password
+    const response = await axios.post(`${BASE_URL_API}/login`, {
+      email: login,
+      password,
+      plateforme: 'backoffice'
     });
 
     console.log('Réponse API login:', response.data);
@@ -72,7 +73,7 @@ export async function login(login: string, password: string) {
       return null;
     }
 
-    const { token, data } = response.data;
+    const { token, data } = response.data.data;
 
     if (!token) {
       console.error("Token invalide");
@@ -82,10 +83,10 @@ export async function login(login: string, password: string) {
     // Préparer les données pour le cookie
     const authData = {
       id: data?.id,
-      role: data.role,
-      username: data.username,
+      role: data?.role,
+      username: data?.username,
       type: data.type,
-      status: data.status,
+      status: data?.status,
       payement: data.payement,
       avatar: data.avatar,
       personneId: data.personneId,
@@ -126,12 +127,12 @@ export async function loginUserFront(username_field: string, password: string) {
   try {
     console.log('Tentative de connexion front pour:', username_field);
     
-    const response = await fetch(`${BASE_URL_API}/login_check`, {
+    const response = await fetch(`${BASE_URL_API}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username: username_field, password })
+      body: JSON.stringify({ email: username_field, password, plateforme: 'front' })
     });
 
     const jsonData = await response.json();

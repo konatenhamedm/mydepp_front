@@ -15,7 +15,7 @@
 
   const getUserInfo = async () => {
     try {
-      const response = await fetch("https://prodmydepps.leadagro.net/api/user/get/one/" + userData.id, {
+      const response = await fetch("http://backend.leadagro.net/api/user/get/one/" + userData.id, {
         method: "GET",
       });
       if (response.ok) {

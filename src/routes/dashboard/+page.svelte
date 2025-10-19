@@ -15,7 +15,7 @@
   };
 
   const countNotif =async () => {
-    await axios.get("https://prodmydepps.leadagro.net/api/notification/by/" + userData.id)
+    await axios.get("http://backend.leadagro.net/api/notification/by/" + userData.id)
      .then(response => {
        response.data.data.forEach(element => {
         if(!element.isRead){

@@ -15,7 +15,7 @@
   };
 
   const getAllNotifications = async () => {
-   await axios.get("https://prodmydepps.leadagro.net/api/notification/by/" + userData.id)
+   await axios.get("http://backend.leadagro.net/api/notification/by/" + userData.id)
      .then(response => {
        notification = response.data.data;
        console.log("Notifications:", notification);

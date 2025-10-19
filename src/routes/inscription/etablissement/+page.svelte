@@ -82,7 +82,7 @@ let formData = {
       let res = null;
       objects.forEach(async (element) => {
         if (!element.id) {
-          res = await axios.get(`https://prodmydepps.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+          res = await axios.get(`http://backend.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
             console.error("Erreur lors de la récupération des données:", error);
             values[element.name as keyof typeof values] = [];
           });
@@ -101,7 +101,7 @@ let formData = {
       let res = null;
       objects.forEach(async (element) => {
         if (element.id) {
-            res = await axios.get(`https://prodmydepps.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+            res = await axios.get(`http://backend.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
             console.error("Erreur lors de la récupération des données:", error);
             values[element.name as keyof typeof values] = [];
           });
@@ -266,7 +266,7 @@ function clickPaiement() {
     console.log("formDatas", formDatas);
 
     try {
-      const response = await fetch(`https://prodmydepps.leadagro.net/api/paiement/paiement`, {
+      const response = await fetch(`http://backend.leadagro.net/api/paiement/paiement`, {
         method: "POST",
         body: formDatas,
       });
@@ -291,7 +291,7 @@ function clickPaiement() {
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `https://prodmydepps.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
