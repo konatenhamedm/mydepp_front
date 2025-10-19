@@ -18,10 +18,9 @@
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
+	let item: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: ''
 	};
 
 
@@ -32,10 +31,9 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await apiFetch(true,'/civilite/create', "POST",{
+				code: item.code,
+				libelle: item.libelle
 			});
 
 			if (res) {
@@ -50,12 +48,7 @@
 		}
 	}
 
-	function handleFileChange(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-		}
-	}
+	
 
 	function handleModalClose(event: Event) {
 		if (isLoad) {
@@ -70,27 +63,23 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
+				<!-- Champ pour le code du item -->
 				<InputSimple
 					fieldName="code"
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={item.code}
+					placeholder="Entrez le code"
 				/>
 
 				<InputSimple
-					fieldName="symbole"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+					fieldName="libelle"
+					label="Libelle"
+					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
 				/>
 
-				<InputSimple
-					fieldName="nb_decimal"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
+				
+
 			</div>
 		</form>
 	</div>

@@ -213,7 +213,7 @@
         <div class="scrollbar overflow-x-auto">
           <table class="min-w-full border border-gray-200 rounded-xl shadow-sm text-sm">
             <!-- Header -->
-            <HeaderTable item={['Username', 'Email', 'Type de compte']} />
+            <HeaderTable item={['Username', 'Identité', 'Type de compte']} />
             
             <!-- Body -->
             <tbody class="text-gray-700">
@@ -234,10 +234,10 @@
                 {#each paginatedData as item, i}
                   <tr class="hover:bg-gray-50 transition-colors">
                     <td class="px-4 text-[14px] py-3 border border-gray-200">
-                      {item.username}
+                      {item.email}
                     </td>
                     <td class="px-4 text-[14px] py-3 border border-gray-200">
-                      {item.email}
+                     {item.typeUser == "PROFESSIONNEL" ? item.personne.nom + " " + item.personne.prenoms : item.personne.typePersonne == "PHYSIQUE" ? item.personne.nom + " " + item.personne.prenoms : item.personne.denomination}
                     </td>
                     <td class="px-4 text-[14px] py-3 border border-gray-200">
                       {item.typeUser}

@@ -48,7 +48,7 @@
 
   let actions: Action[] = [];
 
-  const path: string = '/admin/civilite';
+  const path: string = '/admin/ville';
 
   // Configuration des permissions
   const PERMISSION_MAP: Record<ActionType, Permission[]> = {
@@ -90,7 +90,7 @@
   async function fetchData() {
     loading = true;
     try {
-      const res = await apiFetch(true, `/civilite/`);
+      const res = await apiFetch(true, `/ville/`);
 
       console.log(res);
 
@@ -184,7 +184,7 @@
 <div
   class=" ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
-  <Abercrome titre="civilité" parent="Dashbord" current="civilité" />
+  <Abercrome titre="Paramètres" parent="Dashbord" current="Villes" />
   <!-- Responsive Toggler -->
   <div class="col-span-12">
     <div
@@ -196,7 +196,7 @@
         <h1
           class="text-dark dark:text-title-dark mb-0 inline-flex items-center overflow-hidden py-[16px] text-[18px] font-semibold text-ellipsis whitespace-nowrap"
         >
-          Liste des civilités
+          Liste des villes
         </h1>
 
         <!-- {#if PERMISSION_MAP['add'].includes(permission as Permission)} -->
@@ -283,7 +283,7 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<!-- <Modale bind:open={openAdd} size="xl" title="Créer une civilité">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
 <Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
@@ -294,4 +294,4 @@
 </Modale>
 <Modale bind:open={openDelete} size="xl" title="Supprimer civilité">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
-</Modale>
+</Modale> -->

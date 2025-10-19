@@ -1,6 +1,7 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import Choice from "./choice.svelte";
 
 
 </script>
@@ -8,7 +9,8 @@
 <main>
     <HeaderNew/>
 <div
-        class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pt-16"
+        class="max-h-screen pt-20"
+        style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
       >
         <div class="py-12 px-4 sm:px-6 lg:px-8">
           <div class="max-w-4xl mx-auto">
@@ -17,87 +19,15 @@
                 Inscription E-DEPPS
               </h1>
               <p class="text-lg text-gray-600">
-                Choisissez votre type d'inscription
+                <!-- Choisissez votre type d'inscription -->
               </p>
             </div>
             <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+              class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl "
             >
-              <div
-                class="bg-white rounded-2xl shadow-xl p-8 cursor-pointer hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-blue-500"
-              >
-                <div class="text-center">
-                  <div
-                    class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6"
-                  >
-                    <div class="w-10 h-10 flex items-center justify-center">
-                      <i class="ri-user-heart-line text-white text-3xl"></i>
-                    </div>
-                  </div>
-                  <h2 class="text-2xl font-bold text-gray-900 mb-4">
-                    Professionnel de santé
-                  </h2>
-                  <p class="text-gray-600 mb-6">
-                    Inscription pour les professionnels de santé individuels
-                    (médecins, dentistes, pharmaciens, infirmiers, etc.)
-                  </p>
-                  <div class="bg-blue-50 rounded-lg p-4 mb-6">
-                    <h3 class="font-semibold text-blue-900 mb-2">
-                      Étapes d'inscription :
-                    </h3>
-                    <ul class="text-sm text-blue-800 space-y-1">
-                      <li>• Informations de connexion</li>
-                      <li>• Informations personnelles</li>
-                      <li>• Informations de contact</li>
-                      <li>• Informations professionnelles</li>
-                      <li>• Validation</li>
-                    </ul>
-                  </div>
-                  <button
-                    onclick={() => window.location.href = '/inscription/professionnel'}
-                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors whitespace-nowrap cursor-pointer"
-                  >
-                    Commencer l'inscription
-                  </button>
-                </div>
-              </div>
-              <div
-                class="bg-white rounded-2xl shadow-xl p-8 cursor-pointer hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-purple-500"
-              >
-                <div class="text-center">
-                  <div
-                    class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6"
-                  >
-                    <div class="w-10 h-10 flex items-center justify-center">
-                      <i class="ri-hospital-line text-white text-3xl"></i>
-                    </div>
-                  </div>
-                  <h2 class="text-2xl font-bold text-gray-900 mb-4">
-                    Établissement de santé
-                  </h2>
-                  <p class="text-gray-600 mb-6">
-                    Inscription pour les établissements de santé privés
-                    (cliniques, centres médicaux, laboratoires, etc.)
-                  </p>
-                  <div class="bg-purple-50 rounded-lg p-4 mb-6">
-                    <h3 class="font-semibold text-purple-900 mb-2">
-                      Étapes d'inscription :
-                    </h3>
-                    <ul class="text-sm text-purple-800 space-y-1">
-                      <li>• Informations de connexion</li>
-                      <li>• Informations de l'établissement</li>
-                      <li>• Validation</li>
-                    </ul>
-                  </div>
-                  <button
-                    onclick={() => window.location.href = '/inscription/etablissement'}
-                    class="w-full bg-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-purple-700 transition-colors whitespace-nowrap cursor-pointer"
-                  >
-                    Commencer l'inscription
-                  </button>
-                </div>
-              </div>
+              
             </div>
+            <Choice/>
             <div class="text-center mt-12">
               <p class="text-gray-600">
                 Vous avez déjà un compte ?<!-- -->
