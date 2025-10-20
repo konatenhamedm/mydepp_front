@@ -40,7 +40,7 @@
 				libelle: devise.libelle,
 			});
 
-			if (res.ok) {
+			if (res) {
 				isLoad = false;
 				open = false; // Close the modal
 			}

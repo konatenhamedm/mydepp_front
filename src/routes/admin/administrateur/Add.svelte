@@ -8,9 +8,11 @@
     import InputTextArea from "$components/inputs/InputTextArea.svelte";
     import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
     import InputSimplePassword from "$components/inputs/InputSimplePassword.svelte";
+    import { getAuthCookie } from "$lib/auth";
 
     export let open: boolean = false; // modal control
     let isLoad = false;
+    let user: any = [];
 
     let showNotification = false;
     let notificationMessage = "";
@@ -142,7 +144,8 @@
         }
         isLoad = true;
         try {
-            // Créer un objet FormData
+            const token = user?.token;
+
             const formData = new FormData();
             formData.append("nom", devise.nom);
             formData.append("prenoms", devise.prenoms);
@@ -151,8 +154,12 @@
             formData.append("email", devise.email);
             formData.append("typeUser", devise.typeUser);
 
+            const headers: Record<string, string> = {};
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+
             const res = await fetch(BASE_URL_API + "/user/admin/create", {
                 method: "POST",
+                headers,
                 body: formData,
             });
 
@@ -193,6 +200,9 @@
             event.preventDefault();
         }
     }
+    onMount(() => {
+        user = getAuthCookie();
+    });
 </script>
 
 <!-- Modal Content Wrapper -->

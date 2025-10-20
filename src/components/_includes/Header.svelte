@@ -132,7 +132,7 @@
               id="author-dropdown"
               data-te-dropdown-toggle-ref
               aria-expanded="false"
-              class="text-body dark:text-subtitle-dark group me-1.5 flex items-center rounded-full text-sm font-medium whitespace-nowrap capitalize md:me-0"
+              class="text-body dark:text-subtitle-dark group me-1.5 flex items-center rounded-full text-sm font-medium whitespace-nowrap  md:me-0"
             >
               <span class="sr-only">Open user menu</span>
               <img

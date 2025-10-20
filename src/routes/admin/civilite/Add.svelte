@@ -20,7 +20,9 @@
 	// Initializing the user object with only email and status
 	let item: any = {
 		code: '',
-		libelle: ''
+		libelle: '',
+		codeGeneration: '',
+
 	};
 
 
@@ -33,7 +35,8 @@
 		try {
 			const res = await apiFetch(true,'/civilite/create', "POST",{
 				code: item.code,
-				libelle: item.libelle
+				libelle: item.libelle,
+				codeGeneration: item.codeGeneration,
 			});
 
 			if (res) {
@@ -74,6 +77,12 @@
 				<InputSimple  fieldName="libelle" type="text"
 					label="Libelle"
 					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
+					required={true}
+				/>
+				<InputSimple  fieldName="codeGeneration" type="text"
+					label="Code generation"
+					bind:field={item.codeGeneration}
 					placeholder="Entrez le libelle"
 					required={true}
 				/>

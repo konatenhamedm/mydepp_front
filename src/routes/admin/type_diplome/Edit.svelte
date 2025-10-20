@@ -39,11 +39,10 @@
     try {
       // Example POST request (replace with your actual API call)
       const res = await apiFetch(true, '/typeDiplome/update/' + data?.id, 'PUT', {
-   
         libelle: item.libelle,
       });
 
-      if (res.ok) {
+      if (res) {
         isLoad = false;
         open = false; // Close the modal
       }

@@ -8,6 +8,7 @@
     import InputTextArea from "$components/inputs/InputTextArea.svelte";
     import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
     import InputSimplePassword from "$components/inputs/InputSimplePassword.svelte";
+    import { getAuthCookie } from "$lib/auth";
 
     export let open: boolean = false; // modal control
     let isLoad = false;
@@ -15,6 +16,7 @@
     let showNotification = false;
     let notificationMessage = "";
     let notificationType = "info";
+    let user: any = [];
 
     let errors: any = {
         nom: "",
@@ -87,7 +89,9 @@
         };
     }
 
-    onMount(() => {});
+    onMount(() => {
+        user = getAuthCookie();
+    });
 
     function validateForm() {
         let isValid = true;
@@ -116,52 +120,60 @@
     }
 
     async function SaveFunction() {
-        if (!validateForm()) {
+      /*   if (!validateForm()) {
             notificationMessage =
-                "Veuillez renseigner  les champs requis du formulaire";
+                "Veuillez renseigner les champs requis du formulaire";
             notificationType = "error";
             showNotification = true;
             return;
         }
+ */
         isLoad = true;
+
         try {
-            // Créer un objet FormData
+        
+            const token = user?.token;
+
+           
             const formData = new FormData();
             formData.append("nom", devise.nom);
             formData.append("prenoms", devise.prenoms);
             formData.append("password", devise.password);
             formData.append("typeUser", devise.typeUser);
 
+        
+            const headers: Record<string, string> = {};
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+
             const res = await fetch(
-                BASE_URL_API + "/user/admin/update/" + data?.id,
+                `${BASE_URL_API}/user/admin/update/${data?.id}`,
                 {
                     method: "POST",
+                    headers,
                     body: formData,
                 },
             );
 
-            if (res.ok) {
+            if (res) {
                 isLoad = false;
                 open = false;
-                notificationMessage = "utilisateur modifié avec succès!";
+                notificationMessage = "Utilisateur modifié avec succès 🎉";
                 notificationType = "success";
                 showNotification = true;
             } else {
-                // Gérer les erreurs de réponse HTTP
-                const errorData = await res.json();
-                notificationMessage =
-                    errorData.message || "Erreur lors de l'enregistrement";
+                
+                notificationMessage = "Erreur lors de la modification";
                 notificationType = "error";
                 showNotification = true;
                 isLoad = false;
             }
         } catch (error) {
+            console.error("Erreur lors de l’enregistrement :", error);
             notificationMessage =
                 "Une erreur est survenue lors de l'enregistrement";
             notificationType = "error";
             showNotification = true;
             isLoad = false;
-            console.error("Error saving:", error);
         }
     }
 

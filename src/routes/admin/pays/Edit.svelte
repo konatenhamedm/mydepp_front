@@ -38,12 +38,12 @@
 
     try {
       // Example POST request (replace with your actual API call)
-      const res = await apiFetch(true, '/civilite/update/' + data?.id, 'PUT', {
+      const res = await apiFetch(true, '/pays/update/' + data?.id, 'PUT', {
         code: item.code,
         libelle: item.libelle,
       });
 
-      if (res.ok) {
+      if (res) {
         isLoad = false;
         open = false; // Close the modal
       }

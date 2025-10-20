@@ -19,6 +19,7 @@
   let item: any = {
     code: '',
     libelle: '',
+    codeGeneration: '',
   };
   let itemdata: any = [];
 
@@ -28,6 +29,7 @@
     item = {
       code: data?.code || '',
       libelle: data?.libelle || '',
+      codeGeneration: data?.codeGeneration || '',
     };
   }
 
@@ -41,9 +43,10 @@
       const res = await apiFetch(true, '/civilite/update/' + data?.id, 'PUT', {
         code: item.code,
         libelle: item.libelle,
+        codeGeneration: item.codeGeneration,
       });
 
-      if (res.ok) {
+      if (res) {
         isLoad = false;
         open = false; // Close the modal
       }
@@ -84,13 +87,18 @@
           placeholder="Entrez le code"
           required={true}
         />
-
         <InputSimple  fieldName="libelle" type="text"
           label="Libelle"
           bind:field={item.libelle}
           placeholder="Entrez le libelle"
           required={true}
         />
+        	<InputSimple  fieldName="codeGeneration" type="text"
+					label="Code generation"
+					bind:field={item.codeGeneration}
+					placeholder="Entrez le code generation"
+					required={true}
+				/>
       </div>
     </form>
   </div>

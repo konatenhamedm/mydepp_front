@@ -42,13 +42,12 @@
 		try {
 			// Example POST request (replace with your actual API call)
 			const res = await apiFetch(true,'/ville/update/' + data?.id, "PUT", {
-
 				code: devise.code, 
 				libelle: devise.libelle,
 				district: devise.district
 			});
 
-			if (res.ok) {
+			if (res) {
 				isLoad = false;
 				open = false; // Close the modal
 			}
