@@ -1,9 +1,9 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
   import {apiFetch, BASE_URL_API} from '$lib/api';
   import {Button, Modal, Select} from 'flowbite-svelte';
   import Notification from '$components/_includes/Notification.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
   import Modale from '$components/Modales/Modale.svelte';
   import {onMount} from 'svelte';
 
@@ -13,7 +13,7 @@
   import {get} from 'svelte/store';
   import type {sMenu} from '../../../types';
   import Add from './Add.svelte';
-  import Edit from './Add.svelte';
+  import Edit from './Edit.svelte';
   import Show from './Show.svelte';
   import Delete from './Delete.svelte';
   import Menu from '$components/_includes/Menu.svelte';
@@ -185,7 +185,7 @@
 <div
   class=" ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
-  <Abercrome titre="Parametres" parent="Dashbord" current="statut professionnelle" />
+  <Abercrome titre="Parametres" parent="Dashbord" current="statut professionnel" />
   <!-- Responsive Toggler -->
   <div class="col-span-12">
     <div
@@ -197,7 +197,7 @@
         <h1
           class="text-dark dark:text-title-dark mb-0 inline-flex items-center overflow-hidden py-[16px] text-[18px] font-semibold text-ellipsis whitespace-nowrap"
         >
-          Liste des statut professionnelle
+          Liste des statuts professionnels
         </h1>
 
         <!-- {#if PERMISSION_MAP['add'].includes(permission as Permission)} -->
@@ -283,15 +283,15 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="xl" title="Créer un statut professionnel">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
+<Modale bind:open={openEdit} size="xl" title="Modifier un statut professionnel">
   <Edit bind:open={openEdit} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openShow} size="xl" title="Détails d'une civilité">
+<Modale bind:open={openShow} size="xl" title="Détails d'un statut professionnel">
   <Show bind:open={openShow} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openDelete} size="xl" title="Supprimer civilité">
+<Modale bind:open={openDelete} size="xl" title="Supprimer statut professionnel">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
 </Modale>

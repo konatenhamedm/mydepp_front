@@ -302,9 +302,14 @@ export interface Doc {
 
 export interface UserAdmin {
   id: number;
-  username: string;
   email: string;
   roles: string[];
+  isActive: boolean;
+  personne: {
+    nom: string;
+    prenoms: string;
+   }
+    
   /*   nom: string; */
   /* prenoms: string;
   phone: string; */

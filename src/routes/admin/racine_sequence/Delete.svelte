@@ -22,7 +22,7 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,`/devises/delete/` + data?.id,"DELETE");
+			const res = await apiFetch(true,`/racineSequence/delete/` + data?.id,"DELETE");
 
 			if (res) {
 				isLoad = false;
@@ -45,7 +45,7 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Message d'alerte -->
 	<div class="text-center">
 		<h3 class="mb-4 text-lg font-medium text-gray-900">Confirmer la suppression</h3>

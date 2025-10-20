@@ -1,12 +1,12 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
 	import { apiFetch, BASE_URL_API } from '$lib/api';
 	import { A, Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputse/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputse/InputUserSelect.svelte';
+	import InputTextArea from '$components/inputs/InputTextArea.svelte';
+	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -18,10 +18,9 @@
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
+	let item: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: ''
 	};
 
 
@@ -32,10 +31,9 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await apiFetch(true,'/region/create', "POST",{
+				code: item.code,
+				libelle: item.libelle
 			});
 
 			if (res) {
@@ -50,12 +48,7 @@
 		}
 	}
 
-	function handleFileChange(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-		}
-	}
+	
 
 	function handleModalClose(event: Event) {
 		if (isLoad) {
@@ -65,32 +58,28 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
-				<InputSimple
-					fieldName="code"
+				<!-- Champ pour le code du item -->
+				<InputSimple  fieldName="libelle" type="text"				
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={item.code}
+					placeholder="Entrez le code"
+					required={true}
 				/>
 
-				<InputSimple
-					fieldName="symbole"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+				<InputSimple  fieldName="libelle" type="text"
+					label="Libelle"
+					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
+					required={true}
 				/>
 
-				<InputSimple
-					fieldName="nb_decimal"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
+				
+
 			</div>
 		</form>
 	</div>

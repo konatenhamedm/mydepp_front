@@ -1,12 +1,12 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
 	import { apiFetch, BASE_URL_API } from '$lib/api';
 	import { A, Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputse/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputse/InputUserSelect.svelte';
+	import InputTextArea from '$components/inputs/InputTextArea.svelte';
+	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -65,28 +65,25 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Champ pour le code du devise -->
-				<InputSimple
-					fieldName="code"
+				<InputSimple  fieldName="libelle" type="text"				fieldName="code"
 					label="Code"
 					bind:field={devise.code}
 					placeholder="Entrez le code du devise"
 				/>
 
-				<InputSimple
-					fieldName="symbole"
+				<InputSimple  fieldName="libelle" type="text"
 					label="Symbole"
 					bind:field={devise.symbole}
 					placeholder="Entrez le symbole du devise"
 				/>
 
-				<InputSimple
-					fieldName="nb_decimal"
+				<InputSimple  fieldName="nb_decimal" type="text"
 					label="Nombre decimal"
 					bind:field={devise.nb_decimal}
 					placeholder="Entrez le nombre décimal du devise"

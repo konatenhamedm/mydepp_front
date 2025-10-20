@@ -1,9 +1,9 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
   import {apiFetch, BASE_URL_API} from '$lib/api';
   import {Button, Modal, Select} from 'flowbite-svelte';
   import Notification from '$components/_includes/Notification.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
   import Modale from '$components/Modales/Modale.svelte';
   import {onMount} from 'svelte';
   import Edit from './Edit.svelte';
@@ -184,7 +184,7 @@
 <div
   class=" ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
-  <Abercrome titre="civilité" parent="Dashbord" current="civilité" />
+  <Abercrome titre="commune" parent="Dashbord" current="commune" />
   <!-- Responsive Toggler -->
   <div class="col-span-12">
     <div
@@ -196,7 +196,7 @@
         <h1
           class="text-dark dark:text-title-dark mb-0 inline-flex items-center overflow-hidden py-[16px] text-[18px] font-semibold text-ellipsis whitespace-nowrap"
         >
-          Liste des civilités
+          Liste des communes
         </h1>
 
         <!-- {#if PERMISSION_MAP['add'].includes(permission as Permission)} -->
@@ -283,15 +283,15 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="xl" title="Créer une commune">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
+<Modale bind:open={openEdit} size="xl" title="Modifier une commune">
   <Edit bind:open={openEdit} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openShow} size="xl" title="Détails d'une civilité">
+<Modale bind:open={openShow} size="xl" title="Détails d'une commune">
   <Show bind:open={openShow} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openDelete} size="xl" title="Supprimer civilité">
+<Modale bind:open={openDelete} size="xl" title="Supprimer commune">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
 </Modale>

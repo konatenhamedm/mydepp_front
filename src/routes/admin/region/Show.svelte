@@ -1,9 +1,9 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
 	import { BASE_URL_API } from '$lib/api';
 	import { Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
     function cancelDelete() {
         open = false;
@@ -18,9 +18,8 @@
 	// Initializing the user object with only email and status
 	let item: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
-
+		libelle: ''
+		
 	};
 
 	export let data: Record<string, string> = {};
@@ -30,8 +29,8 @@
 
 		console.log(data)
 		item.code = data?.code
-		item.symbole = data?.symbole
-		item.nb_decimal = data?.nb_decimal
+		item.libelle = data?.libelle
+		
 
     }
 
@@ -50,7 +49,7 @@
 
 
 <!-- Modal Content Wrapper -->
-<div class="bg-white rounded-lg shadow p-1 space-y-4">
+<div class="bg-white rounded-lg  p-1 space-y-4">
 
     <!-- Card Body -->
     <div class="space-y-6">
@@ -63,17 +62,12 @@
 					</div>
 				</div>
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Symbole</label>
+					<label class="font-semibold text-gray-700">Libelle</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.symbole || "Non spécifié"}
+						{item.libelle || "Non spécifié"}
 					</div>
 				</div>
-				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Nombre decimal</label>
-					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.nb_decimal }
-					</div>
-				</div>
+				
 
 			</div>
             
