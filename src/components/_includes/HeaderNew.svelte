@@ -23,56 +23,57 @@
 
 </script>
 
-<header class="bg-white shadow-sm fixed w-full top-0 z-50">
+<header class="bg-white shadow-lg fixed w-full top-0 z-50 " style="height: 80px;">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
             <a
-              class="flex items-center"
+              class=""
               href="/"
               ><img
-                src="images/new_Image/logo-depps.png"
+                src="/images/new_Image/logo-depps.png"
                 alt="MYDEPPS Logo"
-                class="h-10 w-auto"
+                
+                style="height: 75px; width: auto;"
             /></a>
           </div>
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-8">
               <a
-                class="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
                 href="/"
                 >Accueil</a
               ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
                 href="/about"
                 >À propos</a
               ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
                 href="/services"
                 >E-DEPPS</a
               ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
+                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
                 href="/contact"
                 >Contact</a
               >
               {#if isAuth}
               <a
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
                 href="/dashbboard"
                 >Tableau de bord</a
               ><button 
                 on:click={logout}
-                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
+                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
               >
                 Deconnexion
               </button>
               {:else}
                <a
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
                 href="/inscription"
                 >Inscription</a
               ><a
-                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
+                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
                 href="/connexion"
                 >Connexion</a
               >
@@ -229,28 +230,7 @@ html {
   font-variation-settings: normal;
   -webkit-tap-highlight-color: transparent;
 }
-body {
-  margin: 0;
-  line-height: inherit;
-}
-hr {
-  height: 0;
-  color: inherit;
-  border-top-width: 1px;
-}
-abbr:where([title]) {
-  -webkit-text-decoration: underline dotted;
-  text-decoration: underline dotted;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-size: inherit;
-  font-weight: inherit;
-}
+
 a {
   color: inherit;
   text-decoration: inherit;
