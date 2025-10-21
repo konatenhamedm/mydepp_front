@@ -1,12 +1,12 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
 	import { apiFetch, BASE_URL_API } from '$lib/api';
 	import { A, Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputse/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputse/InputUserSelect.svelte';
+	import InputTextArea from '$components/inputs/InputTextArea.svelte';
+	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -19,9 +19,7 @@
 
 	// Initializing the user object with only email and status
 	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: '',
 	};
 
 
@@ -32,10 +30,9 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await apiFetch(true,'/statusPro/create', "POST",{
+				libelle: devise.libelle
+				
 			});
 
 			if (res) {
@@ -65,27 +62,21 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Champ pour le code du devise -->
-				
-
-				<InputSimple
-					fieldName="symbole"
-					label="Symbole"
-					bind:field={devise.symbole}
+			
+				<InputSimple  fieldName="libelle" type="text"
+					label="Libelle"
+					bind:field={devise.libelle}
 					placeholder="Entrez le symbole du devise"
+					required={true}
 				/>
 
-				<InputSimple
-					fieldName="nb_decimal"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
+				
 			</div>
 		</form>
 	</div>

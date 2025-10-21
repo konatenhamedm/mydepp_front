@@ -1,45 +1,46 @@
 <script lang="ts">
-  import { Button, Input, Label, Modal, Textarea } from "flowbite-svelte";
-
-  export let label: string;
-  export let field: any;
-  export let fieldName: string;
-  export let placeholder: string = "";
+  export let label: string = '';
+  export let id: string = 'password';
+  export let value: string = '';
+  export let placeholder: string = '';
   export let disabled: boolean = false;
+  export let required: boolean = false;
+  export let error: string = '';
 
-  let showPassword = false; // To toggle password visibility
-  // export let requis: boolean = false; // Si nécessaire, décommentez et utilisez correctement
+  let showPassword = false;
 </script>
 
-<Label class="col-span-6 space-y-1 sm:col-span-3">
-  <span>{label}</span>
- 
-  <div class="relative flex w-full">
-    {#if showPassword}
-      <input
-        id="Password"
-        bind:value={field}
-        class="border rounded w-full py-3 px-3 leading-tight border-gray-200 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono js-password"
-        type="text"
-        {placeholder}
-        {disabled}
-        {...$$restProps}
-      />
-    {:else}
-      <input
-        id="Password"
-        bind:value={field}
-        class="border rounded w-full py-3 px-3 leading-tight border-gray-200 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono js-password"
-        type="password"
-        {placeholder}
-        {disabled}
-        {...$$restProps}
-      />
-    {/if}
+<div class="w-full mx-auto">
+  {#if label}
+    <label for={id} class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      {label}
+      {#if required}
+        <span class="text-red-500">*</span>
+      {/if}
+    </label>
+  {/if}
+
+  <div class="relative">
+    <input
+      id={id}
+      bind:value={value}
+      type={showPassword ? 'text' : 'password'}
+      placeholder={placeholder}
+      {disabled}
+      {required}
+      class={`w-full min-h-[50px] px-5 py-3 text-[15px] rounded-md outline-none ring-0 pr-12
+        ${error 
+          ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+          : 'border !border-black bg-white text-black dark:bg-box-dark-up dark:text-subtitle-dark focus:border-black focus:ring-0'}
+      `}
+    />
+
+    <!-- Bouton toggle affichage -->
     <button
       type="button"
-      class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600"
+      class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
       on:click={() => (showPassword = !showPassword)}
+      tabindex="-1"
     >
       {#if showPassword}
         👁️‍🗨️
@@ -47,6 +48,9 @@
         👁️
       {/if}
     </button>
-    <!-- <input class=" border-1 rounded w-full py-3 px-3 leading-tight border-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-700 focus:bg-white text-gray-700 pr-16 font-mono js-password" id="password" type="password" name="login[password]" autocomplete="off" placeholder="*********" value="1234@abc" required="" /> -->
   </div>
-</Label>
+
+  {#if error}
+    <p class="mt-1 text-sm text-red-500">{error}</p>
+  {/if}
+</div>
