@@ -6,7 +6,7 @@
 	const colorMap: Record<string, string> = {
 	primary: 'bg-primary hover:bg-primary/80 border border-primary text-white',
 	secondary: 'bg-secondary hover:bg-secondary/80 border border-secondary text-foreground',
-	success: 'bg-success hover:bg-success/80 border border-success text-white',
+	success: 'bg-info hover:bg-info/80 border border-info text-white',
 	info: 'bg-info hover:bg-info/80 border border-info text-white',
 	warning: 'bg-warning hover:bg-warning/80 border border-warning text-white',
 	danger: 'bg-danger hover:bg-danger/80 border border-danger text-white',
@@ -20,7 +20,7 @@
 	{#each actions as action}
 		<button
 			on:click={() => onAction(action.action, item)}
-			class={`inline-flex h-[30px] items-center justify-center gap-[6px] rounded-[4px] px-[10px] text-[12px] font-semibold capitalize transition duration-300 ease-in-out ${colorMap[action.color] || 'bg-gray-500 border-gray-500 text-white'}`}
+			class={`inline-flex h-[30px] items-center  gap-[6px] rounded-[4px] px-[10px] text-[20px] font-semibold capitalize transition duration-300 ease-in-out ${colorMap[action.color] || 'bg-gray-500 border-gray-500 text-white'}`}
 			title={action.title}
 		>
 			<i class={`uil uil-${action.icon}`}></i>

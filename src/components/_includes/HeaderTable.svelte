@@ -3,7 +3,7 @@
   export let afficheAction: boolean = true;
 </script>
 
-<thead class="bg-gray-50 text-gray-600 text-left">
+<thead class=" text-white text-left" style="background-color: #151111">
   <tr>
     {#each item as title}
       <th

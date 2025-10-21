@@ -17,11 +17,13 @@
 </script>
 
 <header
-  class="drop-shadow-1 dark:bg-box-dark sticky top-0 flex min-h-[70px] w-full bg-white max-xl:z-[9999] xl:z-[999] dark:drop-shadow-none"
+  class="drop-shadow-1 dark:bg-box-dark sticky top-0 flex min-h-[70px] w-full  max-xl:z-[9999] xl:z-[999] dark:drop-shadow-none"
+  style="background-color: #151111 !important; color: white"
 >
   <!-- Navigation -->
   <div
-    class="nav-wrap max-xs:ps-[15px] max-xs:pe-[15px] dark:bg-box-dark flex flex-1 bg-white ps-[30px] pe-[30px] md:ps-[20px]"
+    class="nav-wrap max-xs:ps-[15px] max-xs:pe-[15px] dark:bg-box-dark flex flex-1  ps-[30px] pe-[30px] md:ps-[20px]"
+    style="background-color: #151111 !important; color: white"
   >
     <!-- Header left menu -->
 
@@ -51,7 +53,7 @@
       </li>
       <li>
         <a
-          class="hover:bg-primary/10 hover:text-primary dark:hover:text-title-dark dark:hover:bg-box-dark-up group dark:text-subtitle-dark max-md:dark:hover:bg-box-dark-up max-md:bg-normalBG max-md:dark:bg-box-dark-up max-md:dark:hover:text-subtitle-dark flex h-[34px] min-w-[34px] cursor-pointer items-center justify-center rounded-full bg-transparent text-[19px] text-[#525768] transition duration-200 ease-in-out sm:h-[40px] sm:w-[40px] sm:min-w-[40px] sm:text-[20px] xl:[&.hide]:hidden"
+          class="hover:bg-primary/10 hover:text-primary dark:hover:text-title-dark dark:hover:bg-box-dark-up group dark:text-subtitle-dark max-md:dark:hover:bg-box-dark-up max-md:bg-normalBG max-md:dark:bg-box-dark-up max-md:dark:hover:text-subtitle-dark flex h-[34px] min-w-[34px] cursor-pointer items-center justify-center rounded-full bg-transparent text-[19px] text-white transition duration-200 ease-in-out sm:h-[40px] sm:w-[40px] sm:min-w-[40px] sm:text-[20px] xl:[&.hide]:hidden"
           id="slim-toggler"
         >
           <i
@@ -70,10 +72,10 @@
     >
       <button
         type="button"
-        class="dark:text-subtitle-dark flex min-h-[40px] items-center text-[22px] text-[#a0a0a0] xl:hidden"
+        class="dark:text-subtitle-dark flex min-h-[40px] items-center text-[22px] text-white xl:hidden"
         id="author-dropdown"
       >
-        <i class="uil uil-ellipsis-v text-[18px]"></i>
+        <i class="uil uil-ellipsis-v text-[18px] text-white" ></i>
       </button>
       <ul
         id="right-ellipsis-trigger"
@@ -140,7 +142,7 @@
                 src="/images/avatars/thumbs.png"
                 alt="user photo"
               />
-              <span class="hidden xl:block"> {user.username}</span>
+              <span class="hidden xl:block text-white"> {user.username}</span>
               <i
                 class="uil uil-angle-down text-light dark:text-subtitle-dark hidden text-[18px] xl:block"
               ></i>

@@ -1,5 +1,6 @@
 <script>
   import { apiFetch } from "$lib/api";
+  import axios from "axios";
   import PutMdp from "./putMdp.svelte";
   import PutOtp from "./putOtp.svelte";
 
@@ -23,7 +24,7 @@ const checkEmail = (email) => {
   if (checkEmail(email)) {
     sessionStorage.setItem("resetEmail", email);
 
-    const res = await apiFetch(true,'/reset-password/request', "POST",{
+    const res = await axios.post('http://backend.leadagro.net/api/reset-password/request', {
 				email:email,
 			});
     alert("Code de vérification envoyé à votre adresse e-mail.");
@@ -52,7 +53,7 @@ const checkEmail = (email) => {
  };
 
 const ResendOtp = async() =>{
-    const res = await apiFetch(true,'/reset-password/request', "POST",{
+    const res = await axios.post('http://backend.leadagro.net/api/reset-password/request', {
 				email:sessionStorage.getItem("resetEmail"),
 			});
 
@@ -66,12 +67,12 @@ const ResendOtp = async() =>{
         alert("OTP invalide");
         return;
     }else{
-     const res = await apiFetch(true,'/reset-password/verify-token-expired', "POST",{
+     const res = await axios.post('http://backend.leadagro.net/api/reset-password/verify-token-expired', {
         email: sessionStorage.getItem("resetEmail"),
         token: otp
       });
       console.log(res);
-      if(res.expired == false){
+      if(res.data.expired == false){
         alert("OTP valide");
         sessionStorage.setItem("otp", otp);
         otpSubmitted = true;
@@ -96,13 +97,13 @@ const checkMdp = (mdp) => {
   if (checkMdp(mdp)) {
     const email = sessionStorage.getItem("resetEmail");
     const otp = sessionStorage.getItem("otp");
-    const res = await apiFetch(true,'/reset-password/reset', "POST",{
+    const res = await axios.post('http://backend.leadagro.net/api/reset-password/reset', {
       email:email,
       token:otp,
 				newPassword:mdp,
 			});
 
-    if(res.success){
+    if(res.data.success){
         alert("Mot de passe modifié avec succès.");
         window.location.href = "/";
       }else{
@@ -118,11 +119,12 @@ const checkMdp = (mdp) => {
 <main>
 
     {#if emailSubmitted == false}
-    <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div class="min-h-screen bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center flex items-center justify-center px-4">
       <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
         <div class="text-center mb-8">
           <div class="text-3xl font-['Pacifico'] text-blue-500 mb-2">
-            MY DEPPS
+            <img src="/_files/logo-depps.png" alt="Logo MyDepps" class="mx-auto" width="150"
+          height="820"/>
           </div>
           <!-- <div
             class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto"
@@ -150,25 +152,25 @@ const checkMdp = (mdp) => {
               type="email"
               id="email"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              placeholder="Entrez votre adresse e-mail"
+              placeholder="Entrez votre  e-mail"
               required={true}
               bind:value={email}
             />
           </div>
           <button
-            type="submit"
+            type="button"
             disabled={!checkEmail(email)}
-
+            on:click={handleSubmit}
             class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
           >
-            Send Verification Code
+            Evoyer le code OTP
           </button>
         </form>
         <div class="text-center mt-6">
           <a
             class="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
             href="/connexion"
-            >← Back to Login</a
+            >← Retour à la connexion</a
           >
         </div>
       </div>
@@ -178,7 +180,7 @@ const checkMdp = (mdp) => {
       <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
         <div class="text-center mb-8">
           <div class="text-3xl font-['Pacifico'] text-blue-500 mb-2">
-            MY DEPPS
+            <img src="/_files/logo-depps.png" alt="Logo MyDepps" class="mx-auto h-16 w-16"/>
           </div>
           <!-- <div
             class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto"
@@ -282,7 +284,7 @@ const checkMdp = (mdp) => {
       <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
         <div class="text-center mb-8">
           <div class="text-3xl font-['Pacifico'] text-blue-500 mb-2">
-            MY DEPPS
+            <img src="/_files/logo-depps.png" alt="Logo MyDepps" class="mx-auto h-30 w-16"/>
           </div>
           <!-- <div
             class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto"

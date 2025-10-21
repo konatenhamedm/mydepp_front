@@ -44,7 +44,7 @@ console.log(success);
 
 <!-- style="background-color: #4075d7;"  -->
 <div
-  class="flex justify-center items-center min-h-screen bg-gray-100 px-4 bg-[url('/bg5.jpg')] bg-top bg-no-repeat bg-full"
+  class="flex justify-center items-center min-h-screen bg-gray-100 px-4 bg-[url('/bg5.jpg')] bg-top bg-no-repeat bg-full bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center"
 >
   <div class="w-full max-w-md">
     <div class="bg-white rounded-lg shadow p-6">

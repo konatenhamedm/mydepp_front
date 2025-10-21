@@ -266,15 +266,30 @@
     class="min-h-screen  flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8"
     style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
   >
-    <div class="max-w-2xl w-full">
-      <div class="text-center mb-8">
+    <div class="max-w-7xl w-full">
+      <!-- <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">
           Inscription Professionnel de santé
         </h1>
         <p class="text-gray-600">
           Bienvenue dans la section d'inscription des professionnels de santé
         </p>
-      </div>
+      </div> -->
+        <section
+          class="relative  text-white py-20 mb-10"
+          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);
+"
+        >
+          <div class="absolute inset-0 bg-black/20"></div>
+          <div
+            class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          >
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Inscription Professionnel de santé</h1>
+            <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+              Bienvenue dans la section d'inscription des professionnels de santé
+            </p>
+          </div>
+        </section>
       <div class="flex justify-between mb-8 text-sm">
         {#if step >= 1}
           <div class="flex items-center">

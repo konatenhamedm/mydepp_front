@@ -58,9 +58,9 @@
 <main>
   <HeaderNew />
   <div
-    class="min-h-screen pt-16"
-    style="background-image: linear-gradient(to bottom right, #eff6ff, #faf5ff);"
-  >
+    class="min-h-screen pt-10 bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center"
+    >
+    <!-- style="background-image: linear-gradient(to bottom right, #eff6ff, #faf5ff);" -->
     <div
       class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8"
     >
@@ -166,7 +166,7 @@
               Pas encore de compte ?<!-- -->
               <a
                 class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
-                href="/preview/99b317f5-8e79-41ff-ad8d-bcf2d258bd10/2961349/inscription"
+                href="/inscription"
                 >Créer un compte</a
               >
             </p>

@@ -80,7 +80,7 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6">
-				<InputSimple  fieldName="libelle" type="text"				fieldName="code"
+				<InputSimple  fieldName="libelle" type="text"				
 					label="Code"
 					bind:field={devise.code}
 					placeholder="Entrez le code du devise"
