@@ -71,7 +71,7 @@
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Champ pour le code du devise -->
-				<InputSimple  fieldName="libelle" type="text"				fieldName="code"
+				<InputSimple  fieldName="libelle" type="text"				
 					label="Code"
 					bind:field={devise.code}
 					placeholder="Entrez le code du devise"

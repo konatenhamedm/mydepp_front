@@ -18,8 +18,8 @@
   let currentPath = '';
   $: currentPath = $page?.url?.pathname ?? (browser ? window.location.pathname : '');
 
-  const BASE_LINK_CLASS = 'rounded-e-[20px] flex h-12 cursor-pointer items-center gap-[16px] truncate px-6 py-4 text-[14px] font-medium outline-none transition-colors duration-300 ease-linear text-gray-700 dark:text-white/80 hover:bg-primary/10 dark:hover:bg-white/10';
-  const SUB_LINK_CLASS = 'rounded-e-[20px] flex cursor-pointer items-center truncate py-[10px] pe-6 ps-[60px] text-[14px] outline-none transition-colors duration-300 ease-linear text-gray-700 dark:text-white/80 hover:bg-primary/10 dark:hover:bg-white/10';
+  const BASE_LINK_CLASS = 'rounded-e-[20px] flex h-12 cursor-pointer items-center gap-[16px] truncate px-6 py-4 text-[14px] font-medium outline-none transition-colors duration-300 ease-linear text-gray-700 dark:text-white/80 hover:bg-white/10 dark:hover:bg-white/10';
+  const SUB_LINK_CLASS = 'rounded-e-[20px] flex cursor-pointer items-center truncate py-[10px] pe-6 ps-[60px] text-[14px] outline-none transition-colors duration-300 ease-linear text-gray-700 dark:text-white/80 hover:bg-white/10 dark:hover:bg-white/10';
   const SECTION_TITLE_CLASS = 'slug dark:text-white/40 mb-[10px] mt-[30px] block px-6 text-[12px] font-medium uppercase text-gray-500 dark:text-white/40';
 
   const getUserRole = () => {
@@ -172,7 +172,8 @@
   }
 </script>
 
-<aside id="asideBar" class="asidebar dark:bg-box-dark fixed start-0 top-0 z-[1035] h-screen overflow-hidden bg-white xl:!w-[280px] xl:[&.collapsed]:!w-[80px] [&.collapsed]:!w-[250px] xl:[&.TopCollapsed]:!w-[0px] [&.TopCollapsed]:!w-[250px] !transition-all !duration-[0.2s] ease-linear delay-[0s] !w-0 xl:[&.collapsed>.logo-wrapper]:w-[80px]">
+<aside id="asideBar" class="asidebar dark:bg-box-dark fixed start-0 top-0 z-[1035] h-screen overflow-hidden  xl:!w-[280px] xl:[&.collapsed]:!w-[80px] [&.collapsed]:!w-[250px] xl:[&.TopCollapsed]:!w-[0px] [&.TopCollapsed]:!w-[250px] !transition-all !duration-[0.2s] ease-linear delay-[0s] !w-0 xl:[&.collapsed>.logo-wrapper]:w-[80px]"
+>
   <!-- Logo -->
   <div class="flex w-[280px] border-e border-[#edf2f9] dark:border-box-dark-up logo-wrapper items-center h-[71px] dark:bg-box-dark-up max-xl:hidden">
     <a href="/admin" class="flex items-center justify-start w-full h-full">
@@ -186,7 +187,7 @@
     </a>
   </div>
 
-  <nav id="navBar" class="navBar dark:bg-box-dark scrollbar relative h-[calc(100vh-71px)] bg-white overflow-y-auto min-w-[280px]">
+  <nav style="background-color: #151111; color:white;" id="navBar" class="navBar dark:bg-box-dark scrollbar relative h-[calc(100vh-71px)] bg-white overflow-y-auto min-w-[280px]">
     {#if isLoading}
       {#each Array(3) as _}
         <MenuSkeleton />

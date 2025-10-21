@@ -89,32 +89,6 @@
       </div>
     </div>
 
-    
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-      {#each cards as card, i}
-        <div
-          on:click={() => window.location.href = card.link}
-          class="cursor-pointer bg-gradient-to-br {card.color} rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 p-6 group animate-fadeIn"
-          style="animation-delay: {i * 0.08}s"
-        >
-          <div class="flex items-start justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-white/60 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <i class="{card.icon} text-2xl text-blue-600"></i>
-            </div>
-            {#if card.badge}
-              <span class="text-xs px-3 py-1 rounded-full font-medium {card.badgeColor}">
-                {card.badge}
-              </span>
-            {/if}
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
-            {card.title}
-          </h3>
-          <p class="text-sm text-gray-600">{card.description}</p>
-        </div>
-      {/each}
-    </section>
-
     <!-- Section Synthèse -->
     <section class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
       <div class="bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center border border-gray-100">
@@ -146,6 +120,32 @@
         <i class="ri-message-line text-purple-600 text-2xl"></i>
       </div>
     </section>
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+      {#each cards as card, i}
+        <div
+          on:click={() => window.location.href = card.link}
+          class="cursor-pointer bg-gradient-to-br {card.color} rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300 p-6 group animate-fadeIn"
+          style="animation-delay: {i * 0.08}s"
+        >
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-white/60 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i class="{card.icon} text-2xl text-blue-600"></i>
+            </div>
+            {#if card.badge}
+              <span class="text-xs px-3 py-1 rounded-full font-medium {card.badgeColor}">
+                {card.badge}
+              </span>
+            {/if}
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
+            {card.title}
+          </h3>
+          <p class="text-sm text-gray-600">{card.description}</p>
+        </div>
+      {/each}
+    </section>
+
+    
 
     <!-- Activité récente -->
     <section class="bg-white border border-gray-100 shadow-sm rounded-3xl p-6 animate-fadeIn">
