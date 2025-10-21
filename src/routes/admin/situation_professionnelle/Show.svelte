@@ -1,9 +1,9 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
 	import { BASE_URL_API } from '$lib/api';
 	import { Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
     function cancelDelete() {
         open = false;
@@ -47,7 +47,7 @@
 
 
 <!-- Modal Content Wrapper -->
-<div class="bg-white rounded-lg shadow p-1 space-y-4">
+<div class="bg-white rounded-lg  p-1 space-y-4">
 
     <!-- Card Body -->
     <div class="space-y-6">

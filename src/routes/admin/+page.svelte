@@ -9,8 +9,8 @@
   import Notification from '$components/_includes/Notification.svelte';
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
-  import InputSimple from '$components/inputse/InputSimple.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
 
   export let data;
  

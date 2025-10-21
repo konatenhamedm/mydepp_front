@@ -1,5 +1,5 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
   import { apiFetch } from '$lib/api';
   import { Button } from 'flowbite-svelte';
   import { EyeOutline } from 'flowbite-svelte-icons';

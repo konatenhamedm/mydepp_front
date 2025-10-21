@@ -6,6 +6,8 @@
 	export let selectedId: any;
 	export let isSelected: boolean = true;
 	export let disabled: boolean = false;
+	export let required: boolean = false;
+	
 </script>
 
 <div class="w-full mx-auto">
