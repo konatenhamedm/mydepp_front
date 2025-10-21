@@ -1,12 +1,12 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
-  import {apiFetch, BASE_URL} from '$lib/api';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
+  import {apiFetch, BASE_URL_API} from '$lib/api';
   import {Button, Modal, Select} from 'flowbite-svelte';
   import Notification from '$components/_includes/Notification.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
   import {onMount} from 'svelte';
-  import InputTextArea from '$components/inputse/InputTextArea.svelte';
-  import InputUserSelect from '$components/inputse/InputUserSelect.svelte';
+  import InputTextArea from '$components/inputs/InputTextArea.svelte';
+  import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
 
   export let open: boolean = false; // modal control
   let isLoad = false;
@@ -16,8 +16,8 @@
   let notificationType = 'info';
 
   // Initializing the item object with only email and status
-  let pays: any = {
-    code: '',
+  let item: any = {
+
     libelle: '',
   };
   let itemdata: any = [];
@@ -25,8 +25,8 @@
   export let data: Record<string, string> = {};
 
   function init(form: HTMLFormElement) {
-    pays = {
-      code: data?.code || '',
+    item = {
+      
       libelle: data?.libelle || '',
     };
   }
@@ -38,17 +38,12 @@
 
     try {
       // Example POST request (replace with your actual API call)
-      const res = await apiFetch(
-        true,
-        BASE_URL + '/pays/update/' + data?.id,
-        'PUT',
-        {
-          code: pays.code,
-          libelle: pays.libelle,
-        }
-      );
+      const res = await apiFetch(true, '/pays/update/' + data?.id, 'PUT', {
+        code: item.code,
+        libelle: item.libelle,
+      });
 
-      if (res.ok) {
+      if (res) {
         isLoad = false;
         open = false; // Close the modal
       }
@@ -62,33 +57,31 @@
       event.preventDefault();
     }
   }
+
+  // Gérer l'upload de l'image
+  let imageUrl: string | null = null;
+
+  function handleImageUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      item.flag = input.files[0];
+      imageUrl = URL.createObjectURL(item.flag); // Créer une URL pour l'aperçu de l'image
+    }
+  }
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
   <!-- Card Body -->
   <div class="space-y-6">
     <form action="#" use:init>
       <div class="grid grid-cols-1 gap-6">
-        <InputSimple
-          fieldName="code"
-          label="Code"
-          bind:field={pays.code}
-          placeholder="Entrez le code du pays"
-        />
+     
 
-        <InputSimple
-          fieldName="libelle"
-          label="Libellé"
-          bind:field={pays.libelle}
-          placeholder="Entrez le nom du pays"
-        />
-
-        <InputSimple
-          fieldName="taille_phone"
-          label="Taille phone"
-          bind:field={pays.taille_phone}
-          placeholder="Entrez la taille du phone"
+        <InputSimple  fieldName="libelle" type="text"
+          label="Libelle"
+          bind:field={item.libelle}
+          placeholder="Entrez le libelle"
         />
       </div>
     </form>

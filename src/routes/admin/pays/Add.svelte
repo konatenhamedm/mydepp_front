@@ -1,12 +1,12 @@
 <script lang="ts">
-	import InputSimple from '$components/inputse/InputSimple.svelte';
-	import { apiFetch, BASE_URL } from '$lib/api';
-	import { Button, Modal, Select } from 'flowbite-svelte';
+	import InputSimple from '$components/inputs/InputSimple.svelte';
+	import { apiFetch, BASE_URL_API } from '$lib/api';
+	import { A, Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputse/InputSelect.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
 	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputse/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputse/InputUserSelect.svelte';
+	import InputTextArea from '$components/inputs/InputTextArea.svelte';
+	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -18,13 +18,11 @@
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let pays: any = {
-		code: '',
-		libelle: '',
-		taille_phone: 0
+	let item: any = {
+	
+		libelle: ''
 	};
 
-	
 
 	export let data: Record<string, string> = {};
 
@@ -33,16 +31,15 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/pays/create', "POST", {
-				code: pays.code,
-					libelle: pays.libelle,
-					taille_phone: pays.taille_phone
+			const res = await apiFetch(true,'/pays/create', "POST",{
+			
+				libelle: item.libelle
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = 'Pays créé avec succès!';
+				notificationMessage = 'Devise créé avec succès!';
 				notificationType = 'success';
 				showNotification = true;
 			}
@@ -51,12 +48,7 @@
 		}
 	}
 
-	function handleFileChange(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			pays.flag = input.files[0];
-		}
-	}
+	
 
 	function handleModalClose(event: Event) {
 		if (isLoad) {
@@ -66,34 +58,20 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du pays -->
-				<InputSimple
-					fieldName="code"
-					label="Code"
-					bind:field={pays.code}
-					placeholder="Entrez le code du pays"
-				/>
-
-				<InputSimple
-					fieldName="libelle"
-					label="Libellé"
-					bind:field={pays.libelle}
-					placeholder="Entrez le nom du pays"
-				/>
-
-				<InputSimple
-					fieldName="taille_phone"
-					label="Taille phone"
-					bind:field={pays.taille_phone}
-					placeholder="Entrez la taille du phone"
-				/>
-
+				<!-- Champ pour le code du item -->
 			
+				<InputSimple  fieldName="libelle" type="text"
+					label="Libelle"
+					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
+					required={true}
+				/>
+
 			</div>
 		</form>
 	</div>

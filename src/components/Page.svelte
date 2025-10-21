@@ -254,7 +254,7 @@
             <tbody class="divide-y divide-gray-200">
               {#each operateurs as op}
                 <tr>
-                  <td class="px-4 py-3 flex items-center gap-3">
+                  <td class="px-4 text-[12px]  py-3 flex items-center gap-3">
                     <img
                       src={op.logo}
                       alt={op.name}
@@ -262,8 +262,8 @@
                     />
                     <span class="font-medium text-gray-800">{op.name}</span>
                   </td>
-                  <td class="px-4 py-3 text-gray-900">{op.volume}</td>
-                  <td class="px-4 py-3 text-gray-900">{op.pays}</td>
+                  <td class="px-4 text-[12px]  py-3 text-gray-900">{op.volume}</td>
+                  <td class="px-4 text-[12px]  py-3 text-gray-900">{op.pays}</td>
                 </tr>
               {/each}
             </tbody>
