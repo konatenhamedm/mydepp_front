@@ -1,9 +1,9 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
   import {apiFetch, BASE_URL_API} from '$lib/api';
   import {Button, Modal, Select} from 'flowbite-svelte';
   import Notification from '$components/_includes/Notification.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
   import Modale from '$components/Modales/Modale.svelte';
   import {onMount} from 'svelte';
 
@@ -13,7 +13,7 @@
   import {get} from 'svelte/store';
   import type {sMenu} from '../../../types';
   import Add from './Add.svelte';
-  import Edit from './Add.svelte';
+  import Edit from './Edit.svelte';
   import Show from './Show.svelte';
   import Delete from './Delete.svelte';
   import Menu from '$components/_includes/Menu.svelte';
@@ -283,15 +283,15 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="xl" title="Créer une lieu diplôme">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
+<Modale bind:open={openEdit} size="xl" title="Modifier une lieu diplôme">
   <Edit bind:open={openEdit} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openShow} size="xl" title="Détails d'une civilité">
+<Modale bind:open={openShow} size="xl" title="Détails d'une lieu diplôme">
   <Show bind:open={openShow} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openDelete} size="xl" title="Supprimer civilité">
+<Modale bind:open={openDelete} size="xl" title="Supprimer lieu diplôme">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
 </Modale>

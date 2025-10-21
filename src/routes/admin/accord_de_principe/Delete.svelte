@@ -46,7 +46,7 @@
 </script>
 
 <!-- Modal Content Wrapper -->
-<div class="space-y-4 rounded-lg bg-white p-1 shadow">
+<div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Message d'alerte -->
 	<div class="text-center">
 		<h3 class="mb-4 text-lg font-medium text-gray-900">Confirmer la suppression</h3>

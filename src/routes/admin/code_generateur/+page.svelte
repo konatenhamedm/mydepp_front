@@ -1,9 +1,9 @@
 <script lang="ts">
-  import InputSimple from '$components/inputse/InputSimple.svelte';
+  import InputSimple from '$components/inputs/InputSimple.svelte';
   import {apiFetch, BASE_URL_API} from '$lib/api';
   import {Button, Modal, Select} from 'flowbite-svelte';
   import Notification from '$components/_includes/Notification.svelte';
-  import InputSelect from '$components/inputse/InputSelect.svelte';
+  import InputSelect from '$components/inputs/InputSelect.svelte';
   import Modale from '$components/Modales/Modale.svelte';
   import {onMount} from 'svelte';
   import Edit from './Edit.svelte';
