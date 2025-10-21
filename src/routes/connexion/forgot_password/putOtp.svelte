@@ -4,7 +4,7 @@
   import { apiFetch } from "$lib/api";
   import { parse } from "cookie";
 
-  $: console.log("Submitted prop:", submitted);
+  
  let otp1 = "";
  let otp2 = "";
  let otp3 = "";
@@ -40,7 +40,7 @@ const ResendOtp = async() =>{
       if(res.expired == false){
         alert("OTP valide");
         sessionStorage.setItem("otp", otp);
-        submitted();
+        submitted = true;
       }else{
         alert("OTP invalide ou expiré");
       }
@@ -149,7 +149,7 @@ const ResendOtp = async() =>{
         <div class="text-center mt-6">
           <a
             class="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
-            href="/preview/e5a92512-bd7c-4c37-8a2b-34032bed8507/3274550"
+            href="/connexion"
             >← Retour à la connexion</a
           >
         </div>

@@ -14,7 +14,7 @@
           <div
             class="absolute inset-0 transition-opacity duration-1000 opacity-100"
             style="
-              background-image: url(https://readdy.ai/api/search-image?query=Modern%20healthcare%20facility%20with%20medical%20professionals%20in%20white%20coats%2C%20clean%20hospital%20environment%2C%20professional%20medical%20team%2C%20bright%20lighting%2C%20contemporary%20medical%20equipment%2C%20healthcare%20excellence%20and%20innovation&width=1200&height=600&seq=hero1&orientation=landscape);
+              background-image: url(https://readdy.ai/api/search-image?query=African%20black%20medical%20professionals%20in%20white%20coats%2C%20diverse%20healthcare%20team%2C%20modern%20hospital%20environment%2C%20professional%20medical%20staff%20with%20dark%20skin%2C%20contemporary%20medical%20facility%2C%20healthcare%20excellence%20and%20diversity&width=1200&height=600&seq=hero3&orientation=landscape);
               background-size: cover;
               background-position: center;
               background-repeat: no-repeat;
@@ -212,8 +212,8 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div class="order-2 lg:order-1">
                 <div class="relative">
-                  <img style="height: 6.5rem !important;"
-                    src="images/new_Image/2150796734-removebg-preview.png"
+                  <img style="height: full !important;"
+                    src="/images/new_Image/2150796734-removebg-preview.png"
                     alt="MYDEPPS About"
                     class="w-full h-auto max-w-md mx-auto"
                   />

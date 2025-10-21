@@ -9,9 +9,9 @@
 <main>
     <HeaderNew/>
 <div
-        class="max-h-screen pt-20"
-        style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
-      >
+        class="max-h-screen pt-10 bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center"
+        >
+        <!-- style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);" -->
         <div class="py-12 px-4 sm:px-6 lg:px-8">
           <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">

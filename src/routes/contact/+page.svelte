@@ -8,7 +8,9 @@
     <HeaderNew/>
      <div class="min-h-screen bg-white pt-16">
         <section
-          class="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20"
+          class="relative  text-white py-20"
+          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);
+"
         >
           <div class="absolute inset-0 bg-black/20"></div>
           <div

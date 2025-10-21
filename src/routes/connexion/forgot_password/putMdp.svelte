@@ -77,7 +77,7 @@ const checkMdp = (mdp) => {
         <div class="text-center mt-6">
           <a
             class="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
-            href="/preview/e5a92512-bd7c-4c37-8a2b-34032bed8507/3274550"
+            href="/connexion"
             >← Back to Login</a
           >
         </div>
