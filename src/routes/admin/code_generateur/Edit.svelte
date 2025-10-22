@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import InputTextArea from '$components/inputs/InputTextArea.svelte';
 	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+    import InputDateSimple from '$components/inputs/InputDateSimple.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -17,9 +18,10 @@
 
 	// Initializing the item object with only email and status
 	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		civilite: "",
+		profession: "",
+		dateNaissance: "",
+		dateCreation: "",
 	};
 	let itemdata: any = [];
 
@@ -27,9 +29,10 @@
 
 	function init(form: HTMLFormElement) {
 		devise = {
-			code: data?.code || '',
-			symbole: data?.symbole || '',
-			nb_decimal: data?.nb_decimal || 0
+			civilite: data?.civilite.id || '',
+			profession: data?.profession.id || '',
+			dateNaissance: data?.dateNaissance || '',
+			dateCreation: data?.dateCreation || '',
 		};
 	}
 
@@ -62,16 +65,53 @@
 		}
 	}
 
-	// Gérer l'upload de l'image
-	let imageUrl: string | null = null;
+/**
+   * @type {any[]}
+   */
+   let objects = [
+     { name: "profession", url: "/profession/" },
+    { name: "civilites", url: "/civilite/" },
+    
+  ];
 
-	function handleImageUpload(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-			imageUrl = URL.createObjectURL(devise.flag); // Créer une URL pour l'aperçu de l'image
-		}
-	}
+  let values: {
+    profession: Civilite[];
+    civilites: Civilite[];
+    
+  } = {
+    civilites: [],
+    profession: []
+  };
+
+  async function getData() {
+    try {
+      let res = null;
+      objects.forEach(async (element) => {
+        res = await apiFetch(true, element.url);
+        if (res) {
+          if (Object.keys(values).includes(element.name)) {
+            values[element.name as keyof typeof values] = res.data;
+          } else {
+            console.error(`Invalid key: ${element.name}`);
+          }
+        } else {
+          console.error(
+            "Erreur lors de la récupération des données:",
+            res.statusText
+          );
+        }
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données:", error);
+    }
+  }
+
+
+  onMount(async() => {
+   await getData();
+
+  });
+
 </script>
 
 <!-- Modal Content Wrapper -->
@@ -79,25 +119,32 @@
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
-			<div class="grid grid-cols-1 gap-6">
-				<InputSimple  fieldName="libelle" type="text"				
-					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
-				/>
+			<div class="grid grid-cols-2 gap-4">
+				<InputDateSimple
+					fieldName="dateNaissance"
+					label="Date de création"
+					bind:field={devise.dateCreation}
+					placeholder="entrez la date de création"
+				></InputDateSimple>
+				<InputDateSimple
+					fieldName="dateNaissance"
+					label="Date de naissance"
+					bind:field={devise.dateNaissance}
+					placeholder="entrez la date de naissance"
+				></InputDateSimple>
 
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
-				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
-
+				<InputSelect
+					label="Civilite"
+					bind:selectedId={devise.civilite}
+					datas={values.civilites}
+					id="civilite"
+				></InputSelect>
+				<InputSelect
+					label="Profession"
+					bind:selectedId={devise.profession}
+					datas={values.profession}
+					id="profession"
+				></InputSelect>
 			</div>
 		</form>
 	</div>

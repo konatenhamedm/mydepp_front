@@ -67,7 +67,7 @@
 					<img
 						src={BASE_URL_API_UPLOAD+link}
 						alt="Aperçu de l'image"
-						class="h-16 w-16 rounded-md border border-gray-300 object-cover"
+						class="h-16 w-16 rounded-md border border-gray-300 object-cover" style="height: 50px !important;"
 					/>
 				</div>
 			{/if}
@@ -76,7 +76,7 @@
     <div class="flex-shrink-0">
       <img
         src={previewUrl}
-        alt="Aperçu de l'image"
+        alt="Aperçu de l'image" style="height: 50px !important;"
         class="h-16 w-16 rounded-md border border-gray-300 object-cover"
       />
     </div>

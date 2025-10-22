@@ -1,6 +1,6 @@
 <script lang="ts">
 	import InputSimple from '$components/inputs/InputSimple.svelte';
-	import { BASE_URL_API } from '$lib/api';
+	import { BASE_URL_API, BASE_URL_API_UPLOAD } from '$lib/api';
 	import { Button, Modal, Select } from 'flowbite-svelte';
 	import Notification from '$components/_includes/Notification.svelte';
 	import InputSelect from '$components/inputs/InputSelect.svelte';
@@ -17,21 +17,16 @@
 
 	// Initializing the user object with only email and status
 	let item: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: '',
+		path: '',
 
 	};
 
 	export let data: Record<string, string> = {};
 
 	function init(form: HTMLFormElement) {
-
-
-		console.log(data)
-		item.code = data?.code
-		item.symbole = data?.symbole
-		item.nb_decimal = data?.nb_decimal
+		item.libelle = data?.libelle
+		item.path = data?.path
 
     }
 
@@ -57,23 +52,18 @@
         <form action="#" use:init>
 			<div class="grid grid-cols-1 gap-1 mb-1">
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Code</label>
+					<label class="font-semibold text-gray-700">Libelle</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.code || "Non spécifié"}
+						{item.libelle || "Non spécifié"}
 					</div>
 				</div>
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Symbole</label>
+					<label class="font-semibold text-gray-700">Image</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.symbole || "Non spécifié"}
+						<img src={BASE_URL_API_UPLOAD + item.path.path + '/' + item.path.alt } alt="Image" class="w-full h-auto" />
 					</div>
 				</div>
-				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Nombre decimal</label>
-					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.nb_decimal }
-					</div>
-				</div>
+				
 
 			</div>
             

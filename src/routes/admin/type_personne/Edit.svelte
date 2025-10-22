@@ -18,8 +18,7 @@
 	// Initializing the item object with only email and status
 	let devise: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: ''
 	};
 	let itemdata: any = [];
 
@@ -28,8 +27,7 @@
 	function init(form: HTMLFormElement) {
 		devise = {
 			code: data?.code || '',
-			symbole: data?.symbole || '',
-			nb_decimal: data?.nb_decimal || 0
+			libelle: data?.libelle || ''
 		};
 	}
 
@@ -40,11 +38,10 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,'/devies/update/' + data?.id, "PUT", {
+			const res = await apiFetch(true,'/typePersonne/update/' + data?.id, "PUT", {
 
 				code: devise.code, 
-					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal
+				libelle: devise.libelle
 			});
 
 			if (res.ok) {
@@ -87,15 +84,9 @@
 				/>
 
 				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
-				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+					label="Libelle"
+					bind:field={devise.libelle}
+					placeholder="Entrez le libelle du devise"
 				/>
 
 			</div>

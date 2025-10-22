@@ -457,7 +457,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShow} size="lg" title="Détails de l'établissement ACP">
+<Modale bind:open={openShow} size="2xl" title="Détails de l'établissement ACP">
   <Show
     bind:open={openShow}
     data={current_data}
@@ -492,11 +492,3 @@
   />
 </Modale>
 
-<style>
-  .tab {
-    @apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700;
-  }
-  .tab-active {
-    @apply text-white border-transparent;
-  }
-</style>

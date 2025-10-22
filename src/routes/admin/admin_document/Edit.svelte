@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import InputTextArea from '$components/inputs/InputTextArea.svelte';
 	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+    import ImageInputNew from '$components/inputs/ImageInputNew.svelte';
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
@@ -16,43 +17,53 @@
 	let notificationType = 'info';
 
 	// Initializing the item object with only email and status
-	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+	let icons: any = {
+		libelle: '',
+		path: null
 	};
 	let itemdata: any = [];
 
 	export let data: Record<string, string> = {};
 
 	function init(form: HTMLFormElement) {
-		devise = {
-			code: data?.code || '',
-			symbole: data?.symbole || '',
-			nb_decimal: data?.nb_decimal || 0
+		icons = {
+			libelle: data?.libelle || '',
+			path: data?.path || null
 		};
 	}
 
 	onMount(() => {});
 
-	async function SaveFunction() {
+async function SaveFunction() {
+		const formData = new FormData();
+		formData.append("libelle", icons.libelle);
+
+		if (icons.path instanceof File) {
+			// Vérifie que c'est bien un fichier
+			formData.append("path", icons.path);
+		}
+		console.log(formData);
+
 		isLoad = true;
-
 		try {
-			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,'/devies/update/' + data?.id, "PUT", {
-
-				code: devise.code, 
-					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal
+			const res = await fetch(BASE_URL_API + "/adminDocument/update/" + data?.id, {
+				method: "POST",
+				body: formData,
 			});
 
 			if (res.ok) {
 				isLoad = false;
-				open = false; // Close the modal
+				open = false;
+				notificationMessage = "document créé avec succès!";
+				notificationType = "success";
+				showNotification = true;
 			}
 		} catch (error) {
-			console.error('Error saving:', error);
+			notificationMessage = "Une erreur crée lors de l enregistrement";
+			notificationType = "error";
+			showNotification = true;
+			isLoad = false;
+			console.error("Error saving:", error);
 		}
 	}
 
@@ -65,13 +76,7 @@
 	// Gérer l'upload de l'image
 	let imageUrl: string | null = null;
 
-	function handleImageUpload(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-			imageUrl = URL.createObjectURL(devise.flag); // Créer une URL pour l'aperçu de l'image
-		}
-	}
+
 </script>
 
 <!-- Modal Content Wrapper -->
@@ -79,25 +84,22 @@
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
-			<div class="grid grid-cols-1 gap-6">
-				<InputSimple  fieldName="libelle" type="text"				
-					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<InputSimple
+					type="text"
+					label="Libelle"
+					fieldName="libelle"
+					bind:field={icons.libelle}
 				/>
-
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+				<!-- Champ pour le code du devise -->
+				<ImageInputNew
+					label="Image"
+					fieldName="image_url"
+					bind:field={icons.path}
+					placeholder="Sélectionnez une image"
+					showPreview={true}
+					link={icons.path ? icons.path?.path + '/' + icons.path?.alt : ""}
 				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
-
 			</div>
 		</form>
 	</div>
