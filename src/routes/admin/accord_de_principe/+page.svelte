@@ -71,30 +71,30 @@
       icon: 'eye',
       color: 'success',
     },
-    {
-      action: 'edit',
-      title: 'Modifier',
-      icon: 'edit',
-      color: 'warning',
-    },
-    {
-      action: 'delete',
-      title: 'Supprimer',
-      icon: 'trash-alt',
-      color: 'danger',
-    },
+    // {
+    //   action: 'edit',
+    //   title: 'Modifier',
+    //   icon: 'edit',
+    //   color: 'warning',
+    // },
+    // {
+    //   action: 'delete',
+    //   title: 'Supprimer',
+    //   icon: 'trash-alt',
+    //   color: 'danger',
+    // },
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
-      color: 'info',
+      color: 'warning',
     },
-    {
-      action: 'details',
-      title: 'Détails',
-      icon: 'info-circle',
-      color: 'primary',
-    },
+    // {
+    //   action: 'details',
+    //   title: 'Détails',
+    //   icon: 'info-circle',
+    //   color: 'primary',
+    // },
   ];
 
   // Liste des onglets ACP
@@ -439,7 +439,7 @@
 </div>
 
 <!-- Modales -->
-<Modale bind:open={openAdd} size="xl" title="Créer un établissement ACP">
+<Modale bind:open={openAdd} size="lg" title="Créer un établissement ACP">
   <Add
     bind:open={openAdd}
     data={current_data}
@@ -448,7 +448,7 @@
   />
 </Modale>
 
-<Modale bind:open={openEdit} size="xl" title="Modifier un établissement ACP">
+<Modale bind:open={openEdit} size="lg" title="Modifier un établissement ACP">
   <Edit
     bind:open={openEdit}
     data={current_data}
@@ -457,7 +457,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShow} size="xl" title="Détails de l'établissement ACP">
+<Modale bind:open={openShow} size="lg" title="Détails de l'établissement ACP">
   <Show
     bind:open={openShow}
     data={current_data}
@@ -466,7 +466,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShowDetails} size="xl" title="Détails complémentaires">
+<Modale bind:open={openShowDetails} size="lg" title="Détails complémentaires">
   <ShowDetails
     bind:open={openShowDetails}
     data={current_data}
@@ -475,7 +475,7 @@
   />
 </Modale>
 
-<Modale bind:open={openImputation} size="xs" title="Imputation">
+<Modale bind:open={openImputation} size="lg" title="Imputation">
   <Imputation
     bind:open={openImputation}
     data={current_data}
@@ -484,7 +484,7 @@
   />
 </Modale>
 
-<Modale bind:open={openDelete} size="xl" title="Supprimer l'établissement ACP">
+<Modale bind:open={openDelete} size="lg" title="Supprimer l'établissement ACP">
   <Delete
     bind:open={openDelete}
     data={current_data}
