@@ -10,6 +10,7 @@
   import Intermed1 from "./intermed1.svelte";
   import LastSteps from "./last_steps.svelte";
   import { BASE_URL_API } from "$lib/api";
+  import Recap from "./recap.svelte";
   let step = 1;
   let done = false;
   let lastStep = false;
@@ -549,6 +550,7 @@
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
                 Finalisation de l'inscription
               </h2>
+              <Recap formdata={formData} values={values} />
               {#if isPaiementProcessing}
                 <p class="text-purple-600 mb-4">
                   Traitement du paiement, veuillez patienter...

@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let item;
 	export let actions: any = [];
-	export let onAction: (a: any, i: any) => void;
+	export let onAction;
 
 	const colorMap: Record<string, string> = {
 	primary: 'bg-primary hover:bg-primary/80 border border-primary text-white',

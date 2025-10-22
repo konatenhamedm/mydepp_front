@@ -18,12 +18,12 @@
   import ShowDetails from './ShowDetails.svelte';
   import Imputation from './Imputation.svelte';
   import Menu from '$components/_includes/Menu.svelte';
-  import {getAuthCookie} from '$lib/auth';
+  import {CookieManager, getAuthCookie} from '$lib/auth';
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
   import { AreaChart } from 'lucide-svelte';
 
-  let user: any = [];
+  let user: any = CookieManager.get('auth') || [];
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
@@ -54,7 +54,7 @@
   let openShow = false;
   let openShowDetails = false;
   let openImputation = false;
-  let current_data = {};
+  let current_data:any;
   let permission: Permission | null = null;
   let activeTab = 'attente';
 
@@ -79,30 +79,30 @@
       icon: 'eye',
       color: 'success',
     },
-    {
-      action: 'edit',
-      title: 'Modifier',
-      icon: 'edit',
-      color: 'warning',
-    },
-    {
-      action: 'delete',
-      title: 'Supprimer',
-      icon: 'trash-alt',
-      color: 'danger',
-    },
+    // {
+    //   action: 'edit',
+    //   title: 'Modifier',
+    //   icon: 'edit',
+    //   color: 'warning',
+    // },
+    // {
+    //   action: 'delete',
+    //   title: 'Supprimer',
+    //   icon: 'trash-alt',
+    //   color: 'danger',
+    // },
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
-      color: 'info',
+      color: 'warning',
     },
-    {
-      action: 'details',
-      title: 'Détails',
-      icon: 'info-circle',
-      color: 'primary',
-    },
+    // {
+    //   action: 'details',
+    //   title: 'Détails',
+    //   icon: 'info-circle',
+    //   color: 'primary',
+    // },
   ];
 
   // Liste des onglets avec leur label
@@ -222,11 +222,11 @@
     // ADMINISTRATEUR ne voit JAMAIS la colonne Action
     if (user.type === 'ADMINISTRATEUR') return false;
     
-    if (activeTab === 'valide') {
+    // if (activeTab === 'valide') {
       return user.type === 'SOUS-DIRECTEUR-ETAB' || 
              user.type === 'SOUS-DIRECTEUR-PROF' || 
              user.type === 'DIRECTEUR';
-    }
+    // }
     
   }
 
@@ -501,7 +501,7 @@
                         <div class="flex items-center gap-2 justify-end">
                           {#if user.type === 'SOUS-DIRECTEUR-ETAB' || user.type === 'SOUS-DIRECTEUR-PROF' || user.type === 'DIRECTEUR'}
                             <Menu {item} onAction={handleAction} {actions} />
-                            <Button
+                            <!-- <Button
                               color="red"
                               size="sm"
                               class="gap-2 px-3 bg-red-600 hover:bg-red-700"
@@ -509,7 +509,7 @@
                             >
                               <TrashBinSolid size="sm" class="mr-1" /> 
                               <span class="hidden sm:inline">Supprimer</span>
-                            </Button>
+                            </Button> -->
                           {:else}
 
                          <!--  { JSON.stringify(showActions, null, 2) } -->
