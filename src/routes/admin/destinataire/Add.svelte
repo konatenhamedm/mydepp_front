@@ -20,8 +20,7 @@
 	// Initializing the user object with only email and status
 	let devise: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: ''
 	};
 
 
@@ -32,16 +31,15 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
+			const res = await apiFetch(true,'/destinateur/create', "POST",{
 				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+				libelle: devise.libelle
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = 'Devise créé avec succès!';
+				notificationMessage = 'Destinataire créé avec succès!';
 				notificationType = 'success';
 				showNotification = true;
 			}
@@ -71,23 +69,19 @@
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Champ pour le code du devise -->
-				<InputSimple  fieldName="libelle" type="text"				
+				<InputSimple  fieldName="code" type="text"				
 					label="Code"
 					bind:field={devise.code}
 					placeholder="Entrez le code du devise"
 				/>
 
 				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+					label="Libelle"
+					bind:field={devise.libelle}
+					placeholder="Entrez le libelle du devise"
 				/>
 
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
+				
 			</div>
 		</form>
 	</div>

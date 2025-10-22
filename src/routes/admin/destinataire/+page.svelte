@@ -282,13 +282,13 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="xl" title="Créer un destinateur">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
+<Modale bind:open={openEdit} size="xl" title="Modifier un destinateur">
   <Edit bind:open={openEdit} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openShow} size="xl" title="Détails d'une civilité">
+<Modale bind:open={openShow} size="xl" title="Détails d'un destinateur">
   <Show bind:open={openShow} data={current_data} on:updated={fetchData} />
 </Modale>
 <Modale bind:open={openDelete} size="xl" title="Supprimer civilité">

@@ -2,7 +2,7 @@
   import InputCheck from "$components/inputs/InputCheck.svelte";
   import InputSimple from "$components/inputs/InputSimple.svelte";
   import { apiFetch, BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
-  
+
   import { Button, Modal } from "flowbite-svelte";
   import { TrashBinSolid } from "flowbite-svelte-icons";
   import { createEventDispatcher, onMount } from "svelte";
@@ -97,8 +97,9 @@
       ) {
         if (!dateSisite || !raison) {
           showErrorMessage = true;
-          errorMessage="Veuillez remplir la date de la visite et le rapport de l'examen."
-          
+          errorMessage =
+            "Veuillez remplir la date de la visite et le rapport de l'examen.";
+
           isLoad = false;
           return;
         }
@@ -106,10 +107,9 @@
         data.personne.status == "acp_dossier_attente_validation_directrice"
       ) {
         if (!raison) {
-          
-           showErrorMessage = true;
-          errorMessage= "Veuillez remplir l'observation svp.";
-          
+          showErrorMessage = true;
+          errorMessage = "Veuillez remplir l'observation svp.";
+
           isLoad = false;
           return;
         }
@@ -119,7 +119,7 @@
         {
           method: "POST",
           body: formdata,
-        }
+        },
       );
 
       if (res.ok) {
@@ -135,20 +135,24 @@
 
         showErrorMessage = true;
         // alert("Erreur lors du traitement: " + errorData.errors[0]);
-        if(errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0){
+        if (
+          errorData.errors &&
+          Array.isArray(errorData.errors) &&
+          errorData.errors.length > 0
+        ) {
           console.error("Error response:", errorData);
           errorMessage = "Merci de bien vouloir verifier les champs saisis";
-        }else{
-        console.error("Error secondaire:", errorData);
+        } else {
+          console.error("Error secondaire:", errorData);
 
           isLoad = false;
           open = false;
         }
-        
       }
     } catch (error) {
       showErrorMessage = true;
-      errorMessage = "Erreur lors du traitement. Veuillez signaler l'erreur a un administrateur.";
+      errorMessage =
+        "Erreur lors du traitement. Veuillez signaler l'erreur a un administrateur.";
       console.error("Error saving:", error);
     }
   }
@@ -172,19 +176,9 @@
   function validateState(status) {}
 </script>
 
-<div
- 
-  title="Traitement de la demande "
-  
-  class="m-4 modale_general"
->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-    crossorigin="anonymous"
-  />
-  <div class="space-y-6 p-4">
+<div class="space-y-4 rounded-lg bg-white p-1">
+  <!-- Card Body -->
+  <div class="space-y-6">
     <form action="#" use:init>
       <label
         style="color: black; font-weight: bold; font-size: x-large; margin-bottom: 15px;"
@@ -214,7 +208,7 @@
       <div class="grid grid-cols-3 gap-6">
         <div>
           <InputSimple
-type="text"
+            type="text"
             fieldName="Email"
             label="Email"
             field={data.email}
@@ -223,7 +217,7 @@ type="text"
         </div>
         <div>
           <InputSimple
-type="text"
+            type="text"
             fieldName="Entité Juridique"
             label="Entité Juridique"
             field={data.personne.typePersonne.libelle}
@@ -232,7 +226,7 @@ type="text"
         </div>
         <div>
           <InputSimple
-type="text"
+            type="text"
             fieldName="Niveau d'Intervention"
             label="Niveau d'Intervention"
             field={data.personne.niveauIntervention.libelle}
@@ -242,7 +236,7 @@ type="text"
         {#if data.personne.typePersonne.libelle == "PHYSIQUE"}
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Nom"
               label="Nom"
               field={data.personne.nom}
@@ -251,7 +245,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Prenoms"
               label="Prénom(s)"
               field={data.personne.prenoms}
@@ -260,7 +254,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Telephone"
               label="Téléphone"
               field={data.personne.telephone}
@@ -269,7 +263,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Boite Postale"
               label="Boite Postale"
               field={data.personne.bp}
@@ -278,7 +272,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Autre E-mail"
               label="Autre E-mail"
               field={data.personne.emailAutre}
@@ -289,7 +283,7 @@ type="text"
         {#if data.personne.typePersonne.libelle == "MORALE"}
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Adresse"
               label="Adresse"
               field={data.personne.adresse}
@@ -298,7 +292,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Nom du Representant"
               label="Nom du Representant"
               field={data.personne.nomRepresentant}
@@ -307,7 +301,7 @@ type="text"
           </div>
           <div>
             <InputSimple
-type="text"
+              type="text"
               fieldName="Denomination"
               label="Denomination"
               field={data.personne.denomination}
@@ -381,11 +375,11 @@ type="text"
           placeholder="Rapport de l'examen"
           class="w-full border border-gray-300 rounded-md p-2 text-black"
         ></textarea>
-       =
+        =
       {/if}
     </form>
   </div>
-  <div  class="w-full">
+  <div class="w-full">
     <div class="w-full grid grid-cols-3">
       <div class="col-span-2">
         {#if data.personne.status == "acp_attente_dossier_depot_service_courrier"}
@@ -429,8 +423,7 @@ type="text"
           <Button
             color="alternative"
             style="background-color: green !important; color: white;"
-            onclick={() =>
-              SaveFunctionSingleMethode("imputation_non_conforme")}
+            onclick={() => SaveFunctionSingleMethode("imputation_non_conforme")}
             type="submit">Imputation Non Conforme</Button
           >
         {:else if data.personne.status == "oep_dossier_imputer_conforme_attente_planification_visite"}

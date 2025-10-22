@@ -1,29 +1,30 @@
 <script lang="ts">
-	import InputSimple from '$components/inputs/InputSimple.svelte';
-	import { apiFetch, BASE_URL_API } from '$lib/api';
-	import { A, Button, Modal, Select } from 'flowbite-svelte';
-	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputs/InputSelect.svelte';
-	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputs/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+	import InputSimple from "$components/inputs/InputSimple.svelte";
+	import { apiFetch, BASE_URL_API } from "$lib/api";
+	import { A, Button, Modal, Select } from "flowbite-svelte";
+	import Notification from "$components/_includes/Notification.svelte";
+	import InputSelect from "$components/inputs/InputSelect.svelte";
+	import { onMount } from "svelte";
+	import InputTextArea from "$components/inputs/InputTextArea.svelte";
+	import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
+    import InputDateSimple from "$components/inputs/InputDateSimple.svelte";
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
 
 	let showNotification = false;
-	let notificationMessage = '';
-	let notificationType = 'info';
+	let notificationMessage = "";
+	let notificationType = "info";
 
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+	let icons: any = {
+		civilite: "",
+		profession: "",
+		dateNaissance: "",
+		dateCreation: "",
 	};
-
 
 	export let data: Record<string, string> = {};
 
@@ -32,28 +33,22 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await apiFetch(true, "/codeGenerateur/create", "POST", {
+				civilite: icons.civilite,
+				profession: icons.profession,
+				dateNaissance: icons.dateNaissance,
+				dateCreation: icons.dateCreation,
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = 'Devise créé avec succès!';
-				notificationType = 'success';
+				notificationMessage = "Devise créé avec succès!";
+				notificationType = "success";
 				showNotification = true;
 			}
 		} catch (error) {
-			console.error('Error saving:', error);
-		}
-	}
-
-	function handleFileChange(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
+			console.error("Error saving:", error);
 		}
 	}
 
@@ -62,6 +57,49 @@
 			event.preventDefault();
 		}
 	}
+
+	/**
+	 * @type {any[]}
+	 */
+	let objects = [
+		{ name: "profession", url: "/profession/" },
+		{ name: "civilites", url: "/civilite/" },
+	];
+
+	let values: {
+		profession: Civilite[];
+		civilites: Civilite[];
+	} = {
+		civilites: [],
+		profession: [],
+	};
+
+	async function getData() {
+		try {
+			let res = null;
+			objects.forEach(async (element) => {
+				res = await apiFetch(true, element.url);
+				if (res) {
+					if (Object.keys(values).includes(element.name)) {
+						values[element.name as keyof typeof values] = res.data;
+					} else {
+						console.error(`Invalid key: ${element.name}`);
+					}
+				} else {
+					console.error(
+						"Erreur lors de la récupération des données:",
+						res.statusText,
+					);
+				}
+			});
+		} catch (error) {
+			console.error("Erreur lors de la récupération des données:", error);
+		}
+	}
+
+	onMount(async () => {
+		await getData();
+	});
 </script>
 
 <!-- Modal Content Wrapper -->
@@ -69,25 +107,32 @@
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
-				<InputSimple  fieldName="libelle" type="text"				
-					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
-				/>
+			<div class="grid grid-cols-2 gap-4">
+				<InputDateSimple
+					fieldName="dateNaissance"
+					label="Date de création"
+					bind:field={icons.dateCreation}
+					placeholder="entrez la date de création"
+				></InputDateSimple>
+				<InputDateSimple
+					fieldName="dateNaissance"
+					label="Date de naissance"
+					bind:field={icons.dateNaissance}
+					placeholder="entrez la date de naissance"
+				></InputDateSimple>
 
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
-				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
-				/>
+				<InputSelect
+					label="Civilite"
+					bind:selectedId={icons.civilite}
+					datas={values.civilites}
+					id="civilite"
+				></InputSelect>
+				<InputSelect
+					label="Profession"
+					bind:selectedId={icons.profession}
+					datas={values.profession}
+					id="profession"
+				></InputSelect>
 			</div>
 		</form>
 	</div>
@@ -100,7 +145,9 @@
 				class="cursor-not-allowed rounded bg-blue-500 px-4 py-2 text-white opacity-50"
 			>
 				<div class="flex items-center space-x-2">
-					<div class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
+					<div
+						class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"
+					></div>
 					<span>Chargement...</span>
 				</div>
 			</button>
@@ -117,5 +164,9 @@
 
 <!-- Notification Component -->
 {#if showNotification}
-	<Notification message={notificationMessage} type={notificationType} duration={5000} />
+	<Notification
+		message={notificationMessage}
+		type={notificationType}
+		duration={5000}
+	/>
 {/if}
