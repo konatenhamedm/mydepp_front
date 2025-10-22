@@ -1,25 +1,28 @@
 <script lang="ts">
-	import InputSimple from '$components/inputs/InputSimple.svelte';
-	import { apiFetch, BASE_URL_API } from '$lib/api';
-	import { Button, Modal, Select } from 'flowbite-svelte';
-	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputs/InputSelect.svelte';
-	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputs/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+	import InputSimple from "$components/inputs/InputSimple.svelte";
+	import { apiFetch, BASE_URL_API } from "$lib/api";
+	import { Button, Modal, Select } from "flowbite-svelte";
+	import Notification from "$components/_includes/Notification.svelte";
+	import InputSelect from "$components/inputs/InputSelect.svelte";
+	import { onMount } from "svelte";
+	import InputTextArea from "$components/inputs/InputTextArea.svelte";
+	import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
 	let userdata: any = [];
 	let showNotification = false;
-	let notificationMessage = '';
-	let notificationType = 'info';
-
+	let notificationMessage = "";
+	let notificationType = "info";
+	let typeProfessions: any = [];
 	// Initializing the item object with only email and status
 	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		code: "",
+		libelle: "",
+		typeProfession: "",
+		montantRenouvellement: "",
+		montantNouvelleDemande: "",
+		chronoMax: "",
 	};
 	let itemdata: any = [];
 
@@ -27,9 +30,12 @@
 
 	function init(form: HTMLFormElement) {
 		devise = {
-			code: data?.code || '',
-			symbole: data?.symbole || '',
-			nb_decimal: data?.nb_decimal || 0
+			code: data?.code || "",
+			libelle: data?.libelle || "",
+			typeProfession: data?.typeProfession.id || "",
+			montantRenouvellement: data?.montantRenouvellement || "",
+			montantNouvelleDemande: data?.montantNouvelleDemande || "",
+			chronoMax: data?.chronoMax || "",
 		};
 	}
 
@@ -40,19 +46,23 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,'/devies/update/' + data?.id, "PUT", {
-
-				code: devise.code, 
+			const res = await apiFetch(
+				true,
+				"/devies/update/" + data?.id,
+				"PUT",
+				{
+					code: devise.code,
 					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal
-			});
+					nb_decimal: devise.nb_decimal,
+				},
+			);
 
 			if (res.ok) {
 				isLoad = false;
 				open = false; // Close the modal
 			}
 		} catch (error) {
-			console.error('Error saving:', error);
+			console.error("Error saving:", error);
 		}
 	}
 
@@ -72,32 +82,84 @@
 			imageUrl = URL.createObjectURL(devise.flag); // Créer une URL pour l'aperçu de l'image
 		}
 	}
+	async function getTypeProfession() {
+		try {
+			const res = await fetch(BASE_URL_API + "/typeProfession");
+			const data = await res.json();
+			typeProfessions = data.data;
+		} catch (error) {
+			console.error("Error fetching villes:", error);
+		}
+	}
+
+	onMount(async () => {
+		await getTypeProfession();
+	});
 </script>
 
 <!-- Modal Content Wrapper -->
 <div class="space-y-4 rounded-lg bg-white p-1">
 	<!-- Card Body -->
 	<div class="space-y-6">
-		<form action="#" use:init>
-			<div class="grid grid-cols-1 gap-6">
-				<InputSimple  fieldName="libelle" type="text"				
+<form action="#" use:init>
+			<div class="grid grid-cols-2 gap-6 md:grid-cols-2">
+				<!-- Champ pour le code du devise -->
+				<InputSimple
+					fieldName="code"
+					type="text"
 					label="Code"
 					bind:field={devise.code}
 					placeholder="Entrez le code du devise"
 				/>
 
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+				<InputSimple
+					fieldName="libelle"
+					type="text"
+					label="Libelle"
+					bind:field={devise.libelle}
+					placeholder="Entrez le libelle du devise"
 				/>
 
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+				<InputSimple
+					fieldName="codeGeneration"
+					type="text"
+					label="Code generation"
+					bind:field={devise.codeGeneration}
+					placeholder="Entrez le code generation du devise"
 				/>
 
+			<InputSelect
+					label="Type profession"
+					bind:selectedId={devise.typeProfession}
+					datas={typeProfessions}
+					id="typeProfession"
+					required={true}
+				></InputSelect>
+
+				<InputSimple
+					fieldName="montantRenouvellement"
+					type="text"
+					label="Montant renouvellement"
+					bind:field={devise.montantRenouvellement}
+					placeholder="Entrez le montant renouvellement du devise"
+				/>
+
+				<InputSimple
+					fieldName="montantNouvelleDemande"
+					type="text"
+					label="Montant nouvelle demande"
+					bind:field={devise.montantNouvelleDemande}
+				/>
+
+				
+			</div>
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<InputSimple
+					fieldName="chronoMax"
+					type="number"
+					label="Chrono max"
+					bind:field={devise.chronoMax}
+				/>
 			</div>
 		</form>
 	</div>
@@ -110,7 +172,9 @@
 				class="cursor-not-allowed rounded bg-blue-500 px-4 py-2 text-white opacity-50"
 			>
 				<div class="flex items-center space-x-2">
-					<div class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
+					<div
+						class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"
+					></div>
 					<span>Chargement...</span>
 				</div>
 			</button>
@@ -127,5 +191,9 @@
 
 <!-- Notification Component -->
 {#if showNotification}
-	<Notification message={notificationMessage} type={notificationType} duration={5000} />
+	<Notification
+		message={notificationMessage}
+		type={notificationType}
+		duration={5000}
+	/>
 {/if}

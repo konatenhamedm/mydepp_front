@@ -22,7 +22,7 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,`/devises/delete/` + data?.id,"DELETE");
+			const res = await apiFetch(true,`/codeGenerateur/delete/` + data?.id,"DELETE");
 
 			if (res) {
 				isLoad = false;
@@ -50,7 +50,7 @@
 	<div class="text-center">
 		<h3 class="mb-4 text-lg font-medium text-gray-900">Confirmer la suppression</h3>
 		<p class="text-gray-500">
-			Êtes-vous sûr de vouloir supprimer cet enregistrement ({data?.libelle}) ? Cette action est
+			Êtes-vous sûr de vouloir supprimer cet enregistrement , Cette action est
 			irréversible.
 		</p>
 	</div>

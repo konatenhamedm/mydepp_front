@@ -1,61 +1,78 @@
 <script lang="ts">
-	import InputSimple from '$components/inputs/InputSimple.svelte';
-	import { apiFetch, BASE_URL_API } from '$lib/api';
-	import { A, Button, Modal, Select } from 'flowbite-svelte';
-	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputs/InputSelect.svelte';
-	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputs/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+	import InputSimple from "$components/inputs/InputSimple.svelte";
+	import { apiFetch, BASE_URL_API } from "$lib/api";
+	import { A, Button, Modal, Select } from "flowbite-svelte";
+	import Notification from "$components/_includes/Notification.svelte";
+	import InputSelect from "$components/inputs/InputSelect.svelte";
+	import { onMount } from "svelte";
+	import InputTextArea from "$components/inputs/InputTextArea.svelte";
+	import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
+	import ImageInputNew from "$components/inputs/ImageInputNew.svelte";
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
+	let avatarPreview: any = "";
 
 	let showNotification = false;
-	let notificationMessage = '';
-	let notificationType = 'info';
+	let notificationMessage = "";
+	let notificationType = "info";
 
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
-	};
 
+	let icons: any = {
+		path: null as File | null,
+		libelle: "",
+	};
 
 	export let data: Record<string, string> = {};
 
-	function init(form: HTMLFormElement) {}
+	function init(form: HTMLFormElement) {
+		icons.libelle = "";
+		icons.path = null;
+		avatarPreview = "";
+	}
 
 	async function SaveFunction() {
+		const formData = new FormData();
+		formData.append("libelle", icons.libelle);
+
+		if (icons.path instanceof File) {
+			// Vérifie que c'est bien un fichier
+			formData.append("path", icons.path);
+		}
+		console.log(formData);
+
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await fetch(BASE_URL_API + "/adminDocument/create", {
+				method: "POST",
+				body: formData,
 			});
 
-			if (res) {
+			if (res.ok) {
 				isLoad = false;
 				open = false;
-				notificationMessage = 'Devise créé avec succès!';
-				notificationType = 'success';
+				notificationMessage = "document créé avec succès!";
+				notificationType = "success";
 				showNotification = true;
 			}
 		} catch (error) {
-			console.error('Error saving:', error);
+			notificationMessage = "Une erreur crée lors de l enregistrement";
+			notificationType = "error";
+			showNotification = true;
+			isLoad = false;
+			console.error("Error saving:", error);
 		}
 	}
 
-	function handleFileChange(event: Event) {
+	/* function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
 			devise.flag = input.files[0];
 		}
-	}
+	} */
 
 	function handleModalClose(event: Event) {
 		if (isLoad) {
@@ -70,23 +87,20 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<InputSimple
+					type="text"
+					label="Libelle"
+					fieldName="libelle"
+					bind:field={icons.libelle}
+				/>
 				<!-- Champ pour le code du devise -->
-				<InputSimple  fieldName="libelle" type="text"				
-					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
-				/>
-
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
-				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+				<ImageInputNew
+					label="Image"
+					fieldName="image_url"
+					bind:field={icons.path}
+					placeholder="Sélectionnez une image"
+					showPreview={true}
+					link={icons.image ? icons.image : ""}
 				/>
 			</div>
 		</form>
@@ -100,7 +114,9 @@
 				class="cursor-not-allowed rounded bg-blue-500 px-4 py-2 text-white opacity-50"
 			>
 				<div class="flex items-center space-x-2">
-					<div class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
+					<div
+						class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"
+					></div>
 					<span>Chargement...</span>
 				</div>
 			</button>
@@ -117,5 +133,9 @@
 
 <!-- Notification Component -->
 {#if showNotification}
-	<Notification message={notificationMessage} type={notificationType} duration={5000} />
+	<Notification
+		message={notificationMessage}
+		type={notificationType}
+		duration={5000}
+	/>
 {/if}
