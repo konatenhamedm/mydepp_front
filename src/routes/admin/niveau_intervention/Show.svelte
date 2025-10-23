@@ -17,9 +17,10 @@
 
 	// Initializing the user object with only email and status
 	let item: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: "",
+    code: "",
+    montant: "",
+    montantRenouvellement: "",
 
 	};
 
@@ -27,11 +28,10 @@
 
 	function init(form: HTMLFormElement) {
 
-
-		console.log(data)
-		item.code = data?.code
-		item.symbole = data?.symbole
-		item.nb_decimal = data?.nb_decimal
+			item.libelle = data?.libelle
+			item.code = data?.code
+			item.montant = data?.montant
+			item.montantRenouvellement = data?.montantRenouvellement
 
     }
 
@@ -45,9 +45,6 @@
 		}
 	}
 </script>
-
-
-
 
 <!-- Modal Content Wrapper -->
 <div class="bg-white rounded-lg p-1 space-y-4">
@@ -63,15 +60,21 @@
 					</div>
 				</div>
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Symbole</label>
+					<label class="font-semibold text-gray-700">Libelle</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.symbole || "Non spécifié"}
+						{item.libelle || "Non spécifié"}
 					</div>
 				</div>
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Nombre decimal</label>
+					<label class="font-semibold text-gray-700">Montant</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.nb_decimal }
+						{item.montant || "Non spécifié"}
+					</div>
+				</div>
+				<div class="flex flex-col items-start mb-3">
+					<label class="font-semibold text-gray-700">Montant renouvellement</label>
+					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
+						{item.montantRenouvellement || "Non spécifié"}
 					</div>
 				</div>
 

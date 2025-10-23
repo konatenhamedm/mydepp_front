@@ -18,10 +18,11 @@
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
-		code: "",
-		symbole: "",
-		nb_decimal: 0,
+	let item: any = {
+		 libelle: "",
+    code: "",
+    montant: "",
+    montantRenouvellement: "",
 	};
 
 	export let data: Record<string, string> = {};
@@ -31,16 +32,17 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true, "/devises/create", "POST", {
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal,
+			const res = await apiFetch(true, "/niveauInterventions/create", "POST", {
+				 libelle: item.libelle,
+          code: item.code,
+          montant: item.montant,
+          montantRenouvellement: item.montantRenouvellement,
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = "Devise créé avec succès!";
+				notificationMessage = "Niveau d'intervention créé avec succès!";
 				notificationType = "success";
 				showNotification = true;
 			}
@@ -52,7 +54,7 @@
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
+			item.flag = input.files[0];
 		}
 	}
 
@@ -69,29 +71,37 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
+				<!-- Champ pour le code du item -->
 				<InputSimple
 					type="text"
 					fieldName="code"
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={item.code}
+					placeholder="Entrez le code du item"
 				/>
 
 				<InputSimple
 					type="text"
-					fieldName="symbole"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+					fieldName="libelle"
+					label="Libelle"
+					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
 				/>
 
 				<InputSimple
 					type="text"
-					fieldName="nb_decimal"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+					fieldName="montant"
+					label="Montant"
+					bind:field={item.montant}
+					placeholder="Entrez le montant"
+				/>
+
+				<InputSimple
+					type="text"
+					fieldName="montantRenouvellement"
+					label="Montant renouvellement"
+					bind:field={item.montantRenouvellement}
+					placeholder="Entrez le montant renouvellement"
 				/>
 			</div>
 		</form>

@@ -16,20 +16,22 @@
 	let notificationType = 'info';
 
 	// Initializing the item object with only email and status
-	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+	let item: any = {
+		 libelle: "",
+    code: "",
+    montant: "",
+    montantRenouvellement: "",
 	};
 	let itemdata: any = [];
 
 	export let data: Record<string, string> = {};
 
 	function init(form: HTMLFormElement) {
-		devise = {
+		item = {
+			libelle: data?.libelle || '',
 			code: data?.code || '',
-			symbole: data?.symbole || '',
-			nb_decimal: data?.nb_decimal || 0
+			montant: data?.montant || '',
+			montantRenouvellement: data?.montantRenouvellement || '',
 		};
 	}
 
@@ -40,11 +42,12 @@
 
 		try {
 			// Example POST request (replace with your actual API call)
-			const res = await apiFetch(true,'/devies/update/' + data?.id, "PUT", {
+			const res = await apiFetch(true,'/niveauIntervention/update/' + data?.id, "PUT", {
 
-				code: devise.code, 
-					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal
+				libelle: item.libelle,
+				code: item.code,
+				montant: item.montant,
+				montantRenouvellement: item.montantRenouvellement
 			});
 
 			if (res.ok) {
@@ -68,8 +71,8 @@
 	function handleImageUpload(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-			imageUrl = URL.createObjectURL(devise.flag); // Créer une URL pour l'aperçu de l'image
+			item.flag = input.files[0];
+			imageUrl = URL.createObjectURL(item.flag); // Créer une URL pour l'aperçu de l'image
 		}
 	}
 </script>
@@ -80,24 +83,37 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-1 gap-6">
-				<InputSimple  fieldName="libelle" type="text"				
+				<InputSimple
+					type="text"
+					fieldName="code"
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={item.code}
+					placeholder="Entrez le code du item"
 				/>
 
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
+				<InputSimple
+					type="text"
+					fieldName="libelle"
+					label="Libelle"
+					bind:field={item.libelle}
+					placeholder="Entrez le libelle"
 				/>
 
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+				<InputSimple
+					type="text"
+					fieldName="montant"
+					label="Montant"
+					bind:field={item.montant}
+					placeholder="Entrez le montant"
 				/>
 
+				<InputSimple
+					type="text"
+					fieldName="montantRenouvellement"
+					label="Montant renouvellement"
+					bind:field={item.montantRenouvellement}
+					placeholder="Entrez le montant renouvellement"
+				/>
 			</div>
 		</form>
 	</div>
