@@ -488,4 +488,3 @@
     on:updated={fetchData}
   />
 </Modale>
-
