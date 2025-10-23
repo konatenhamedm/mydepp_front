@@ -207,7 +207,7 @@
                 <span class="nav-icon text-[18px] text-gray-700 dark:text-white/80">
                   <i class={convertIconToUil(item.icon) || 'uil uil-circle'}></i>
                 </span>
-                <span class="title capitalize text-gray-700 dark:text-white/80">{item.title}</span>
+                <span class="title  text-gray-700 dark:text-white/80">{item.title}</span>
                 <span class="arrow-down absolute end-0 me-[0.8rem] text-[18px] transition-transform duration-300 text-gray-700 dark:text-white/80">
                   <i class="uil uil-angle-down" class:rotate-180={isSubMenuOpen(index) || hasActiveChild(item.subItems)}></i>
                 </span>
@@ -242,7 +242,7 @@
                 <span class="nav-icon text-[18px] text-gray-700 dark:text-white/80">
                   <i class={convertIconToUil(item.icon) || 'uil uil-circle'}></i>
                 </span>
-                <span class="title capitalize text-gray-700 dark:text-white/80">{item.title}</span>
+                <span class="title  text-gray-700 dark:text-white/80">{item.title}</span>
               </a>
             </li>
           {/if}
