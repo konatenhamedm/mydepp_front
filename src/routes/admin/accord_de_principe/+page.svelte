@@ -17,11 +17,11 @@
   import Imputation from './Imputation.svelte';
   import ShowDetails from './ShowDetails.svelte';
   import Menu from '$components/_includes/Menu.svelte';
-  import { getAuthCookie } from '$lib/auth';
+  import { CookieManager, getAuthCookie } from '$lib/auth';
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
 
- 
-  let user: any = [];
+
+  let user: any = CookieManager.get('auth');
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
@@ -64,38 +64,31 @@
     details: ['R', 'RD', 'RU', 'CRUD', 'CRU', 'CR'],
   };
 
-  const allActions: Action[] = [
+  const allActions: Action[] =[
     {
       action: 'view',
       title: 'Voir',
       icon: 'eye',
       color: 'success',
     },
-    {
-      action: 'edit',
-      title: 'Modifier',
-      icon: 'edit',
-      color: 'warning',
-    },
-    {
-      action: 'delete',
-      title: 'Supprimer',
-      icon: 'trash-alt',
-      color: 'danger',
-    },
+    
+    
+    // {
+    //   action: 'imputation',
+    //   title: 'Imputation',
+    //   icon: 'user-check',
+    //   color: 'warning',
+    // }
+  ];
+  const tallActions: Action[] = [
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
-      color: 'info',
-    },
-    {
-      action: 'details',
-      title: 'Détails',
-      icon: 'info-circle',
-      color: 'primary',
-    },
+      color: 'warning',
+    }
   ];
+  
 
   // Liste des onglets ACP
   const tabs = [
@@ -408,9 +401,13 @@
                     </td>
 
                     <!-- Actions -->
-                    {#if showActions}
+                    {#if showActions && activeTab != 'acp_dossier_valide_directrice'}
                       <td class="px-4 text-[12px] py-3 border border-gray-200 text-right">
                         <Menu {item} onAction={handleAction} {actions} />
+                      </td>
+                    {:else if showActions && activeTab == 'acp_dossier_valide_directrice'}
+                      <td class="px-4 text-[12px] py-3 border border-gray-200 text-right">
+                        <Menu {item} onAction={handleAction} actions={tallActions} />
                       </td>
                     {/if}
                   </tr>
@@ -439,7 +436,7 @@
 </div>
 
 <!-- Modales -->
-<Modale bind:open={openAdd} size="xl" title="Créer un établissement ACP">
+<Modale bind:open={openAdd} size="lg" title="Créer un établissement ACP">
   <Add
     bind:open={openAdd}
     data={current_data}
@@ -448,7 +445,7 @@
   />
 </Modale>
 
-<Modale bind:open={openEdit} size="xl" title="Modifier un établissement ACP">
+<Modale bind:open={openEdit} size="lg" title="Modifier un établissement ACP">
   <Edit
     bind:open={openEdit}
     data={current_data}
@@ -457,7 +454,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShow} size="xl" title="Détails de l'établissement ACP">
+<Modale bind:open={openShow} size="2xl" title="Détails de l'établissement ACP">
   <Show
     bind:open={openShow}
     data={current_data}
@@ -466,7 +463,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShowDetails} size="xl" title="Détails complémentaires">
+<Modale bind:open={openShowDetails} size="lg" title="Détails complémentaires">
   <ShowDetails
     bind:open={openShowDetails}
     data={current_data}
@@ -475,7 +472,7 @@
   />
 </Modale>
 
-<Modale bind:open={openImputation} size="xs" title="Imputation">
+<Modale bind:open={openImputation} size="lg" title="Imputation">
   <Imputation
     bind:open={openImputation}
     data={current_data}
@@ -484,19 +481,10 @@
   />
 </Modale>
 
-<Modale bind:open={openDelete} size="xl" title="Supprimer l'établissement ACP">
+<Modale bind:open={openDelete} size="lg" title="Supprimer l'établissement ACP">
   <Delete
     bind:open={openDelete}
     data={current_data}
     on:updated={fetchData}
   />
 </Modale>
-
-<style>
-  .tab {
-    @apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700;
-  }
-  .tab-active {
-    @apply text-white border-transparent;
-  }
-</style>

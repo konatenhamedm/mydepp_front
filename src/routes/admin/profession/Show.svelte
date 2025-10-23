@@ -19,7 +19,11 @@
 	let item: any = {
 		code: '',
 		symbole: '',
-		nb_decimal: 0
+		nb_decimal: 0,
+		typeProfession: '',
+		montantRenouvellement: '',
+		montantNouvelleDemande: '',
+		chronoMax: '',
 
 	};
 
@@ -27,11 +31,15 @@
 
 	function init(form: HTMLFormElement) {
 
-
-		console.log(data)
-		item.code = data?.code
-		item.symbole = data?.symbole
-		item.nb_decimal = data?.nb_decimal
+         item ={
+			code: data?.code,
+			symbole: data?.symbole,
+			nb_decimal: data?.nb_decimal,
+			typeProfession: data?.typeProfession.libelle,
+			montantRenouvellement: data?.montantRenouvellement,
+			montantNouvelleDemande: data?.montantNouvelleDemande,
+			chronoMax: data?.chronoMax,
+		 }
 
     }
 
@@ -55,7 +63,7 @@
     <!-- Card Body -->
     <div class="space-y-6">
         <form action="#" use:init>
-			<div class="grid grid-cols-1 gap-1 mb-1">
+			<div class="grid grid-cols-2 gap-1 mb-1">
 				<div class="flex flex-col items-start mb-3">
 					<label class="font-semibold text-gray-700">Code</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
@@ -71,10 +79,35 @@
 				<div class="flex flex-col items-start mb-3">
 					<label class="font-semibold text-gray-700">Nombre decimal</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.nb_decimal }
+						{item.nb_decimal || "Non spécifié"}
 					</div>
 				</div>
+				<div class="flex flex-col items-start mb-3">
+					<label class="font-semibold text-gray-700">Type profession</label>
+					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
+						{item.typeProfession }
+					</div>
+				</div>
+				<div class="flex flex-col items-start mb-3">
+					<label class="font-semibold text-gray-700">Montant renouvellement</label>
+					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
+						{item.montantRenouvellement || "Non spécifié"}
+					</div>
+				</div>
+				<div class="flex flex-col items-start mb-3">
+					<label class="font-semibold text-gray-700">Montant nouvelle demande</label>
+					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
+						{item.montantNouvelleDemande || "Non spécifié"}
+					</div>
+				</div>
+				
+			</div>
 
+			<div class="flex flex-col items-start mb-3">
+				<label class="font-semibold text-gray-700">Chrono max</label>
+				<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
+					{item.chronoMax || "Non spécifié"}
+				</div>
 			</div>
             
 			

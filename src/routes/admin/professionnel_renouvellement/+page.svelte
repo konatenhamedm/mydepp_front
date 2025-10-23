@@ -23,7 +23,7 @@
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
   import { AreaChart } from 'lucide-svelte';
 
-  export let data../professionnel copy 3/$types.js; // Les données retournées par `load()`
+// Les données retournées par `load()`
   let user: any = [];
 
   // Types

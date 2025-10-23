@@ -243,7 +243,7 @@
             class="min-w-full border border-gray-200 rounded-xl shadow-sm text-sm"
           >
             <!-- Header -->
-            <HeaderTable item={["Date création","code","Civilite","Profession","Date naissance"]} />
+            <HeaderTable item={["Date création","code","Civilite","Profession","Date naissance"]} afficheAction={false} />
             <!-- Body -->
             <tbody class="text-gray-700">
               {#if loading && paginatedData.length === 0}
@@ -279,9 +279,9 @@
                     <td class="px-4 text-[14px]  py-3 border border-gray-200"
                       >{formatDateForInput(item.dateNaissance)}</td
                     >
-                    <td class="px-4 text-[12px]  py-3 border border-gray-200 text-right">
+                  <!--   <td class="px-4 text-[12px]  py-3 border border-gray-200 text-right">
                       <Menu {item} onAction={handleAction} {actions} />
-                    </td>
+                    </td> -->
                   </tr>
                 {/each}
               {/if}

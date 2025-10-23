@@ -18,8 +18,7 @@
 	// Initializing the user object with only email and status
 	let item: any = {
 		code: '',
-		symbole: '',
-		nb_decimal: 0
+		libelle: ''
 
 	};
 
@@ -28,10 +27,9 @@
 	function init(form: HTMLFormElement) {
 
 
-		console.log(data)
+		
 		item.code = data?.code
-		item.symbole = data?.symbole
-		item.nb_decimal = data?.nb_decimal
+		item.libelle = data?.libelle
 
     }
 
@@ -56,24 +54,19 @@
     <div class="space-y-6">
         <form action="#" use:init>
 			<div class="grid grid-cols-1 gap-1 mb-1">
-				<div class="flex flex-col items-start mb-3">
+				<!-- <div class="flex flex-col items-start mb-3">
 					<label class="font-semibold text-gray-700">Code</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
 						{item.code || "Non spécifié"}
 					</div>
-				</div>
+				</div> -->
 				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Symbole</label>
+					<label class="font-semibold text-gray-700">Libelle</label>
 					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.symbole || "Non spécifié"}
+						{item.libelle || "Non spécifié"}
 					</div>
 				</div>
-				<div class="flex flex-col items-start mb-3">
-					<label class="font-semibold text-gray-700">Nombre decimal</label>
-					<div class="bg-white px-3 py-2 w-full border border-gray-300 rounded-md text-gray-700">
-						{item.nb_decimal }
-					</div>
-				</div>
+				
 
 			</div>
             
