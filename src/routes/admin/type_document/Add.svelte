@@ -1,29 +1,31 @@
 <script lang="ts">
-	import InputSimple from '$components/inputs/InputSimple.svelte';
-	import { apiFetch, BASE_URL_API } from '$lib/api';
-	import { A, Button, Modal, Select } from 'flowbite-svelte';
-	import Notification from '$components/_includes/Notification.svelte';
-	import InputSelect from '$components/inputs/InputSelect.svelte';
-	import { onMount } from 'svelte';
-	import InputTextArea from '$components/inputs/InputTextArea.svelte';
-	import InputUserSelect from '$components/inputs/InputUserSelect.svelte';
+	import InputSimple from "$components/inputs/InputSimple.svelte";
+	import { apiFetch, BASE_URL_API } from "$lib/api";
+	import { A, Button, Modal, Select } from "flowbite-svelte";
+	import Notification from "$components/_includes/Notification.svelte";
+	import InputSelect from "$components/inputs/InputSelect.svelte";
+	import { onMount } from "svelte";
+	import InputTextArea from "$components/inputs/InputTextArea.svelte";
+	import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
 
 	export let open: boolean = false; // modal control
 	let isLoad = false;
 
 	let showNotification = false;
-	let notificationMessage = '';
-	let notificationType = 'info';
+	let notificationMessage = "";
+	let notificationType = "info";
+	let typePersonnes: any = []; // Assume that this will be populated with cities
+	let libelleGroupe: any = []; // Assume that this will be populated with cities
 
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
 	let devise: any = {
-		code: '',
-		symbole: '',
-		nb_decimal: 0
+		nombre: "",
+		libelle: "",
+		typePersonne: "",
+		libelleGroupe,
 	};
-
 
 	export let data: Record<string, string> = {};
 
@@ -32,21 +34,22 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true,'/devises/create', "POST",{
-				code: devise.code,
-				symbole: devise.symbole,
-				nb_decimal: devise.nb_decimal
+			const res = await apiFetch(true, "/typeDocument/create", "POST", {
+				nombre: devise.nombre,
+				libelle: devise.libelle,
+				libelleGroupe: devise.libelleGroupe,
+				typePersonne: devise.typePersonne,
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = 'Devise créé avec succès!';
-				notificationType = 'success';
+				notificationMessage = "Devise créé avec succès!";
+				notificationType = "success";
 				showNotification = true;
 			}
 		} catch (error) {
-			console.error('Error saving:', error);
+			console.error("Error saving:", error);
 		}
 	}
 
@@ -62,6 +65,23 @@
 			event.preventDefault();
 		}
 	}
+
+	async function getTypePersonne() {
+		try {
+			const res = await fetch(BASE_URL_API + "/typePersonne");
+			const data = await res.json();
+			typePersonnes = data.data;
+			const res_libelle = await fetch(BASE_URL_API + "/libelleGroupe/");
+			const data_libelle = await res_libelle.json();
+			libelleGroupe = data_libelle.data;
+		} catch (error) {
+			console.error("Error fetching villes:", error);
+		}
+	}
+
+	onMount(async () => {
+		await getTypePersonne();
+	});
 </script>
 
 <!-- Modal Content Wrapper -->
@@ -69,24 +89,34 @@
 	<!-- Card Body -->
 	<div class="space-y-6">
 		<form action="#" use:init>
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
-				<InputSimple  fieldName="libelle" type="text"				
-					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+			<div class="grid grid-cols-2 gap-4 mb-4">
+				<InputSimple
+					fieldName="Libellé"
+					label="Libellé"
+					bind:field={devise.libelle}
+					placeholder="entrez le libellé"
+					type="text"
+				></InputSimple>
+				<InputSimple
+					fieldName="number"
+					label="Nombre"
+					bind:field={devise.nombre}
+					placeholder="entrez le nombre"
+					type="text"
+				></InputSimple>
+			</div>
+			<div class="grid grid-cols-2 gap-6">
+				<InputSelect
+					label="L'entité"
+					bind:selectedId={devise.typePersonne}
+					datas={typePersonnes}
+					id="typePersonne"
 				/>
-
-				<InputSimple  fieldName="libelle" type="text"
-					label="Symbole"
-					bind:field={devise.symbole}
-					placeholder="Entrez le symbole du devise"
-				/>
-
-				<InputSimple  fieldName="nb_decimal" type="text"
-					label="Nombre decimal"
-					bind:field={devise.nb_decimal}
-					placeholder="Entrez le nombre décimal du devise"
+				<InputSelect
+					label="Libellé groupe"
+					bind:selectedId={devise.libelleGroupe}
+					datas={libelleGroupe}
+					id="libelleGroupe"
 				/>
 			</div>
 		</form>
@@ -100,7 +130,9 @@
 				class="cursor-not-allowed rounded bg-blue-500 px-4 py-2 text-white opacity-50"
 			>
 				<div class="flex items-center space-x-2">
-					<div class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
+					<div
+						class="h-5 w-5 animate-spin rounded-full border-b-2 border-white"
+					></div>
 					<span>Chargement...</span>
 				</div>
 			</button>
@@ -117,5 +149,9 @@
 
 <!-- Notification Component -->
 {#if showNotification}
-	<Notification message={notificationMessage} type={notificationType} duration={5000} />
+	<Notification
+		message={notificationMessage}
+		type={notificationType}
+		duration={5000}
+	/>
 {/if}

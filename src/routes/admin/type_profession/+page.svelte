@@ -283,15 +283,15 @@
   </div>
 </div>
 
-<Modale bind:open={openAdd} size="xl" title="Créer une civilité">
+<Modale bind:open={openAdd} size="xl" title="Créer un type document">
   <Add bind:open={openAdd} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openEdit} size="xl" title="Modifier une civilité">
+<Modale bind:open={openEdit} size="xl" title="Modifier un type document">
   <Edit bind:open={openEdit} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openShow} size="xl" title="Détails d'une civilité">
+<Modale bind:open={openShow} size="xl" title="Détails d'un type document">
   <Show bind:open={openShow} data={current_data} on:updated={fetchData} />
 </Modale>
-<Modale bind:open={openDelete} size="xl" title="Supprimer civilité">
+<Modale bind:open={openDelete} size="xl" title="Supprimer type document">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
 </Modale>
