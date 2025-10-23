@@ -17,11 +17,11 @@
   import Imputation from './Imputation.svelte';
   import ShowDetails from './ShowDetails.svelte';
   import Menu from '$components/_includes/Menu.svelte';
-  import { getAuthCookie } from '$lib/auth';
+  import { CookieManager, getAuthCookie } from '$lib/auth';
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
 
- 
-  let user: any = [];
+
+  let user: any = CookieManager.get('auth');
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
@@ -64,38 +64,31 @@
     details: ['R', 'RD', 'RU', 'CRUD', 'CRU', 'CR'],
   };
 
-  const allActions: Action[] = [
+  const allActions: Action[] =[
     {
       action: 'view',
       title: 'Voir',
       icon: 'eye',
       color: 'success',
     },
+    
+    
     // {
-    //   action: 'edit',
-    //   title: 'Modifier',
-    //   icon: 'edit',
+    //   action: 'imputation',
+    //   title: 'Imputation',
+    //   icon: 'user-check',
     //   color: 'warning',
-    // },
-    // {
-    //   action: 'delete',
-    //   title: 'Supprimer',
-    //   icon: 'trash-alt',
-    //   color: 'danger',
-    // },
+    // }
+  ];
+  const tallActions: Action[] = [
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
       color: 'warning',
-    },
-    // {
-    //   action: 'details',
-    //   title: 'Détails',
-    //   icon: 'info-circle',
-    //   color: 'primary',
-    // },
+    }
   ];
+  
 
   // Liste des onglets ACP
   const tabs = [
@@ -408,9 +401,13 @@
                     </td>
 
                     <!-- Actions -->
-                    {#if showActions}
+                    {#if showActions && activeTab != 'acp_dossier_valide_directrice'}
                       <td class="px-4 text-[12px] py-3 border border-gray-200 text-right">
                         <Menu {item} onAction={handleAction} {actions} />
+                      </td>
+                    {:else if showActions && activeTab == 'acp_dossier_valide_directrice'}
+                      <td class="px-4 text-[12px] py-3 border border-gray-200 text-right">
+                        <Menu {item} onAction={handleAction} actions={tallActions} />
                       </td>
                     {/if}
                   </tr>
