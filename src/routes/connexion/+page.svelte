@@ -7,6 +7,7 @@
   let email = "";
   let password = "";
   let errorMessage = "";
+  let isLoading = false;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -14,6 +15,7 @@
     console.log("Email:", email);
     console.log("Password:", password);
     if (email && password) {
+      isLoading = true;
       axios
         .post("http://backend.leadagro.net/api/login", {
           email: email,
@@ -46,11 +48,15 @@
         })
         .catch((error) => {
           console.log(error);
-          errorMessage = error.response.data.message;
-          alert("Erreur lors de la connexion. Vérifiez vos identifiants.");
+          isLoading = false;
+          if (error.response.data.error == "Invalid credentials") {
+            errorMessage = "Email ou mot de passe incorrect.";
+          }else{
+            errorMessage = "Une erreur est survenue. Veuillez réessayer plus tard.";
+          }
         });
     } else {
-      alert("Veuillez remplir tous les champs.");
+      errorMessage = "Veuillez remplir tous les champs.";
     }
   };
 </script>
@@ -73,8 +79,8 @@
               <i class="ri-login-box-line text-white text-2xl"></i>
             </div>
           </div>
-          <h2 class="text-3xl font-bold text-gray-900 mb-2">Connexion</h2>
-          <p class="text-gray-600">Accédez à votre espace E-DEPPS</p>
+          <h2 class="text-3xl font-bold text-white mb-2">Connexion</h2>
+          <p class="text-white">Accédez à votre espace E-DEPPS</p>
         </div>
         <div class="bg-white rounded-2xl shadow-xl p-8">
           {#if errorMessage}
@@ -136,7 +142,8 @@
               </div>
             </div>
             <div class="flex items-center justify-between">
-              <div class="flex items-center">
+              <div class="flex items-center"></div>
+              <!-- <div class="flex items-center">
                 <input
                   type="checkbox"
                   id="rememberMe"
@@ -147,7 +154,7 @@
                   class="ml-2 block text-sm text-gray-700 cursor-pointer"
                   >Se souvenir de moi</label
                 >
-              </div>
+              </div> -->
               <a
                 href="/connexion/forgot_password"
                 class="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
@@ -156,21 +163,30 @@
             </div>
             <button
               type="submit"
+              disabled={!email || !password || isLoading}
               class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
             >
+            {#if isLoading }
+              <span class="animate-spin mr-2">
+                <i class="ri-loader-4-line"></i>
+              </span>
+              <span>Chargement...</span>
+              {:else}
               Se connecter
+
+            {/if}
             </button>
           </form>
-          <div class="mt-6 text-center">
+          <!-- <div class="mt-6 text-center">
             <p class="text-gray-600">
-              Pas encore de compte ?<!-- -->
+              Pas encore de compte ?
               <a
                 class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                 href="/inscription"
                 >Créer un compte</a
               >
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
