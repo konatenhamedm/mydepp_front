@@ -77,7 +77,7 @@
   async function fetchData() {
     try {
       const response = await fetch(
-        BASE_URL_API + `/notification/nombre/${user?.id || "107"}`,
+        BASE_URL_API + `/notification/nombre/${user?.id}`,
       );
       if (response.ok) {
         const result = await response.json();
@@ -112,6 +112,8 @@
 
   onMount(async () => {
     user = getAuthCookie();
+
+    console.log("=============user", user);
     
     // Charger la photo de profil existante si disponible
     if (user?.photo) {
