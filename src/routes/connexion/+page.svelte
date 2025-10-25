@@ -25,7 +25,7 @@
     if (email && password) {
       isLoading = true;
       axios
-        .post("http://backend.leadagro.net/api/login", {
+        .post("https://backend.leadagro.net/api/login", {
           email: email,
           password: password,
           plateforme: "front",

@@ -24,7 +24,7 @@
       sessionStorage.setItem("resetEmail", email);
 
       const res = await axios.post(
-        "http://backend.leadagro.net/api/reset-password/request",
+        "https://backend.leadagro.net/api/reset-password/request",
         {
           email: email,
         }
@@ -50,7 +50,7 @@
 
   const ResendOtp = async () => {
     const res = await axios.post(
-      "http://backend.leadagro.net/api/reset-password/request",
+      "https://backend.leadagro.net/api/reset-password/request",
       {
         email: sessionStorage.getItem("resetEmail"),
       }
@@ -67,7 +67,7 @@
       return;
     } else {
       const res = await axios.post(
-        "http://backend.leadagro.net/api/reset-password/verify-token-expired",
+        "https://backend.leadagro.net/api/reset-password/verify-token-expired",
         {
           email: sessionStorage.getItem("resetEmail"),
           token: otp.join(""),
@@ -102,7 +102,7 @@
       const email = sessionStorage.getItem("resetEmail");
       const otp = JSON.parse(sessionStorage.getItem("otp"));
       const res = await axios.post(
-        "http://backend.leadagro.net/api/reset-password/reset",
+        "https://backend.leadagro.net/api/reset-password/reset",
         {
           email: email,
           token: otp,
