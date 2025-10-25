@@ -23,7 +23,7 @@
 
 </script>
 
-<header class="bg-white shadow-lg fixed w-full top-0 z-50 " style="height: 80px;">
+<header class="bg-white shadow-lg fixed w-full top-0 z-50 items-center" style="height: 80px;">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
@@ -33,8 +33,8 @@
               ><img
                 src="/images/new_Image/logo-depps.png"
                 alt="MYDEPPS Logo"
-                
-                style="height: 75px; width: auto;"
+
+                style="height: 110px; width: auto;"
             /></a>
           </div>
           <div class="hidden md:block">

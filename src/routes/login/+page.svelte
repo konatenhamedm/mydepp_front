@@ -89,7 +89,7 @@ console.log(success);
           <div class="relative">
             <input
               id="newPassword"
-              type={password ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'password'}
               bind:value={password}
               placeholder="Entrez votre  mot de passe"
               required
@@ -117,8 +117,8 @@ console.log(success);
         >
           <div class="flex"></div>
           <a
-            class="text-13 hover:text-dark dark:hover:text-title-dark text-[#00baff]"
-            href="/login/mot_passe_oublie">Mot de passe oublié?</a
+            class=" hover:text-dark dark:hover:text-title-dark text-blue-200 font-medium"
+            href="/connexion/forgot_password">Mot de passe oublié?</a
           >
         </div>
 

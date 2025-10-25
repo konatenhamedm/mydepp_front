@@ -63,6 +63,44 @@ let formData = {
   denomination: "",
   documents: [],
 };
+let errors = {
+  email: "",
+  password: "",
+  confirmPassword: "",
+  niveauIntervention: "",
+  typePersonne: "",
+  nom: "",
+  prenoms: "",
+  telephone: "",
+  bp: "",
+  emailAutre: "",
+  adresse: "",
+  nomRepresentant: "",
+  denomination: "",
+  documents: ""
+};
+
+function checkFormData(formData:any) {
+  
+
+  if (!formData.email) errors.email = "L'email est requis";
+  if (!formData.password) errors.password = "Le mot de passe est requis";
+  if (!formData.confirmPassword) errors.confirmPassword = "La confirmation du mot de passe est requise";
+  if (formData.password !== formData.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas";
+  if (!formData.niveauIntervention) errors.niveauIntervention = "Le niveau d'intervention est requis";
+  if (!formData.typePersonne) errors.typePersonne = "Le type de personne est requis";
+  if (!formData.nom) errors.nom = "Le nom est requis";
+  if (!formData.prenoms) errors.prenoms = "Les prénoms sont requis";
+  if (!formData.telephone) errors.telephone = "Le téléphone est requis";
+  if (!formData.bp) errors.bp = "La boîte postale est requise";
+  if (!formData.emailAutre) errors.emailAutre = "L'email secondaire est requis";
+  if (!formData.adresse) errors.adresse = "L'adresse est requise";
+  if (!formData.nomRepresentant) errors.nomRepresentant = "Le nom du représentant est requis";
+  if (!formData.denomination) errors.denomination = "La dénomination est requise";
+  if (!formData.documents || formData.documents.length === 0) errors.documents = "Au moins un document doit être ajouté";
+
+  return errors;
+}
 
  let values = {
     typePersonne: [],
@@ -318,21 +356,9 @@ function clickPaiement() {
 
 <main>
   <HeaderNew />
- 
-    <div
-      class="min-h-screen   flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8 "
-      style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
-    >
-      <div class="max-w-7xl w-full">
-        <!-- <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">
-            Inscription Établissement
-          </h1>
-          <p class="text-gray-600">Inscrivez votre établissement de santé</p>
-        </div> -->
-             <section
-          class="relative  text-white py-20"
-          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);
+   <section
+          class="relative  text-white"
+          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);padding-top:100px;padding-bottom:50px;
 "
         >
           <div class="absolute inset-0 bg-black/20"></div>
@@ -346,6 +372,18 @@ function clickPaiement() {
             </p>
           </div>
         </section>
+    <div
+      class="flex items-center justify-center px-4 sm:px-6 lg:px-8 "
+      style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
+    >
+      <div class="max-w-7xl w-full">
+        <!-- <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            Inscription Établissement
+          </h1>
+          <p class="text-gray-600">Inscrivez votre établissement de santé</p>
+        </div> -->
+           
         <section class="py-16">
         <div class="flex justify-between mb-8 text-sm">
           {#if step >= 1}
@@ -657,16 +695,7 @@ function clickPaiement() {
             </div>
           </form>
         </div>
-        <div class="text-center mt-6">
-          <p class="text-gray-600">
-            Vous avez déjà un compte ?<!-- -->
-            <a
-              class="text-purple-600 hover:text-purple-700 font-medium"
-              href="/connexion"
-              >Se connecter</a
-            >
-          </p>
-        </div>
+       
       </div>
     </div>
  
