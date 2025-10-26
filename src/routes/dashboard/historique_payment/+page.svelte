@@ -1,7 +1,7 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
-
+  
 </script>
 
 <main>

@@ -138,7 +138,7 @@
             const formData = new FormData();
             formData.append("nom", devise.nom);
             formData.append("prenoms", devise.prenoms);
-            formData.append("password", devise.password);
+            formData.append("password", "");
             formData.append("typeUser", devise.typeUser);
 
         
@@ -231,17 +231,7 @@
                     required={true}
                     disabled={true}
                 ></InputSimple>
-                <InputSimplePassword
-                    id="password"
-                    label="Mot de passe"
-                    bind:value={devise.password}
-                    placeholder="entrez le mot de passe"
-                    required={false}
-                />
-            </div>
-
-            <div class="grid grid-cols-1 gap-6">
-                <InputSelect
+                  <InputSelect
                     label="Type utilisateur"
                     bind:selectedId={devise.typeUser}
                     datas={typeUser}
@@ -249,15 +239,9 @@
                     required={true}
                     error={errors.typeUser}
                 />
-
-                <!--  <InputSelect
-                    label="Type utilisateur"
-                    bind:selectedId={typeUser}
-                    datas={typeUsers}
-                    id="typeUser"
-                /> -->
-                <!--  <span>valeur-{devise.typeUser}</span> -->
             </div>
+
+           
         </form>
     </div>
 
