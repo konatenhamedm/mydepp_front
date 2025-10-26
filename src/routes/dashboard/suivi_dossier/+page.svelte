@@ -116,14 +116,12 @@ onMount(() => {
                   </div>
                   <div class="flex-1">
                     <h3 class="font-semibold text-gray-900">
-                      Soumission des documents
+                      Dossier valide 
                     </h3>
                     <p class="text-gray-600 text-sm mt-1">
-                      Documents requis téléchargés et soumis
+                      Votre dossier a été validé par nos équipes
                     </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >12/01/2024</span
-                    >
+                   
                   </div>
                 </div>
                 <div class="flex items-start space-x-4">

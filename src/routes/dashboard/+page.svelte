@@ -341,7 +341,7 @@
       >
         <button
           
-          on:click={() => (window.location.href = "/dashboard/oep_initiate")}
+          on:click={() => (window.location.href = "/dashboard/oep_initie")}
           style="font-size: 1.1rem; padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border: none; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;  "
         >
           Passer à L'initialisation OEP
