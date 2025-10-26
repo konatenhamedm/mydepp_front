@@ -9,7 +9,7 @@
 
   async function getAllProfessions() {
     await axios
-      .get("http://backend.leadagro.net/api/typeProfession")
+      .get("https://backend.leadagro.net/api/typeProfession")
       .then((response) => {
         professions = response.data.data;
         console.log("YYYYYY", professions);

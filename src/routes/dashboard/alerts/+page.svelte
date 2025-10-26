@@ -15,7 +15,7 @@
   };
 
   const getAllNotifications = async () => {
-   await axios.get("http://backend.leadagro.net/api/notification/by/" + userData.id)
+   await axios.get("https://backend.leadagro.net/api/notification/by/" + userData.id)
      .then(response => {
        notification = response.data.data;
        console.log("Notifications:", notification);
@@ -31,6 +31,20 @@
       getAllNotifications();
     }
   });
+
+const readIt = async (id) => {
+    await axios.post("https://backend.leadagro.net/api/notification/read/" + id)
+      .then(response => {
+        console.log("Notification marked as read:", response.data);
+        // Refresh notifications after marking as read
+        getAllNotifications();
+      })
+      .catch(error => {
+        console.error("Error marking notification as read:", error);
+      });
+  };
+
+
 </script>
 
 <main>
@@ -85,33 +99,37 @@
                     <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
                   </div>
                 </div>
-                <p class="text-gray-600 leading-relaxed">
+                <!-- <p class="text-gray-600 leading-relaxed">
                   Votre certificat d'assurance expire dans 7 jours. Veuillez le
                   renouveler.
-                </p>
+                </p> -->
+                {#if note.isRead == false}
                 <div class="mt-4 flex space-x-3">
-                  <button
+                  <!-- <button
                     class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
                   >
                     Voir détails</button
-                  ><button
-                    class="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors whitespace-nowrap"
+                  > -->
+                  <button
+                    onclick={() => readIt(note.id)}
+                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
                   >
                     Marquer comme lu
                   </button>
                 </div>
+                {/if}
               </div>
             </div>
           
           </div>
           {/each}
-            <div class="mt-8 text-center">
+            <!-- <div class="mt-8 text-center">
           <button
             class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
           >
             Marquer tout comme lu
           </button>
-        </div>
+        </div> -->
           {:else}
           <div class="bg-white rounded-xl shadow-sm border-l-4 p-6 hover:shadow-md transition-shadow border-l-gray-300">
             <div class="flex items-start space-x-4">
