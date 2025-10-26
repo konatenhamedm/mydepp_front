@@ -1,7 +1,14 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { CookieManager, getAuthCookie } from "$lib/auth";
+  import { onMount } from "svelte";
 
+  let userData = CookieManager.get('auth');
+
+onMount(() => {
+    userData = getAuthCookie();
+});
 </script>
 
 <main>
@@ -50,7 +57,7 @@
                   <span class="text-sm text-gray-500">Progression</span>
                   <div class="mt-2">
                     <div class="flex justify-between text-sm mb-1">
-                      <span>75<!-- -->%</span>
+                      <span>75%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
                       <div
@@ -90,14 +97,12 @@
                   </div>
                   <div class="flex-1">
                     <h3 class="font-semibold text-gray-900">
-                      Création du dossier
+                      Dossier Soumis 
                     </h3>
                     <p class="text-gray-600 text-sm mt-1">
-                      Dossier créé et informations de base renseignées
+                      Dossier soumis, en attente de validation
                     </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >10/01/2024</span
-                    >
+                    
                   </div>
                 </div>
                 <div class="flex items-start space-x-4">
@@ -166,7 +171,7 @@
             </div>
           </div>
         </div>
-        <div class="mt-8">
+        <!-- <div class="mt-8">
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-6">
               Documents du dossier
@@ -297,7 +302,7 @@
               </table>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 <FooterNew />

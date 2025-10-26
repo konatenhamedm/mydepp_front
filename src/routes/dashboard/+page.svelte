@@ -166,7 +166,7 @@
       title: "Alertes",
       icon: "ri-notification-line",
       color: "from-orange-100 to-orange-50",
-      badge: notificationCount.toString(),
+      badge: `${notifications.length}`,
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/alerts",
       description: "Notifications importantes",

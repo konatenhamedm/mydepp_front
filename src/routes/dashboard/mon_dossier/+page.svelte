@@ -44,7 +44,7 @@
         BASE_URL_API + "/professionnel/update/" + user?.personneId,
         {
           method: "POST",
-          body: JSON.stringify(professionnelData),
+          body: JSON.stringify(professionnelData)
         }
       )
         .then((response) => response.json())
@@ -71,7 +71,7 @@
         } else {
           professionnelData = userData?.personne;
         }
-        nbDocumentSoumis = userData?.personne?.documents?.length;
+        nbDocumentSoumis = userData?.personne?.documents?.length || 6;
         Documents = userData?.personne?.documents || [];
       });
   }
@@ -285,27 +285,27 @@
                     />
                   </div>
 
-                  <div>
+                  <!-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2"
                       >Appartenance à une organisation</label
                     >
                     <input
                       type="tel"
-                      disabled
+                      bind:value={professionnelData.appartenirOrganisation}
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      value={userData?.personne?.appartenirOrganisation}
+                      
                     />
-                  </div>
+                  </div> -->
 
-                  <div>
+                  <!-- <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2"
                       >Appartenance à un ordre</label
                     >
                     <input
                       type="text"
-                      disabled
+                      bind:value={professionnelData.appartenirOrdre}
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      value={userData?.personne?.appartenirOrdre}
+                      
                     />
                   </div>
 
@@ -319,7 +319,7 @@
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       value={userData?.personne?.situationPro.libelle}
                     />
-                  </div>
+                  </div> -->
                 </div>
               {/if}
               <div class="flex justify-end space-x-4 pt-6">
@@ -363,10 +363,132 @@
               {/each}
             </ul>
           {:else}
+            {#if professionnelData.cni != null }
+              <ul class="space-y-4">
+              
+                <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        CNI
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.cni.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.cni.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+                 <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        PHOTO
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.photo.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.photo.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+
+                 <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        CASIER
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.casier.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.casier.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+                 <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        CERTIFICAT
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.certificat.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.certificat.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+                 <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        DIPLOME
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.diplomeFile.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.diplomeFile.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+                 <li
+                  class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div class="flex items-center gap-4">
+                    <i class="ri-file-line text-3xl text-blue-500"></i>
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        CV
+                      </p>
+                      <a
+                        class="text-lg"
+                        style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                        href={professionnelData.cv.url
+                          ? BASE_URL_API_UPLOAD + professionnelData.cv.url
+                          : "#"}>Voir Document</a
+                      >
+                    </div>
+                  </div>
+                </li>
+              
+            </ul>
+            {:else}
             <div class="text-center py-16 text-gray-500">
               <i class="ri-folder-2-line text-6xl text-gray-400 mb-4"></i>
               <p class="text-lg">Aucun document ajouté pour le moment.</p>
             </div>
+            {/if}
           {/if}
         </div>
       </div>
