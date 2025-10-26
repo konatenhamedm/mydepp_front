@@ -104,9 +104,9 @@
             >
               Adresse email <span class="text-red-500">*</span>
             </label>
-            <div class="relative">
+            <div class="relative items-center grid grid-cols-1">
               <div
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                class="absolute left-4  transform  pointer-events-none"
               >
                 <i class="ri-mail-line text-gray-400 text-lg"></i>
               </div>
@@ -115,8 +115,8 @@
                 id="email"
                 required
                 bind:value={email}
-                class="w-full px-4 py-3.5 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
-                placeholder="votre.email@exemple.com"
+                class="w-full px-[40px] py-3.5 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
+                placeholder="Votre.email@exemple.com"
                 name="email"
               />
             </div>
@@ -130,9 +130,9 @@
             >
               Mot de passe <span class="text-red-500">*</span>
             </label>
-            <div class="relative">
+            <div class="relative items-center grid grid-cols-1">
               <div
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                class="absolute left-4  mr-4 transform  pointer-events-none"
               >
                 <i class="ri-lock-line text-gray-400 text-lg"></i>
               </div>
@@ -141,14 +141,14 @@
                 id="password"
                 required
                 bind:value={password}
-                class="w-full px-4 py-3.5 pl-12 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
+                class="w-full px-[40px] py-3.5 pl-12 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
                 placeholder="Votre mot de passe"
                 name="password"
               />
               <button
                 type="button"
                 on:click={togglePasswordVisibility}
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                class="absolute right-4  transform  text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
                 aria-label={showPassword
                   ? "Masquer le mot de passe"
                   : "Afficher le mot de passe"}
