@@ -1,12 +1,15 @@
 <script lang="ts">
   export let formdata: any;
-
+  export let values: any;
+  let allValuesAsTables : any[] = Object.values(values);
   // Fonction pour afficher les valeurs de manière lisible
   function displayValue(value: any): string {
     if (!value) return "Non renseigné";
     if (typeof value === "string") return value;
     return String(value);
   }
+
+  console.log("value as table dans recap professionnel:", allValuesAsTables);
 </script>
 
 <div class="space-y-6">
@@ -41,7 +44,7 @@
       <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3">2</span>
       Informations personnelles
     </h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-11">
+    <div class="grid sm:grid-cols-1 grid-cols-2 md:grid-cols-2 gap-4 pl-11">
       <div>
         <p class="text-sm text-gray-600">Civilité</p>
         <p class="font-medium text-gray-900">{displayValue(formdata.civilite)}</p>
@@ -56,7 +59,7 @@
       </div>
       <div>
         <p class="text-sm text-gray-600">Nationalité</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.nationalite)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.nationalite) ? allValuesAsTables[3][parseInt(formdata.nationalite)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Date de naissance</p>
@@ -85,7 +88,7 @@
       <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-3">3</span>
       Informations professionnelles
     </h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-11">
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 pl-11">
       <div>
         <p class="text-sm text-gray-600">Profession</p>
         <p class="font-medium text-gray-900">{displayValue(formdata.profession)}</p>
@@ -96,7 +99,7 @@
       </div>
       <div>
         <p class="text-sm text-gray-600">Type de diplôme</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.typeDiplome)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.typeDiplome) ? allValuesAsTables[2][parseInt(formdata.typeDiplome)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Date du diplôme</p>
@@ -104,11 +107,11 @@
       </div>
       <div>
         <p class="text-sm text-gray-600">Lieu d'obtention</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.lieuObtentionDiplome)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.lieuObtentionDiplome) ? allValuesAsTables[5][parseInt(formdata.lieuObtentionDiplome)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Situation professionnelle</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.situationPro)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.situationPro) ? allValuesAsTables[4][parseInt(formdata.situationPro)-1].libelle : "Non renseigné"}</p>
       </div>
       {#if formdata.emailPro}
         <div>
@@ -125,22 +128,22 @@
       <span class="bg-yellow-100 text-yellow-600 rounded-full w-8 h-8 flex items-center justify-center mr-3">4</span>
       Lieu d'exercice
     </h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-11">
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 pl-11">
       <div>
         <p class="text-sm text-gray-600">Région</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.region)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.region) ? allValuesAsTables[6][parseInt(formdata.region)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">District</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.district)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.district) ? allValuesAsTables[8][parseInt(formdata.district)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Ville</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.ville)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.ville) ? allValuesAsTables[7][parseInt(formdata.ville)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Commune</p>
-        <p class="font-medium text-gray-900">{displayValue(formdata.commune)}</p>
+        <p class="font-medium text-gray-900">{displayValue(formdata.commune) ? allValuesAsTables[9][parseInt(formdata.commune)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p class="text-sm text-gray-600">Quartier</p>
@@ -161,7 +164,7 @@
       <span class="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center mr-3">5</span>
       Documents
     </h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-11">
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 pl-11">
       <div>
         <p class="text-sm text-gray-600">Photo d'identité</p>
         <p class="font-medium text-gray-900">
