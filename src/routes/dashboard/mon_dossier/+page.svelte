@@ -27,12 +27,16 @@
 
 
     const handleSubmit = async  (event) => {
+      const formData = new FormData();
     if (userData.typeUser === "ETABLISSEMENT") {
+      for (const [key, value] of Object.entries(etablissementData)) {
+        formData.append(key, value as string);
+      }
      await fetch(
         BASE_URL_API + "/etablissement/update/" + user?.personneId,
         {
           method: "POST",
-          body: JSON.stringify(etablissementData),
+          body: formData,
         }
       )
         .then((response) => response.json())
@@ -40,11 +44,15 @@
           console.log("Etablissement profile updated:", result);
         });
     } else {
+      for (const [key, value] of Object.entries(professionnelData)) {
+        formData.append(key, value as string);
+      }
+
       await fetch(
         BASE_URL_API + "/professionnel/update/" + user?.personneId,
         {
           method: "POST",
-          body: JSON.stringify(professionnelData)
+          body: formData
         }
       )
         .then((response) => response.json())
