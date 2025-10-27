@@ -8,7 +8,7 @@
 
   async function getAllDocuments() {
     await axios
-      .get("http://backend.leadagro.net/api/adminDocument")
+      .get("https://backend.leadagro.net/api/adminDocument")
       .then((response) => {
         console.log("response", response);
         if (response.data.code === 200) {
