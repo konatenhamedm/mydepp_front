@@ -14,9 +14,10 @@
   
  async function handleSubmitNewTopic() {
     await axios
-      .post(BASE_URL_API + "/forum/create", {...newTopic, user: userData.id, statut:"Actif"})
+      .post(BASE_URL_API + "/forum/create", {...newTopic, user: userData.id, status:"Actif"})
       .then((response) => {
         console.log("Sujet créé avec succès:", response.data);
+        fetchForumData();
       })
       .catch((error) => {
         console.error("Erreur lors de la création du sujet:", error);
