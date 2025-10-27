@@ -59,7 +59,7 @@
               {#if isAuth}
               <a
                 class="bg-blue-600 text-white px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                href="/dashbboard"
+                href="/dashboard"
                 >Tableau de bord</a
               ><button 
                 on:click={logout}

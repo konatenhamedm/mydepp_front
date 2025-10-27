@@ -6,13 +6,28 @@
   
   import { goto } from "$app/navigation";
   import Spinner from "$components/_skeletons/Spinner.svelte";
-  import { CookieManager } from "$lib/auth";
+  import { CookieManager, getAuthCookie } from "$lib/auth";
+  import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import FooterNew from "$components/_includes/FooterNew.svelte";
 
+export let data;
+ let formData: {
+   
+    documents: DocumentItem[];
+  } = {
+    
+    documents: [],
+  };
 
-
+  // Définition des erreurs
+  let errors = {
+   
+    documents: "",
+  };
 
   
-  let user = CookieManager.get("auth") || {};
+  let user = data.user;
+  console.log("user dans oep_initie", user);
   let isPaiementProcessing = false;
   $: isPaiementDone = false;
   $: message = "";
@@ -46,19 +61,7 @@
   localStorage.setItem("formDataOep", JSON.stringify(formData));
 }
 
-  let formData: {
-   
-    documents: DocumentItem[];
-  } = {
-    
-    documents: [],
-  };
-
-  // Définition des erreurs
-  let errors = {
-   
-    documents: "",
-  };
+ 
   let emailCheck = false;
  
 
@@ -141,7 +144,7 @@
 
   // ✅ Vérifier si on revient après un paiements
   onMount(async () => {
-    console.log("Mounted component, checking for return param...",data);
+    
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has("return")) {
       await restoreFormState();
@@ -307,12 +310,12 @@ console.log("formDatas avant fichiers", formDatas);
      {
       name: "userData",
       url: "/etablissement/get/one",
-      id: user.personneId,
+      id: user.personneId ? user.personneId : null,
     },
     {
       name: "typeDocument",
       url: "/libelleGroupe/all/oep",
-      id: user.typePersonne,
+      id: user.typePersonne ? user.typePersonne : null,
     },
   ];
 
@@ -344,7 +347,30 @@ console.log("formDatas avant fichiers", formDatas);
     }
   }
 
+   function updateFormData(fieldName: any, file: any) {
+    if (file) {
+      // Lire le fichier en Base64 pour le stocker dans localStorage
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // Ajouter le fichier à selectedFiles
+        selectedFiles = {
+          ...selectedFiles,
+          [fieldName]: { name: file.name, data: reader.result },
+        };
+
+        // Stocker dans le localStorage
+        localStorage.setItem("selectedFilesOep", JSON.stringify(selectedFiles));
+
+        // Mettre à jour les noms de fichiers affichés
+        fileNames = { ...fileNames, [fieldName]: file.name };
+      };
+    }
+  }
+
   onMount(async () => {
+    
+    console.log("Mounted component, fetching data...", user);
     fetchData();
     localStorage.removeItem("formDataOep");
   });
@@ -379,239 +405,327 @@ console.log("formDatas avant fichiers", formDatas);
   }
 </script>
 
-<div id="">
-  <Header />
-  <Slide {user} />
-  <section class="text-center pb-20" style="padding-top:150px">
-    <h2 class="h2-baslik-anasayfa-ozel pb-10 text-uppercase">
-     Initialisation de l'OEP
-    </h2>
-    <p class="text-center paragraf">
+
+<div class="oep-bg-gradient">
+  <HeaderNew />
+  <section class="oep-section-header">
+    <h2 class="oep-title">Initialisation de l'OEP</h2>
+    <p class="oep-subtitle">
       Veuillez renseigner vos informations afin de procéder à l'ouverture de votre dossier OEP.
     </p>
   </section>
 
-  <main style="padding-top:200px">
-    <!--İletişim Form Alanı-->
-    <section class="iletisim-form-alani pt-20">
-      <div class="tablo">
-        <div class="" style="visibility: visible;">
-          <form
-            class="form one_customer"
-            method="post"
-            on:submit|preventDefault={clickPaiement}
-          >
-            {#if step === 1}
-              <h2 class="h2-baslik-anasayfa-ozel h-yazi-margin-kucuk">
-                Documents de l'établissement 
-              </h2>
-              <div class="tablo">
-                <div class="tablo--1h-ve-2">
-                  {#each values.typeDocument as document}
-                    <div style="margin-top: 20px;"></div>
-                    <h2 class="h2-baslik-anasayfa-ozel h-yazi-margin-kucuk">
-                      {document.libelle}
-                    </h2>
-                    <div class="grid grid-cols-2">
-                      {#each document.typeDocuments as requiredFile, index}
-                        <div class="form__grup">
-                          <label class="form_label"
-                            >{requiredFile.libelle} *</label
-                          >
-                          <div class="flex items-center">
-                            {#if uploadedFiles[requiredFile.libelle + document.id]}
-                              <span
-                                class="file-preview"
-                                style="margin-right:8px;"
-                              >
-                                {#if formData.documents
-                                  .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
-                                  ?.path.startsWith("data:image")}
-                                  <!-- Affiche la miniature de l'image -->
-                                  <img
-                                    src={formData.documents.find(
-                                      (d) =>
-                                        d.libelle === requiredFile.libelle &&
-                                        d.libelleGroupe === document.id
-                                    )?.path}
-                                    alt="miniature"
-                                    style="width:70px;height:70px;object-fit:cover;border-radius:4px;border:1px solid #ccc;"
-                                  />
-                                {:else}
-                                  <!-- Affiche le nom du fichier si ce n'est pas une image -->
-                                  <span style="font-size:12px;color:#555;">
-                                    {uploadedFiles[
-                                      requiredFile.libelle + document.id
-                                    ]}
-                                  </span>
-                                {/if}
-                              </span>
-                            {/if}
-
-                            <input
-                              accept="image/*, .pdf"
-                              type="file"
-                              class="form__input"
-                              on:change={(e) =>
-                                handleDocumentChange(
-                                  e,
-                                  requiredFile.libelle,
-                                  document.id
-                                )}
-                              placeholder="Documents à fournir"
-                            />
-
-                            {#if errors.documents}
-                              <p class="error">{errors.documents}</p>
-                            {/if}
-                          </div>
+  <main class="oep-main">
+    <section class="oep-form-section">
+      <div class="oep-form-wrapper">
+        <form
+          class="oep-form"
+          method="post"
+          on:submit|preventDefault={clickPaiement}
+        >
+          {#if step === 1}
+            <h2 class="oep-form-title">Documents de l'établissement</h2>
+            <div class="oep-form-block">
+              {#each values.typeDocument as document}
+                <div class="oep-document-group">
+                  <h2 class="oep-document-title">{document.libelle}</h2>
+                  <div class="oep-grid">
+                    {#each document.typeDocuments as requiredFile, index}
+                      <div class="oep-form-group">
+                        <label class="oep-label">{requiredFile.libelle} *</label>
+                        <div class="oep-file-flex">
+                          {#if uploadedFiles[requiredFile.libelle + document.id]}
+                            <span class="oep-file-preview">
+                              {#if formData.documents
+                                .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
+                                ?.path.startsWith("data:image")}
+                                <img
+                                  src={formData.documents.find(
+                                    (d) =>
+                                      d.libelle === requiredFile.libelle &&
+                                      d.libelleGroupe === document.id
+                                  )?.path}
+                                  alt="miniature"
+                                  class="oep-file-img"
+                                />
+                              {:else}
+                                <span class="oep-file-name">
+                                  {uploadedFiles[requiredFile.libelle + document.id]}
+                                </span>
+                              {/if}
+                            </span>
+                          {/if}
+                          <input
+                            accept="image/*, .pdf"
+                            type="file"
+                            class="oep-input-file"
+                            on:change={(e) =>
+                              handleDocumentChange(
+                                e,
+                                requiredFile.libelle,
+                                document.id
+                              )}
+                            placeholder="Documents à fournir"
+                          />
+                          {#if errors.documents}
+                            <p class="oep-error">{errors.documents}</p>
+                          {/if}
                         </div>
-                      {/each}
-                    </div>
-                  {/each}
-                </div>
-              </div>
-              {#if isPaiementDone == true}
-               <div class="tablo">
-                <div class="tablo--1h-ve-2">
-                  <!-- on:click={clickPaiement} -->
-                  <div class="grid grid-cols-1 gap-20 flex justify-center">
-                    <div class="">
-                     
-                      
-                        <p>
-                          Votre dossier est en cours de validation, Merci pour votre paiement.
-                        </p>
-                        <br />
-                    
-
-                      <br />
-                    </div>
+                      </div>
+                    {/each}
                   </div>
                 </div>
+              {/each}
+            </div>
+            {#if isPaiementDone == true}
+              <div class="oep-form-block">
+                <div class="oep-validation-message">
+                  <p>Votre dossier est en cours de validation, Merci pour votre paiement.</p>
+                </div>
               </div>
+            {/if}
+          {/if}
+
+          <div class="oep-form-group oep-btn-group">
+            {#if isPaiementDone == false}
+              <button
+                type="button"
+                on:click={clickPaiement}
+                class="oep-btn"
+              >
+                {#if authenticating}
+                  <div class="oep-btn-flex">
+                    <Spinner />
+                    <span>Effectuer le paiement</span>
+                  </div>
+                {:else}
+                  Effectuer le paiement
                 {/if}
+              </button>
+            {/if}
+            {#if isPaiementDone == true}
+              <button
+                type="button"
+                on:click={connexion}
+                class="oep-btn"
+              >
+                Connectez vous
+              </button>
             {/if}
 
-            <!-- Étape 1 -->
-            
-
-          
-           
-
-            <!-- Boutons de navigation -->
-            <div class="form__grup">
-           
-                {#if isPaiementDone == false}
-                  <button
-                    type="button"
-                    on:click={clickPaiement}
-                    class="buton buton--kirmizi bg-green-500"
-                  >
-                    {#if authenticating}
-                      <div class="grid grid-cols-2">
-                        <div>
-                          <Spinner />
-                        </div>
-                        <div>Effectuer le paiement</div>
-                      </div>
-                    {:else}
-                      Effectuer le paiement
-                    {/if}
-                  </button>
-                {/if}
-                {#if isPaiementDone == true}
-                  <button
-                    type="button"
-                    on:click={connexion}
-                    class="buton buton--kirmizi bg-green-500"
-                  >
-                    Connectez vous
-                  </button>
-                {/if}
-              
-
-              <br />
-              <br />
-              {#if message !== ""}
-                <div
-                  class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-                  role="alert"
-                >
-                  <strong class="font-bold">Oups erreur!</strong>
-                  <span class="block sm:inline">{message}</span>
-                </div>
-              {/if}
-            </div>
-          </form>
-        </div>
+            {#if message !== ""}
+              <div class="oep-alert" role="alert">
+                <strong>Oups erreur!</strong>
+                <span>{message}</span>
+              </div>
+            {/if}
+          </div>
+        </form>
       </div>
     </section>
   </main>
-
-  <style>
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .footerss p {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: start !important;
-      align-items: start !important;
-    }
-    h2.h2-baslik-footer.h-yazi-margin-kucuk,
-    .footer__list,
-    .footer__sosyal {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: start !important;
-      align-items: start !important;
-    }
-    .form {
-      max-width: 100%;
-      margin: auto;
-    }
-    .tablo {
-      display: flex;
-      flex-direction: column;
-    }
-    .row {
-      display: flex;
-      gap: 1px; /* Espacement entre les champs */
-      flex-wrap: wrap;
-    }
-
-    .form__grup {
-      flex: 1; /* Permet aux champs de prendre la même largeur */
-      min-width: 250px; /* Empêche les champs d'être trop petits */
-    }
-    h3 {
-      font-size: 1.5em;
-      margin-bottom: 15px;
-      color: #333;
-    }
-
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    .bouncingImage {
-      cursor: pointer;
-    }
-
-    .bouncingImage:hover {
-      scale: 1.1;
-      duration: 2;
-    }
-
-    .file-icon {
-      display: flex;
-      align-items: center;
-      color: #e53e3e; /* red for PDF, change as needed */
-    }
-  </style>
-  <Footer />
+  <FooterNew/>
 </div>
+
+
+<style>
+  .oep-bg-gradient {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff);
+    padding: 0;
+  }
+  .oep-section-header {
+    text-align: center;
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+  .oep-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6d28d9;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px #e0e7ff;
+  }
+  .oep-subtitle {
+    font-size: 1.2em;
+    color: #374151;
+    margin-bottom: 0;
+  }
+  .oep-main {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 70vh;
+  }
+  .oep-form-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .oep-form-wrapper {
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 8px 32px 0 rgba(60, 60, 120, 0.15);
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 900px;
+    width: 100%;
+    margin-bottom: 40px;
+    border: 1px solid #e0e7ff;
+  }
+  .oep-form {
+    width: 100%;
+  }
+  .oep-form-title {
+    font-size: 1.7em;
+    color: #2563eb;
+    margin-bottom: 24px;
+    font-weight: 600;
+    text-shadow: 0 1px 4px #e0e7ff;
+  }
+  .oep-form-block {
+    margin-bottom: 32px;
+
+  }
+  .oep-document-group {
+    margin-bottom: 32px;
+    background: #f3f4f6;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px 0 rgba(60, 60, 120, 0.07);
+    padding: 24px 18px;
+  }
+  .oep-document-title {
+    font-size: 1.2em;
+    color: #7c3aed;
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .oep-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .oep-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+  }
+  .oep-label {
+    font-size: 1em;
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .oep-file-flex {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .oep-file-preview {
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+  }
+  .oep-file-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 8px #e0e7ff;
+    transition: transform 0.2s;
+  }
+  .oep-file-img:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px #a5b4fc;
+  }
+  .oep-file-name {
+    font-size: 13px;
+    color: #6366f1;
+    background: #eef2ff;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  .oep-input-file {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font-size: 1em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px #e0e7ff;
+  }
+  .oep-input-file:focus {
+    border-color: #6366f1;
+    box-shadow: 0 2px 8px #a5b4fc;
+    outline: none;
+  }
+  .oep-error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+  .oep-validation-message {
+    text-align: center;
+    font-size: 1.1em;
+    color: #059669;
+    background: #e0f2fe;
+    border-radius: 12px;
+    padding: 18px 0;
+    margin-top: 12px;
+    box-shadow: 0 2px 8px #bae6fd;
+  }
+  .oep-btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-top: 24px;
+  }
+  .oep-btn {
+    background: linear-gradient(90deg, #6366f1 0%, #7c3aed 100%);
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 12px 32px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px #e0e7ff;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .oep-btn:hover {
+    background: linear-gradient(90deg, #7c3aed 0%, #6366f1 100%);
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px #a5b4fc;
+  }
+  .oep-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .oep-btn-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .oep-alert {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 1em;
+    box-shadow: 0 2px 8px #fecaca;
+    text-align: center;
+  }
+</style>
