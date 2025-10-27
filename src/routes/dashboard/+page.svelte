@@ -54,6 +54,10 @@
   async function uploadPhoto(file) {
     const formData = new FormData();
     formData.append("avatar", file);
+    formData.append("password", "");
+    formData.append("newPassword", "");
+    formData.append("email", user?.username || "");
+    formData.append("username", user?.username || "");
 
     try {
       const response = await fetch(BASE_URL_API + "/user/profil/update/" + user?.id, {
