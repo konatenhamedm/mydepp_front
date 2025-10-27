@@ -2,13 +2,31 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { BASE_URL_API_UPLOAD } from "$lib/api";
+  import axios from "axios";
+  let Documents = [];
 
+  async function getAllDocuments() {
+    await axios
+      .get("http://backend.leadagro.net/api/adminDocument")
+      .then((response) => {
+        console.log("response", response);
+        if (response.data.code === 200) {
+          Documents = response.data.documents;
+          console.log("Documents", Documents);
+        }
+      }).catch((error) => {
+        console.log("error", error);
+        Documents = [];
+      });
+  }
 </script>
 
 <main>
-    <!-- <HeaderNew />  -->
+    <HeaderNew /> 
     <div
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+      style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
     >
       <div class="bg-white shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -29,15 +47,15 @@
             <div class="flex items-center space-x-2">
               <span
                 class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium"
-                >1<!-- -->
-                nouveaux</span
+                >{Documents.length}<!-- -->
+                Documents</span
               >
             </div>
           </div>
         </div>
       </div>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-3 md:grid-cols-3 gap-6 mb-8">
+        <!-- <div class="grid grid-cols-3 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center space-x-3">
               <div
@@ -77,8 +95,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        </div> -->
+        <!-- <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
           <div
             class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
           >
@@ -121,8 +139,12 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {#if Documents.length === 0}
+            <p class="text-gray-600 justify-center text-lg items-center">Aucun document disponible.</p>
+          {:else}
+            {#each Documents as document}
           <div
             class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
           >
@@ -133,278 +155,45 @@
                 </div>
                 <div>
                   <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Guide de conformité 2024
+                    {document.libelle}
                   </h3>
                   <span class="text-xs text-gray-500"
-                    >PDF<!-- -->
-                    •
-                    <!-- -->2.5 MB</span
+                    >{document.path.alt.slice(-1,-3)}</span
                   >
                 </div>
               </div>
-              <span
+              <!-- <span
                 class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium"
                 >Nouveau</span
-              >
+              > -->
             </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+            <!-- <p class="text-gray-600 text-sm mb-4 line-clamp-3">
               Guide complet des nouvelles réglementations sanitaires pour 2024
-            </p>
-            <div
+            </p> -->
+            <!-- <div
               class="flex items-center justify-between text-sm text-gray-500 mb-4"
             >
               <span class="px-2 py-1 bg-gray-100 rounded-full"
                 >Réglementation</span
               ><span>2024-01-15</span>
-            </div>
+            </div> -->
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-1 text-sm text-gray-500">
                 <i class="ri-download-line"></i><span>45</span>
               </div>
               <div class="flex space-x-2">
                 <button
+                  onclick={() => window.open(BASE_URL_API_UPLOAD+document.path.path+document.path.url, "_blank")}
                   class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
                 >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
+                  Aperçu/Telecharger</button
                 >
-                  Télécharger
-                </button>
               </div>
             </div>
           </div>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 flex items-center justify-center">
-                  <i class="ri-file-pdf-line text-red-500 text-2xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Protocole d'urgence
-                  </h3>
-                  <span class="text-xs text-gray-500"
-                    >PDF<!-- -->
-                    •
-                    <!-- -->1.8 MB</span
-                  >
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              Procédures d'urgence et contacts essentiels
-            </p>
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 mb-4"
-            >
-              <span class="px-2 py-1 bg-gray-100 rounded-full">Procédures</span
-              ><span>2024-01-12</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>32</span>
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 flex items-center justify-center">
-                  <i class="ri-file-word-line text-blue-500 text-2xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Formulaire de déclaration
-                  </h3>
-                  <span class="text-xs text-gray-500"
-                    >DOCX<!-- -->
-                    •
-                    <!-- -->0.5 MB</span
-                  >
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              Formulaire de déclaration d'incident
-            </p>
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 mb-4"
-            >
-              <span class="px-2 py-1 bg-gray-100 rounded-full">Formulaires</span
-              ><span>2024-01-10</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>28</span>
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 flex items-center justify-center">
-                  <i class="ri-file-pdf-line text-red-500 text-2xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Certificat de formation
-                  </h3>
-                  <span class="text-xs text-gray-500"
-                    >PDF<!-- -->
-                    •
-                    <!-- -->1.2 MB</span
-                  >
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              Modèle de certificat de formation du personnel
-            </p>
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 mb-4"
-            >
-              <span class="px-2 py-1 bg-gray-100 rounded-full"
-                >Certifications</span
-              ><span>2024-01-08</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>67</span>
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 flex items-center justify-center">
-                  <i class="ri-file-pdf-line text-red-500 text-2xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Rapport d'audit 2023
-                  </h3>
-                  <span class="text-xs text-gray-500"
-                    >PDF<!-- -->
-                    •
-                    <!-- -->3.2 MB</span
-                  >
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              Rapport complet de l'audit annuel 2023
-            </p>
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 mb-4"
-            >
-              <span class="px-2 py-1 bg-gray-100 rounded-full">Rapports</span
-              ><span>2024-01-05</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>89</span>
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 flex items-center justify-center">
-                  <i class="ri-file-excel-line text-green-500 text-2xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900 line-clamp-2">
-                    Checklist hygiène
-                  </h3>
-                  <span class="text-xs text-gray-500"
-                    >XLSX<!-- -->
-                    •
-                    <!-- -->0.8 MB</span
-                  >
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-              Liste de contrôle pour les procédures d'hygiène
-            </p>
-            <div
-              class="flex items-center justify-between text-sm text-gray-500 mb-4"
-            >
-              <span class="px-2 py-1 bg-gray-100 rounded-full">Procédures</span
-              ><span>2024-01-03</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>156</span>
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Aperçu</button
-                ><button
-                  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors whitespace-nowrap"
-                >
-                  Télécharger
-                </button>
-              </div>
-            </div>
-          </div>
+            {/each}
+          {/if}
+         
         </div>
       </div>
     </div>
