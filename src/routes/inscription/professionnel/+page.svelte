@@ -22,6 +22,8 @@
   let isModalOpen = false;
   let intermed = 0;
   let pdfUrl: any;
+  let errors: { [key: string]: string } = {};
+  let imagePreview: { [key: string]: string } = {};
   function openModal(reference: any) {
     pdfUrl = reference; // ✅ Met à jour la variable réactive
     isModalOpen = true;
@@ -32,10 +34,186 @@
     localStorage.clear();
   }
 
+  const validateEmail = (email: string): boolean => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+  const validatePhone = (phone: string): boolean => {
+    const re = /^(07|01|05)[0-9]{8}$/;
+    return re.test(String(phone));
+  };
+
+  // Fonction pour valider les champs d'une étape
+  function validateStep(currentStep: number): boolean {
+    errors = {}; // Réinitialiser les erreurs
+    let isValid = true;
+
+    if (currentStep === 1) {
+      // Validation Step 1: Email et mot de passe
+      if (!formData.email) {
+        errors.email = "L'email est requis";
+        isValid = false;
+      } else if (!validateEmail(formData.email)) {
+        errors.email = "Email invalide, merci de vérifier le format";
+        isValid = false;
+      }
+
+      if (!formData.password) {
+        errors.password = "Le mot de passe est requis";
+        isValid = false;
+      } else if (formData.password.length < 8) {
+        errors.password = "Le mot de passe doit contenir au moins 8 caractères";
+        isValid = false;
+      }
+
+      if (!formData.confirmPassword) {
+        errors.confirmPassword = "Veuillez confirmer le mot de passe";
+        isValid = false;
+      } else if (formData.password !== formData.confirmPassword) {
+        errors.confirmPassword = "Les mots de passe ne correspondent pas";
+        isValid = false;
+      }
+    }
+
+    if (currentStep === 2) {
+      // Validation Step 2: Informations personnelles
+      const requiredFields = [
+        { field: "nom", label: "Nom" },
+        { field: "prenoms", label: "Prénoms" },
+        { field: "nationalite", label: "Nationalité" },
+        { field: "civilite", label: "Civilité" },
+        { field: "emailAutre", label: "emailAutre" },
+        { field: "dateNaissance", label: "Date de naissance" },
+        { field: "situation", label: "Situation" },
+      ];
+
+      requiredFields.forEach(({ field, label }) => {
+        if (!formData[field]) {
+          errors[field] = `${label} est requis(e)`;
+          isValid = false;
+        }
+      });
+
+      // Validation du numéro de téléphone
+      if (!formData.numero) {
+        errors.numero = "Le numéro de téléphone est requis";
+        isValid = false;
+      } else if (!validatePhone(formData.numero)) {
+        errors.numero = "Format de numéro de téléphone invalide";
+        isValid = false;
+      }
+
+      // Validation de l'email alternatif s'il est fourni
+      if (formData.emailAutre && !validateEmail(formData.emailAutre)) {
+        errors.emailAutre = "Format d'email invalide";
+        isValid = false;
+      }
+    }
+
+    if (currentStep === 3) {
+      // Validation Step 3: Informations professionnelles
+      const requiredFields = [
+        { field: "profession", label: "Profession" },
+        // {field: 'diplome', label: 'Diplôme'},
+        // {field: 'typeDiplome', label: 'Type de diplôme'},
+        // {field: 'dateDiplome', label: 'Date du diplôme'},
+        // {field: 'lieuObtentionDiplome', label: "Lieu d'obtention du diplôme"},
+        // {field: 'situationPro', label: 'Situation professionnelle'},
+      ];
+      if (intermed == 1) {
+        requiredFields.push(
+          { field: "emailPro", label: "Adresse email professionnel" },
+          { field: "dateDiplome", label: "Date d'obtention du diplôme" },
+          { field: "lieuDiplome", label: "Lieu d'obtention du diplôme" },
+          { field: "datePremierDiplome", label: "Date du premier emploi" },
+          { field: "diplome", label: "Dénomination du diplôme" },
+          { field: "situationPro", label: "Situation professionnelle" },
+          { field: "region", label: "Région sanitaire" },
+          { field: "district", label: "District sanitaire" },
+          { field: "ville", label: "Ville" },
+          { field: "commune", label: "Commune" },
+          { field: "quartier", label: "Quartier" },
+
+          {
+            field: "professionnel",
+            label: "Structure d'exercice professionnel",
+          },
+          { field: "lieuExercicePro", label: "Lieu d'exercice professionnel" },
+          { field: "typeDiplome", label: "Type de diplôme" },
+          { field: "statusPro", label: "Status professionnel" },
+          { field: "lieuObtentionDiplome", label: "Origine du diplôme" }
+        );
+      }
+
+      requiredFields.forEach(({ field, label }) => {
+        if (!formData[field]) {
+          errors[field] = `${label} est requis(e)`;
+          isValid = false;
+        }
+      });
+
+      // Validation de l'email professionnel s'il est fourni
+      if (formData.emailPro && !validateEmail(formData.emailPro)) {
+        errors.emailPro = "Format d'email invalide";
+        isValid = false;
+      }
+    }
+
+    if (currentStep === 4) {
+      // Validation Step 4: Lieu d'exercice
+      const requiredFiles = [
+        { field: "photo", label: "Photo d'identité" },
+        { field: "cni", label: "Copie CNI (Carte nationale d’identité)" },
+        {
+          field: "casier",
+          label: "Extrait Casier judiciaire (Datant de moins 3 mois)",
+        },
+        { field: "diplomeFile", label: "Diplôme légalisé" },
+        // { field: "certificat", label: "Certificat de résidence (Datant de moins 3 mois)" },
+        // { field: "cv", label: "CV" }
+      ];
+
+      requiredFiles.forEach(({ field, label }) => {
+        if (!formData[field]) {
+          errors[field] = `${label} est requis(e)`;
+          isValid = false;
+        }
+      });
+    }
+
+    if (currentStep === 5) {
+      // Validation Step 5: Documents
+      const requiredFiles = [
+        { field: "photo", label: "Photo d'identité" },
+        { field: "cni", label: "CNI" },
+        { field: "diplomeFile", label: "Diplôme" },
+        { field: "casier", label: "Casier judiciaire" },
+      ];
+
+      requiredFiles.forEach(({ field, label }) => {
+        if (!formData[field]) {
+          errors[field] = `${label} est requis(e)`;
+          isValid = false;
+        }
+      });
+    }
+
+    return isValid;
+  }
+
   const nextStep = () => {
-    
+    // Valider l'étape actuelle avant de passer à la suivante
+    if (!validateStep(step)) {
+      message = "Veuillez remplir tous les champs obligatoires correctement";
+      return;
+    }
+
+    message = ""; // Effacer le message d'erreur
+    // alert("next step");
     if (step == 3 && intermed == 0) {
       intermed = 1;
+      // alert("intermed");
     } else {
       step += 1;
       if (step == 6) {
@@ -45,6 +223,7 @@
 
     console.log(formData);
   };
+
   const prevStep = () => {
     if (step > 1) {
       step -= 1;
@@ -53,8 +232,8 @@
       intermed = 0;
     }
     lastStep = false;
+    message = ""; // Effacer les messages d'erreur
   };
-
   let formData = {
     email: "",
     password: "",
@@ -115,10 +294,10 @@
     nationate: [],
     situationProfessionnelle: [],
     lieuObtentionDiplome: [],
-    region : [],
-    ville : [],
-    district : [],
-    commune : [],
+    region: [],
+    ville: [],
+    district: [],
+    commune: [],
   };
   let objects = [
     { name: "civilite", url: "/civilite/" },
@@ -127,10 +306,10 @@
     { name: "lieuObtentionDiplome", url: "/lieuDiplome" },
     { name: "nationate", url: "/pays/" },
     { name: "situationProfessionnelle", url: "/situationProfessionnelle/" },
-    {name: 'region', url: '/region'},
-    {name: 'ville', url: '/ville'},
-    {name: 'district', url: '/district'},
-    {name: 'commune', url: '/commune'},
+    { name: "region", url: "/region" },
+    { name: "ville", url: "/ville" },
+    { name: "district", url: "/district" },
+    { name: "commune", url: "/commune" },
   ];
   ////on recupere le type de personne et les autres trucs a mettre dans le formulaire
   async function fetchDataFirst() {
@@ -138,7 +317,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`https://backend.leadagro.net/api${element.url}`)
+          .get(`http://backend.leadagro.net/api${element.url}`)
           .then((response) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -170,7 +349,7 @@
     initPaiement();
   }
 
- async function initPaiement() {
+  async function initPaiement() {
     authenticating = true;
     // Créer un FormData pour les données du formulaire
     let formDatas = new FormData();
@@ -238,7 +417,7 @@
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -258,25 +437,73 @@
       return false;
     }
   }
+
+  const situationsMatrimoniales = [
+    { value: "Célibataire", label: "Célibataire" },
+    { value: "Marié(e)", label: "Marié(e)" },
+    { value: "Divorcé(e)", label: "Divorcé(e)" },
+    { value: "Veuf (Veuve)", label: "Veuf (Veuve)" },
+  ];
+
+  let professions: any[] = [];
+
+  async function getAllProfessions() {
+    await axios
+      .get("http://backend.leadagro.net/api/typeProfession")
+      .then((response) => {
+        professions = response.data.data;
+        console.log("YYYYYY", professions);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des professions", error);
+        professions = [];
+      });
+  }
+
+  onMount(async () => {
+    await getAllProfessions();
+    console.log("formData dans formStep2", professions);
+  });
+
+  function handleFileUpload(event: any, fieldName: string) {
+    const file = event.target.files[0];
+    if (file) {
+      formData[fieldName] = file;
+
+      // Créer une prévisualisation pour les images
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreview[fieldName] = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Effacer l'erreur pour ce champ
+      if (errors[fieldName]) {
+        delete errors[fieldName];
+      }
+    }
+  }
 </script>
 
 <main>
   <HeaderNew />
-<section
-          class="relative  text-white "
-          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);padding-top:100px;padding-bottom:50px;
+  <section
+    class="relative text-white"
+    style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);padding-top:100px;padding-bottom:50px;
 "
-        >
-          <div class="absolute inset-0 bg-black/20"></div>
-          <div
-            class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-          >
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">Inscription Professionnel de santé</h1>
-            <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Bienvenue dans la section d'inscription des professionnels de santé
-            </p>
-          </div>
-        </section>
+  >
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">
+        Inscription Professionnel de santé
+      </h1>
+      <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+        Bienvenue dans la section d'inscription des professionnels de santé
+      </p>
+    </div>
+  </section>
   <div
     class=" flex items-center justify-center py-30 px-4 sm:px-6 lg:px-8"
     style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
@@ -290,7 +517,7 @@
           Bienvenue dans la section d'inscription des professionnels de santé
         </p>
       </div> -->
-        
+
       <div class="flex justify-between mb-8 text-sm">
         {#if step >= 1}
           <div class="flex items-center">
@@ -399,7 +626,6 @@
             >
               6
             </div>
-            
           </div>
         {:else}
           <div class="flex items-center">
@@ -413,9 +639,11 @@
       </div>
       <div class="flex justify-between mb-8 text-sm">
         {#if step >= 1}
-          <span class="text-purple-600 font-medium">Information generale</span>
+          <span class="text-purple-600 font-medium"
+            >Information de Connexion</span
+          >
         {:else}
-          <span class="text-gray-500">Information generale</span>
+          <span class="text-gray-500">Information de Connexion</span>
         {/if}
         {#if step >= 2}
           <span class="text-purple-600 font-medium"
@@ -474,6 +702,9 @@
                     name="email"
                     bind:value={formData.email}
                   />
+                  {#if errors.email}
+                    <p class="text-red-600 text-sm mt-1">{errors.email}</p>
+                  {/if}
                 </div>
                 <div class="grid md:grid-cols-2 gap-4">
                   <div>
@@ -502,6 +733,9 @@
                         ></i>
                       </button>
                     </div>
+                    {#if errors.password}
+                      <p class="text-red-600 text-sm mt-1">{errors.password}</p>
+                    {/if}
                   </div>
                   <div>
                     <label
@@ -529,22 +763,879 @@
                         ></i>
                       </button>
                     </div>
+                    {#if errors.confirmPassword}
+                      <p class="text-red-600 text-sm mt-1">
+                        {errors.confirmPassword}
+                      </p>
+                    {/if}
                   </div>
                 </div>
               </div>
             </div>
           {:else if step === 2}
-            <FormStep {values} formdata={formData} />
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="nom"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Nom *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="nom"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre nom"
+                    required={true}
+                    name="nom"
+                    bind:value={formData.nom}
+                  />
+                </div>
+                {#if errors.nom}
+                  <p class="text-red-600 text-sm mt-1">{errors.nom}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="prenoms"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Prénoms *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="prenoms"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Confirmez votre mot de passe"
+                    required={true}
+                    name="prenoms"
+                    bind:value={formData.prenoms}
+                  />
+                </div>
+                {#if errors.prenoms}
+                  <p class="text-red-600 text-sm mt-1">{errors.prenoms}</p>
+                {/if}
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="Nationalite"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Nationalite *</label
+                >
+                <div class="relative">
+                  <select
+                    id="Nationalite"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    required={true}
+                    name="Nationalite"
+                    bind:value={formData.nationalite}
+                  >
+                    <option value="">Sélectionnez votre nationalité</option>
+                    {#each values.nationate as option}
+                      <option value={option.id}>{option.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.nationalite}
+                  <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="civilite"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Civilité *</label
+                >
+                <div class="relative">
+                  <select
+                    id="civilite"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    required={true}
+                    name="civilite"
+                    bind:value={formData.civilite}
+                  >
+                    <option value="">Sélectionnez votre civilité</option>
+                    {#each values.civilite as option}
+                      <option value={option.code}>{option.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.civilite}
+                  <p class="text-red-600 text-sm mt-1">{errors.civilite}</p>
+                {/if}
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="emailAutre"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Email Professional *</label
+                >
+                <div class="relative">
+                  <input
+                    type="email"
+                    id="emailAutre"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre email"
+                    required={true}
+                    name="emailAutre"
+                    bind:value={formData.emailAutre}
+                  />
+                </div>
+                {#if errors.emailAutre}
+                  <p class="text-red-600 text-sm mt-1">{errors.emailAutre}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="numero"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Contact *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="numero"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre numéro de téléphone"
+                    required={true}
+                    name="numero"
+                    bind:value={formData.numero}
+                  />
+                </div>
+                {#if errors.numero}
+                  <p class="text-red-600 text-sm mt-1">{errors.numero}</p>
+                {/if}
+              </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="dateNaissance"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Date de Naissance*</label
+                >
+                <div class="relative">
+                  <input
+                    type="date"
+                    id="dateNaissance"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre date de naissance"
+                    required={true}
+                    name="dateNaissance"
+                    bind:value={formData.dateNaissance}
+                  />
+                </div>
+                {#if errors.dateNaissance}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.dateNaissance}
+                  </p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="situation"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Situation matrimoniale *</label
+                >
+                <div class="relative">
+                  <select
+                    id="situation"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    required={true}
+                    name="situation"
+                    bind:value={formData.situation}
+                  >
+                    <option value=""
+                      >Sélectionnez votre situation matrimoniale</option
+                    >
+                    {#each situationsMatrimoniales as option}
+                      <option value={option.value}>{option.label}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.situation}
+                  <p class="text-red-600 text-sm mt-1">{errors.situation}</p>
+                {/if}
+              </div>
+            </div>
           {:else if step === 3 && intermed == 0}
-            <FormStep2 formdata={formData} />
+            <div class=" p-6 rounded-lg shadow-m mb-4">
+              <!-- Radios: Profession -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                {#each professions as professionGP}
+                  <div class="form__group mb-4">
+                    <label
+                      class="form_label font-bold block mb-2"
+                      for="profession-{professionGP.libelle}"
+                    >
+                      <big>{professionGP.libelle}</big>
+                    </label>
+
+                    {#each professionGP.professions as profession}
+                      <div class="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id={profession.code}
+                          name="rd_profession"
+                          class="cursor-pointer"
+                          value={profession.code}
+                          checked={formData.profession === profession.code}
+                          onchange={() =>
+                            (formData.profession = profession.code)}
+                        />
+                        <label for={profession.code} class="cursor-pointer"
+                          >{profession.libelle}</label
+                        >
+                      </div>
+                    {/each}
+                  </div>
+                {/each}
+              </div>
+              {#if errors.profession}
+                <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
+              {/if}
+            </div>
           {/if}
           {#if intermed == 1 && step === 3}
-            <Intermed1 formdata={formData} values={values} />
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="numeroInscription"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Numéro d'inscription au registre</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="numeroInscription"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre numéro d'inscription"
+                    required={true}
+                    name="numeroInscription"
+                    bind:value={formData.numeroInscription}
+                  />
+                </div>
+                {#if errors.numeroInscription}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.numeroInscription}
+                  </p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="emailPro"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Adresse email professionnel *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="emailPro"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Confirmez votre adresse email"
+                    required={true}
+                    name="emailPro"
+                    bind:value={formData.emailPro}
+                  />
+                </div>
+                {#if errors.emailPro}
+                  <p class="text-red-600 text-sm mt-1">{errors.emailPro}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="dateDiplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Date d'obtention du diplôme *</label
+                >
+                <div class="relative">
+                  <input
+                    type="date"
+                    id="dateDiplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre date d'obtention du diplôme"
+                    required={true}
+                    name="dateDiplome"
+                    bind:value={formData.dateDiplome}
+                  />
+                </div>
+                {#if errors.dateDiplome}
+                  <p class="text-red-600 text-sm mt-1">{errors.dateDiplome}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="lieuDiplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Lieu d'obtention du diplôme *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="lieuDiplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre lieu d'obtention du diplôme"
+                    required={true}
+                    name="lieuDiplome"
+                    bind:value={formData.lieuDiplome}
+                  />
+                </div>
+                {#if errors.lieuDiplome}
+                  <p class="text-red-600 text-sm mt-1">{errors.lieuDiplome}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="datePremierDiplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Date du premier emploi *</label
+                >
+                <div class="relative">
+                  <input
+                    type="date"
+                    id="datePremierDiplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre date d'obtention du diplôme"
+                    required={true}
+                    name="datePremierDiplome"
+                    bind:value={formData.datePremierDiplome}
+                  />
+                </div>
+                {#if errors.datePremierDiplome}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.datePremierDiplome}
+                  </p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="diplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Dénomination du diplôme *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="diplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Denomination du  diplôme"
+                    required={true}
+                    name="diplome"
+                    bind:value={formData.diplome}
+                  />
+                </div>
+                {#if errors.diplome}
+                  <p class="text-red-600 text-sm mt-1">{errors.diplome}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="situationPro"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Situation professionnelle *</label
+                >
+                <div class="relative">
+                  <select
+                    id="situationPro"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="situationPro"
+                    bind:value={formData.situationPro}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre situation professionnelle
+                    </option>
+                    {#each values.situationProfessionnelle as situation}
+                      <option value={situation.id}>{situation.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.situationPro}
+                  <p class="text-red-600 text-sm mt-1">{errors.situationPro}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="region"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Région sanitaire *</label
+                >
+                <div class="relative">
+                  <select
+                    id="region"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="region"
+                    bind:value={formData.region}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre région sanitaire
+                    </option>
+                    {#each values.region as region}
+                      <option value={region.id}>{region.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.region}
+                  <p class="text-red-600 text-sm mt-1">{errors.region}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="district"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >District sanitaire *</label
+                >
+                <div class="relative">
+                  <select
+                    id="district"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="district"
+                    bind:value={formData.district}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre district sanitaire
+                    </option>
+                    {#each values.district as district}
+                      <option value={district.id}>{district.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.district}
+                  <p class="text-red-600 text-sm mt-1">{errors.district}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="ville"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Ville *</label
+                >
+                <div class="relative">
+                  <select
+                    id="ville"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="ville"
+                    bind:value={formData.ville}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre ville
+                    </option>
+                    {#each values.ville as ville}
+                      <option value={ville.id}>{ville.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.ville}
+                  <p class="text-red-600 text-sm mt-1">{errors.ville}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="commune"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Commune *</label
+                >
+                <div class="relative">
+                  <select
+                    id="commune"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="commune"
+                    bind:value={formData.commune}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre commune
+                    </option>
+                    {#each values.commune as commune}
+                      <option value={commune.id}>{commune.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.commune}
+                  <p class="text-red-600 text-sm mt-1">{errors.commune}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="quartier"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Quartier *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="quartier"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre quartier"
+                    required={true}
+                    name="quartier"
+                    bind:value={formData.quartier}
+                  />
+                </div>
+                {#if errors.quartier}
+                  <p class="text-red-600 text-sm mt-1">{errors.quartier}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="Ilot,lot"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Ilot,lot</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="Ilot,lot"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre Ilot,lot"
+                    required={true}
+                    name="Ilot,lot"
+                    bind:value={formData.Ilot}
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  for="professionnel"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Structure d'exercice professionnel *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="professionnel"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre strucuture d'exercice professionnel"
+                    required={true}
+                    name="professionnel"
+                    bind:value={formData.professionnel}
+                  />
+                </div>
+                {#if errors.professionnel}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.professionnel}
+                  </p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="lieuExercicePro"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Lieu d'exercice professionnel *</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="lieuExercicePro"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre lieu d'exercice professionnel"
+                    required={true}
+                    name="lieuExercicePro"
+                    bind:value={formData.lieuExercicePro}
+                  />
+                </div>
+                {#if errors.lieuExercicePro}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.lieuExercicePro}
+                  </p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="typeDiplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Type de diplôme *</label
+                >
+                <div class="relative">
+                  <select
+                    id="typeDiplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="typeDiplome"
+                    bind:value={formData.typeDiplome}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre type de diplôme
+                    </option>
+                    {#each values.typeDiplome as profession}
+                      <option value={profession.id}>{profession.libelle}</option
+                      >
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.typeDiplome}
+                  <p class="text-red-600 text-sm mt-1">{errors.typeDiplome}</p>
+                {/if}
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="statusPro"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Status professionnel *</label
+                >
+                <div class="relative">
+                  <select
+                    id="statusPro"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="statusPro"
+                    bind:value={formData.statusPro}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez votre status professionnel
+                    </option>
+                    {#each values.statusPro as status}
+                      <option value={status.id}>{status.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.statusPro}
+                  <p class="text-red-600 text-sm mt-1">{errors.statusPro}</p>
+                {/if}
+              </div>
+              <div>
+                <label
+                  for="lieuObtentionDiplome"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Origine du diplôme *</label
+                >
+                <div class="relative">
+                  <select
+                    id="lieuObtentionDiplome"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                    required={true}
+                    name="lieuObtentionDiplome"
+                    bind:value={formData.lieuObtentionDiplome}
+                  >
+                    <option value="" disabled selected>
+                      Sélectionnez l'origine de votre diplôme
+                    </option>
+                    {#each values.lieuObtentionDiplome as lieu}
+                      <option value={lieu.id}>{lieu.libelle}</option>
+                    {/each}
+                  </select>
+                </div>
+                {#if errors.lieuObtentionDiplome}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.lieuObtentionDiplome}
+                  </p>
+                {/if}
+              </div>
+            </div>
           {/if}
           {#if step === 4}
-            <FormStep3 formData={formData} />
+            <div class="space-y-6">
+              <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                Documents requis
+              </h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <!-- Photo d'identité -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Photo d'identité <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.photo}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.photo}
+                          alt="Aperçu photo"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onchange={(e) => handleFileUpload(e, "photo")}
+                        class="w-full h-[50px] px-4 py-2 border rounded-lg
+            {errors.photo ? 'border-red-500' : 'border-gray-300'}"
+                        required
+                      />
+                      {#if errors.photo}
+                        <p class="mt-1 text-sm text-red-600">{errors.photo}</p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CNI -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Carte nationale d'identité (CNI) <span class="text-red-500"
+                      >*</span
+                    >
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.cni}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.cni}
+                          alt="Aperçu CNI"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onchange={(e) => handleFileUpload(e, "cni")}
+                        class="w-full h-[50px] px-4 py-2 border rounded-lg
+            {errors.cni ? 'border-red-500' : 'border-gray-300'}"
+                        required
+                      />
+                      {#if errors.cni}
+                        <p class="mt-1 text-sm text-red-600">{errors.cni}</p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Diplôme -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Diplôme <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.diplomeFile}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.diplomeFile}
+                          alt="Aperçu diplôme"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onchange={(e) => handleFileUpload(e, "diplomeFile")}
+                        class="w-full h-[50px] px-4 py-2 border rounded-lg
+            {errors.diplomeFile ? 'border-red-500' : 'border-gray-300'}"
+                        required
+                      />
+                      {#if errors.diplomeFile}
+                        <p class="mt-1 text-sm text-red-600">
+                          {errors.diplomeFile}
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Casier judiciaire -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Casier judiciaire <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.casier}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.casier}
+                          alt="Aperçu casier"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onchange={(e) => handleFileUpload(e, "casier")}
+                        class="w-full h-[50px] px-4 py-2 border rounded-lg
+            {errors.casier ? 'border-red-500' : 'border-gray-300'}"
+                        required
+                      />
+                      {#if errors.casier}
+                        <p class="mt-1 text-sm text-red-600">{errors.casier}</p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Certificat (optionnel) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Certificat (optionnel)
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.certificat}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.certificat}
+                          alt="Aperçu certificat"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onchange={(e) => handleFileUpload(e, "certificat")}
+                        class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CV (optionnel) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    CV (optionnel)
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onchange={(e) => handleFileUpload(e, "cv")}
+                    class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
           {:else if step == 5}
-          <LastSteps formdata={formData} />
+            <LastSteps formdata={formData} />
           {:else if step == 6}
             <div class="text-center">
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
@@ -572,7 +1663,7 @@
                 </p>
               {/if}
             </div>
-           {/if}
+          {/if}
 
           <div class="flex justify-between mt-8 pt-6 border-t">
             <button
@@ -611,7 +1702,6 @@
           </div>
         </form>
       </div>
-     
     </div>
   </div>
 
