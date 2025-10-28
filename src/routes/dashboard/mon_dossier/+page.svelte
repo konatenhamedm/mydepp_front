@@ -149,6 +149,30 @@
           >
             <i class="ri-user-line mr-2"></i> Informations du profil
           </button>
+          {#if userData.typeUser === "PROFESSIONNEL"}
+
+ <button
+            class="relative py-4 text-sm font-medium transition-all duration-300 border-b-2"
+            class:!border-blue-600={activeTab === "infoPro"}
+            class:!text-blue-600={activeTab === "infoPro"}
+            class:border-transparent={activeTab !== "infoPro"}
+            class:text-gray-500={activeTab !== "infoPro"}
+            on:click={() => (activeTab = "infoPro")}
+          >
+            <i class="ri-user-line mr-2"></i> Informations professionnelles
+          </button>
+
+           <button
+            class="relative py-4 text-sm font-medium transition-all duration-300 border-b-2"
+            class:!border-blue-600={activeTab === "Organisation"}
+            class:!text-blue-600={activeTab === "Organisation"}
+            class:border-transparent={activeTab !== "Organisation"}
+            class:text-gray-500={activeTab !== "Organisation"}
+            on:click={() => (activeTab = "Organisation")}
+          >
+            <i class="ri-user-line mr-2"></i> Organisation
+          </button>
+          {/if}
 
           <button
             class="relative py-4 text-sm font-medium transition-all duration-300 border-b-2"
@@ -338,7 +362,77 @@
                 </button>
               </div>
             </form>
-          {:else if Documents.length > 0}
+          {:else if activeTab === "infoPro" && userData.typeUser === "PROFESSIONNEL"}
+           <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Profession</label
+                    >
+                    <input
+                      type="text"
+                      disabled
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={userData?.personne?.profession.libelle}
+                    />
+                  </div>
+             <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+                 
+                </div>
+          {:else if activeTab === "Organisation" && userData.typeUser === "PROFESSIONNEL"}
+            <div>
+                      <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Organisation</label
+                      >
+                      <div class="flex gap-4">
+                        <div class="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        disabled
+                        value= "non"
+                        class="w-full px-4 py-3 border  rounded-lg "
+                        checked={professionnelData?.personne?.appartenirOrganisation === "non"}
+                      />
+                      <label> Non </label>
+                      </div>
+                         <div class="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        disabled
+                        value= "oui"
+                        class="w-full px-4 py-3 border  rounded-lg "
+                        checked={professionnelData?.personne?.appartenirOrganisation === "oui"}
+                      />
+                      <label> Oui  </label>
+                      </div>
+                    
+                      </div>
+                    </div>
+             <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Ordre</label
+                      >
+                      <div class="flex gap-4">
+                        <div class="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        disabled
+                        value= "non"
+                        class="w-full px-4 py-3 border  rounded-lg "
+                        checked={professionnelData?.personne?.appartenirOrdre === "non"}
+                      />
+                      <label> Non </label>
+                      </div>
+                         <div class="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        disabled
+                        value= "oui"
+                        class="w-full px-4 py-3 border  rounded-lg "
+                        checked={professionnelData?.personne?.appartenirOrdre === "oui"}
+                      />
+                      <label> Oui  </label>
+                      </div>
+                    
+                      </div>
+            {:else if Documents.length > 0}
             <ul class="space-y-4">
               {#each Documents as document}
                 <li

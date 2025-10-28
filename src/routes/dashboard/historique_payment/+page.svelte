@@ -1,13 +1,44 @@
 <script>
+  import { form } from "$app/server";
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
-  
+  import { CookieManager, getAuthCookie } from "$lib/auth";
+  import axios from "axios";
+  import { onMount } from "svelte";
+  let userData = CookieManager.get('auth');
+  let payments = [];
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
+  async function getAllPayment(id){
+    await axios.get( "https://backend.leadagro.net/api/paiement/historique/by/user/"+id).then((response) => {
+      console.log("response", response);
+      if (response.data.code === 200) {
+        console.log("response.data", response.data);
+        payments = response.data.data;
+      }
+    }).catch((error) => {
+      console.error("There was an error!", error);
+      payments = [];
+    });
+  }
+
+  onMount(() => {
+    userData = getAuthCookie();
+    console.log("userData", userData);
+    if (userData ) {
+      getAllPayment(userData.id);
+    }
+  }); 
 </script>
 
 <main>
     <HeaderNew />
     <div
-      class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+      class="min-h-screen "
+      style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
     >
       <div class="bg-white shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -29,7 +60,7 @@
         </div>
       </div>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center space-x-3">
               <div
@@ -40,7 +71,7 @@
               <div>
                 <p class="text-sm text-gray-600">Total payé</p>
                 <p class="text-2xl font-bold text-gray-900">
-                  1295.00<!-- -->
+                  1295.00
                   €
                 </p>
               </div>
@@ -56,7 +87,7 @@
               <div>
                 <p class="text-sm text-gray-600">En attente</p>
                 <p class="text-2xl font-bold text-gray-900">
-                  450.00<!-- -->
+                  450.00
                   €
                 </p>
               </div>
@@ -75,8 +106,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        </div> -->
+        <!-- <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold text-gray-900">
               Filtrer par statut
@@ -97,7 +128,7 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
           <div class="overflow-x-auto">
             <table class="w-full">
@@ -115,46 +146,60 @@
                   <th class="text-left py-4 px-6 font-medium text-gray-700">
                     Statut
                   </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                  <!-- <th class="text-left py-4 px-6 font-medium text-gray-700">
                     Échéance
-                  </th>
+                  </th> -->
                   <th class="text-left py-4 px-6 font-medium text-gray-700">
                     Date paiement
                   </th>
                   <th class="text-left py-4 px-6 font-medium text-gray-700">
                     Méthode
                   </th>
-                  <th class="text-left py-4 px-6 font-medium text-gray-700">
+                  <!-- <th class="text-left py-4 px-6 font-medium text-gray-700">
                     Actions
-                  </th>
+                  </th> -->
                 </tr>
               </thead>
               <tbody>
+                {#if payments.length === 0}
+                  <tr>
+                    <td colspan="7" class="py-4 px-6 text-center text-gray-500">
+                      Aucun paiement trouvé.
+                    </td>
+                  </tr>
+                {:else}
+                {#each payments as payment}
                 <tr class="border-b border-gray-100 hover:bg-gray-50">
                   <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-001</span>
+                    <span class="font-medium text-gray-900">{payment.reference}</span>
                   </td>
                   <td class="py-4 px-6">
                     <span class="text-gray-700"
-                      >Cotisation mensuelle - Janvier 2024</span
+                      >{payment.type}</span
                     >
                   </td>
                   <td class="py-4 px-6">
                     <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
+                      >{payment.montant} XOF</span
                     >
                   </td>
                   <td class="py-4 px-6">
+                    {#if payment.statut === 1}
                     <span
                       class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
                       >Payé</span
                     >
+                    {:else }
+                    <span
+                      class="px-3 py-1 rounded-full text-xs font-medium text-blue-600 bg-blue-100"
+                      >Annulé</span
+                    >
+                    {/if}
                   </td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-31</td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-28</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
+                  <!-- <td class="py-4 px-6 text-gray-600">2024-01-31</td> -->
+                  <td class="py-4 px-6 text-gray-600">{formatDate(payment.createdAt) }</td>
+                  <td class="py-4 px-6 text-gray-600">{payment.channel}</td>
+                  <!-- <td class="py-4 px-6">
                     <div class="flex space-x-2">
                       <button
                         class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
@@ -166,162 +211,10 @@
                         Télécharger
                       </button>
                     </div>
-                  </td>
+                  </td> -->
                 </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-002</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Frais de dossier - Mise à jour</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >75.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-15</td>
-                  <td class="py-4 px-6 text-gray-600">2024-01-12</td>
-                  <td class="py-4 px-6 text-gray-600">Carte bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2024-003</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Cotisation mensuelle - Février 2024</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-yellow-600 bg-yellow-100"
-                      >En attente</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2024-02-28</td>
-                  <td class="py-4 px-6 text-gray-600">-</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-orange-600 hover:text-orange-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Payer
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2023-012</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Cotisation mensuelle - Décembre 2023</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >450.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2023-12-31</td>
-                  <td class="py-4 px-6 text-gray-600">2023-12-29</td>
-                  <td class="py-4 px-6 text-gray-600">
-                    Prélèvement automatique
-                  </td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                  <td class="py-4 px-6">
-                    <span class="font-medium text-gray-900">PAY-2023-011</span>
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="text-gray-700"
-                      >Formation continue - Personnel</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span class="font-semibold text-gray-900"
-                      >320.00<!-- -->
-                      €</span
-                    >
-                  </td>
-                  <td class="py-4 px-6">
-                    <span
-                      class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
-                      >Payé</span
-                    >
-                  </td>
-                  <td class="py-4 px-6 text-gray-600">2023-11-30</td>
-                  <td class="py-4 px-6 text-gray-600">2023-11-25</td>
-                  <td class="py-4 px-6 text-gray-600">Virement bancaire</td>
-                  <td class="py-4 px-6">
-                    <div class="flex space-x-2">
-                      <button
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Voir</button
-                      ><button
-                        class="text-green-600 hover:text-green-800 text-sm font-medium whitespace-nowrap"
-                      >
-                        Télécharger
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {/each}
+              {/if}
               </tbody>
             </table>
           </div>

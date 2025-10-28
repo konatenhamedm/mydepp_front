@@ -11,7 +11,8 @@
   let nbDocumentValide = 0;
   let nbWaitingDocument = 0;
   let notifications: any = [];
-  let user: any = [];
+  export let data: any;
+  let user = data.user;
 
   let expire: boolean = false;
   let info = {
@@ -52,10 +53,14 @@
 
   async function uploadPhoto(file) {
     const formData = new FormData();
-    formData.append("photo", file);
+    formData.append("avatar", file);
+    formData.append("password", "");
+    formData.append("newPassword", "");
+    formData.append("email", user?.username || "");
+    formData.append("username", user?.username || "");
 
     try {
-      const response = await fetch(BASE_URL_API + "/user/upload-photo", {
+      const response = await fetch(BASE_URL_API + "/user/profil/update/" + user?.id, {
         method: "POST",
         body: formData,
         headers: {
@@ -134,13 +139,12 @@
     }
   }
   onMount(async () => {
-    user = getAuthCookie();
+
 
     console.log("=============user", user);
 
-    // Charger la photo de profil existante si disponible
-    if (user?.photo) {
-      photoProfile = BASE_URL_API_UPLOAD + user.photo;
+    if (user?.avatar) {
+      photoProfile = BASE_URL_API_UPLOAD + user.avatar;
     }
 
     console.log("user", user);
@@ -196,7 +200,7 @@
       color: "from-red-100 to-red-50",
       badge: "0",
       badgeColor: "bg-red-500 text-white",
-      link: "#",
+      link: "/dashboard/documentheque",
       description: "Accéder aux documents",
       isProtected: false,
     },
@@ -206,7 +210,7 @@
       color: "from-purple-100 to-purple-50",
       badge: "0",
       badgeColor: "bg-red-500 text-white",
-      link: "#",
+      link: "/dashboard/forum",
       description: "Échanger avec la communauté",
       isProtected: false,
     },
@@ -219,7 +223,7 @@
   <HeaderNew />
 
   <section
-    class="container max-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
+    class=" min-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
   >
     <!-- Header de bienvenue -->
     <div
@@ -249,7 +253,7 @@
         </div>
 
         <!-- Alerte d'expiration -->
-        {#if expire}
+        {#if expire && user.type == "PROFESSIONNEL" }
           <div
             class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
           >
@@ -263,10 +267,30 @@
                 tous les services.
               </p>
               <a
-                href="/dashboard/historique_payment"
+                href="/dashboard/renouvellement"
                 class="inline-block mt-2 text-sm font-semibold text-red-700 hover:text-red-900 underline"
               >
                 Renouveler maintenant →
+              </a>
+            </div>
+          </div>
+          {:else if expire && user.type == "ETABLISSEMENT"}
+          <div
+            class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
+          >
+            <i class="ri-error-warning-line text-red-500 text-2xl animate-pulse"></i>
+            <div>
+              <p class="font-semibold text-red-800">Abonnement expiré</p>
+              <p class="text-sm text-red-600">
+                Votre abonnement a expiré le {info.finRenouvellement}. Veuillez
+                renouveler pour un montant de {info.montant} pour continuer à utiliser
+                tous les services.
+              </p>
+              <a
+                href="/dashboard/oep_initie"
+                class="inline-block mt-2 text-sm font-semibold text-red-700 hover:text-red-900 underline"
+              >
+                Renouveler OEP →
               </a>
             </div>
           </div>
