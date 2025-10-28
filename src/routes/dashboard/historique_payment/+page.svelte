@@ -13,7 +13,7 @@
   }
 
   async function getAllPayment(id){
-    await axios.get( "https://backend.leadagro.net/api/paiement/historique/"+id).then((response) => {
+    await axios.get( "https://backend.leadagro.net/api/paiement/historique/by/user/"+id).then((response) => {
       console.log("response", response);
       if (response.data.code === 200) {
         console.log("response.data", response.data);

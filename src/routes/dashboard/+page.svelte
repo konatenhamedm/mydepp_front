@@ -223,7 +223,7 @@
   <HeaderNew />
 
   <section
-    class="container max-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
+    class=" min-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
   >
     <!-- Header de bienvenue -->
     <div
