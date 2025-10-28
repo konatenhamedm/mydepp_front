@@ -490,8 +490,8 @@
 <main>
   <HeaderNew />
   <section
-    class="relative text-white"
-    style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);padding-top:100px;padding-bottom:50px;
+    class="relative text-white bg-blue-600"
+    style="padding-top:100px;padding-bottom:50px;
 "
   >
     <div class="absolute inset-0 bg-black/20"></div>
@@ -522,11 +522,11 @@
         {#if step >= 1}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-purple-600"
             >
               1
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
         {:else}
           <div class="flex items-center">
@@ -542,11 +542,11 @@
         {#if step >= 2}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               2
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
         {:else}
           <div class="flex items-center">
@@ -562,11 +562,11 @@
         {#if step >= 3}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               3
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
         {:else}
           <div class="flex items-center">
@@ -582,11 +582,11 @@
         {#if step >= 4}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               4
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
         {:else}
           <div class="flex items-center">
@@ -602,11 +602,11 @@
         {#if step >= 5}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               5
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
         {:else}
           <div class="flex items-center">
@@ -622,7 +622,7 @@
         {#if step == 6}
           <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               6
             </div>
@@ -639,42 +639,42 @@
       </div>
       <div class="flex justify-between mb-8 text-sm">
         {#if step >= 1}
-          <span class="text-purple-600 font-medium"
+          <span class="text-blue-600 font-medium"
             >Information de Connexion</span
           >
         {:else}
           <span class="text-gray-500">Information de Connexion</span>
         {/if}
         {#if step >= 2}
-          <span class="text-purple-600 font-medium"
+          <span class="text-blue-600 font-medium"
             >Information Personnelles</span
           >
         {:else}
           <span class="text-gray-500">Information Personnelles</span>
         {/if}
         {#if step >= 3}
-          <span class="text-purple-600 font-medium"
+          <span class="text-blue-600 font-medium"
             >Information professionnelles</span
           >
         {:else}
           <span class="text-gray-500">Information professionnelles</span>
         {/if}
         {#if step >= 4}
-          <span class="text-purple-600 font-medium"
+          <span class="text-blue-600 font-medium"
             >Documents Administratifs</span
           >
         {:else}
           <span class="text-gray-500">Documents Administratifs</span>
         {/if}
         {#if step >= 5}
-          <span class="text-purple-600 font-medium"
+          <span class="text-blue-600 font-medium"
             >Informations Organisationnelles</span
           >
         {:else}
           <span class="text-gray-500">Informations Organisationnelles </span>
         {/if}
         {#if step == 6}
-          <span class="text-purple-600 font-medium">Document de Validation</span
+          <span class="text-blue-600 font-medium">Document de Validation</span
           >
         {:else}
           <span class="text-gray-500">Document de Validation</span>
@@ -1683,7 +1683,7 @@
                   clickPaiement();
                 }}
                 type="button"
-                class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Terminer
               </button>
@@ -1694,7 +1694,7 @@
                 }}
                 type="button"
                 disabled={lastStep}
-                class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Suivant
               </button>

@@ -8,8 +8,10 @@
   let forumData = [];
   let userData = CookieManager.get("auth");
   let topicSelected = {};
+  let dataToShow = {}
   let showTopicModal = false;
   let showNewTopicModal = false;
+  let showCommentTopicModal = false;
   let newTopic = { titre: "", contenu: "" };
   
  async function handleSubmitNewTopic() {
@@ -29,6 +31,31 @@
     // Actualiser la liste des sujets (à implémenter)
   }
 
+    async function getOne(){
+    await axios.get(BASE_URL_API + "/forum/get/one/"+topicSelected.id).then((response) => {
+      dataToShow = response.data.data;
+    });
+  }
+
+  $: topicSelected && getOne();
+
+   async function handleSubmitCommentTopic() {
+    await axios
+      .post(BASE_URL_API + "/avis/create", {...newTopic, user: userData.id, status:"Actif"})
+      .then((response) => {
+        console.log("Sujet créé avec succès:", response.data);
+
+        fetchForumData();
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la création du sujet:", error);
+      });
+    console.log("Nouveau sujet soumis:", newTopic);
+    
+    newTopic = { titre: "", contenu: "" };
+    showNewTopicModal = false;
+    // Actualiser la liste des sujets (à implémenter)
+  }
 
 
   async function fetchForumData() {
@@ -54,17 +81,17 @@
     class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
     style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
   >
-    <div class="bg-white shadow-sm border-b">
+    <div class="bg-blue-600 text-white shadow-sm border-b">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <a
-              class="text-blue-600 hover:text-blue-800 transition-colors"
+              class="text-white  transition-colors"
               href="/dashboard"><i class="ri-arrow-left-line text-xl"></i></a
             >
             <div>
-              <h1 class="text-2xl font-bold text-gray-900">Forum</h1>
-              <p class="text-gray-600">
+              <h1 class="text-2xl font-bold text-white">Forum</h1>
+              <p class="text-white">
                 Échangez avec la communauté des professionnels de santé
               </p>
             </div>
@@ -72,7 +99,7 @@
           <div class="flex items-center space-x-2">
             <button
             on:click={()=>showNewTopicModal=true}
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap"
             >
               Nouvelle discussion
             </button>
@@ -81,91 +108,7 @@
       </div>
     </div>
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-chat-3-line text-blue-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Discussions</p>
-                <p class="text-2xl font-bold text-gray-900">5</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-pulse-line text-green-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Actives</p>
-                <p class="text-2xl font-bold text-gray-900">4</p>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center space-x-3">
-              <div
-                class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center"
-              >
-                <i class="ri-message-3-line text-purple-600 text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Réponses</p>
-                <p class="text-2xl font-bold text-gray-900">50</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div
-            class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
-          >
-            <div class="flex flex-wrap gap-2">
-              <button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-blue-600 text-white"
-              >
-                Toutes</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Réglementation</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Procédures</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Formation</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Support technique</button
-              ><button
-                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Documentation
-              </button>
-            </div>
-            <div class="relative">
-              <i
-                class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              ></i
-              ><input
-                type="text"
-                placeholder="Rechercher une discussion..."
-                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-80"
-                value=""
-              />
-            </div>
-          </div>
-        </div> -->
+    
       {#if showNewTopicModal==false && showTopicModal==false}
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
         <div class="divide-y divide-gray-100">
@@ -238,7 +181,45 @@
           <button class="mb-4 text-blue-600 hover:underline" on:click={() => {showTopicModal = false;}}>← Retour au forum</button>
           <h2 class="text-2xl font-bold mb-4">{topicSelected.titre}</h2>
           <p class="text-gray-700 mb-6">{topicSelected.contenu}</p>
-          <h3 class="text-xl font-semibold mb-3">Avis :</h3>
+          <div class="flex justify-between item-center">
+            <h3 class="text-xl font-semibold mb-3">Avis :</h3>
+            <div class="flex items-center space-x-2">
+            <button
+            on:click={()=>showCommentTopicModal=true}
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+            >
+              Ajouter un commentaire
+            </button>
+          </div>
+          </div>
+          {#if showCommentTopicModal}
+          <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <button class="mb-4 text-blue-600 hover:underline" on:click={() => {showCommentTopicModal = false;}}>Annuler</button>
+          <h2 class="text-2xl font-bold mb-4">Nouveau commentaire</h2>
+          <form on:submit|preventDefault={handleSubmitCommentTopic}>
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 font-semibold mb-2"
+                for="contenu"
+                >Contenu</label
+              >
+              <textarea
+                id="contenu"
+                rows="6"
+                bind:value={newTopic.contenu}
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Écrivez votre commentaire ici"
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Publier le commentaire
+            </button>
+          </form>
+        </div>
+          {/if}
           {#if topicSelected.avis.length === 0}
             <p class="text-gray-500">Aucun avis pour le moment.</p>
           {:else}

@@ -4,15 +4,17 @@
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
   import { BASE_URL_API_UPLOAD } from "$lib/api";
   import axios from "axios";
+  import { onMount } from "svelte";
   let Documents = [];
-
+  let showDoc = false;
+  let selectDoc = {};
   async function getAllDocuments() {
     await axios
       .get("https://backend.leadagro.net/api/adminDocument")
       .then((response) => {
         console.log("response", response);
-        if (response.data.code === 200) {
-          Documents = response.data.documents;
+        if (response.status === 200) {
+          Documents = response.data.data;
           console.log("Documents", Documents);
         }
       }).catch((error) => {
@@ -20,6 +22,10 @@
         Documents = [];
       });
   }
+
+  onMount(() => {
+    getAllDocuments();
+  });
 </script>
 
 <main>
@@ -28,18 +34,18 @@
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
       style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
     >
-      <div class="bg-white shadow-sm border-b">
+      <div class="bg-blue-600 shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <a
-                class="text-blue-600 hover:text-blue-800 transition-colors"
+                class="text-white  transition-colors"
                 href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">Documenthèque</h1>
-                <p class="text-gray-600">
+                <h1 class="text-2xl font-bold text-white">Documenthèque</h1>
+                <p class="text-white">
                   Accédez à tous vos documents et ressources
                 </p>
               </div>
@@ -179,11 +185,11 @@
             </div> -->
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-1 text-sm text-gray-500">
-                <i class="ri-download-line"></i><span>45</span>
+                <i class="ri-download-line"></i><span>0</span>
               </div>
               <div class="flex space-x-2">
                 <button
-                  onclick={() => window.open(BASE_URL_API_UPLOAD+document.path.path+document.path.url, "_blank")}
+                  onclick={() => { showDoc = true, selectDoc = document}}
                   class="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   Aperçu/Telecharger</button
@@ -197,6 +203,25 @@
         </div>
       </div>
     </div>
+
+    {#if showDoc}
+      <div
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 h-4/5 p-4 relative">
+          <button
+            class="absolute top-0 right-0 text-black hover:text-gray-800"
+            onclick={() => (showDoc = false)}
+          >
+            <i class="ri-close-line text-2xl"></i>
+          </button>
+          <iframe
+            src={BASE_URL_API_UPLOAD+selectDoc.path.path+'/'+selectDoc.path.alt}
+            class="w-full h-full rounded-lg"
+          ></iframe>
+        </div>
+      </div>
+    {/if}
   <FooterNew />
 </main>
 
