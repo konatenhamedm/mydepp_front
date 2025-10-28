@@ -40,20 +40,20 @@
       class="min-h-screen "
       style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
     >
-      <div class="bg-white shadow-sm border-b">
+      <div class="bg-blue-600 shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <a
-                class="text-blue-600 hover:text-blue-800 transition-colors"
+                class="text-white transition-colors"
                 href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">
+                <h1 class="text-2xl font-bold text-white">
                   Historique des paiements
                 </h1>
-                <p class="text-gray-600">Consultez vos paiements et factures</p>
+                <p class="text-white">Consultez vos paiements et factures</p>
               </div>
             </div>
           </div>
@@ -184,7 +184,7 @@
                     >
                   </td>
                   <td class="py-4 px-6">
-                    {#if payment.statut === 1}
+                    {#if payment.state == 1}
                     <span
                       class="px-3 py-1 rounded-full text-xs font-medium text-green-600 bg-green-100"
                       >Payé</span

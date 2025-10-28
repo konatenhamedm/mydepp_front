@@ -125,7 +125,7 @@
   async function fetchPaymentStats() {
     try {
       await fetch(
-        BASE_URL_API + "/paiement/historique/" + (user?.id )
+        BASE_URL_API + "/paiement/historique/by/user/" + (user?.id )
       )
         .then((response) => response.json())
         .then((result) => {

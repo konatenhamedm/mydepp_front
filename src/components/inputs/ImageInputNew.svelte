@@ -8,7 +8,7 @@
 	export let fieldName: string;
 	export let placeholder: string = '';
 	export let disabled: boolean = false;
-	export let accept: string = 'image/*';
+	export let accept: string = '';
 	export let multiple: boolean = false;
 	export let showPreview: boolean = true; // Nouvelle prop pour contrôler l'affichage de la prévisualisation
 	export let link: any = '';
@@ -24,12 +24,12 @@
 		if (files && files[0]) {
 			const file = files[0];
 
-			if (!file.type.match('image.*')) {
-				error = 'Veuillez sélectionner un fichier image valide';
-				previewUrl = '';
-				field = null;
-				return;
-			}
+			// if (!file.type.match('image.*')) {
+			// 	error = 'Veuillez sélectionner un fichier image valide';
+			// 	previewUrl = '';
+			// 	field = null;
+			// 	return;
+			// }
 
 			field = multiple ? files : file;
 
