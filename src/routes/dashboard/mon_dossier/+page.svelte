@@ -70,21 +70,28 @@
     denomination: "",
   };
 
-  const handleSubmit = async (event) => {
+
+    const handleSubmit = async  (event) => {
     if (userData.typeUser === "ETABLISSEMENT") {
-      await fetch(BASE_URL_API + "/etablissement/update/" + user?.personneId, {
-        method: "POST",
-        body: JSON.stringify(etablissementData),
-      })
+     await fetch(
+        BASE_URL_API + "/etablissement/update/" + user?.personneId,
+        {
+          method: "POST",
+          body: JSON.stringify(etablissementData),
+        }
+      )
         .then((response) => response.json())
         .then((result) => {
           console.log("Etablissement profile updated:", result);
         });
     } else {
-      await fetch(BASE_URL_API + "/professionnel/update/" + user?.personneId, {
-        method: "POST",
-        body: JSON.stringify(professionnelData),
-      })
+      await fetch(
+        BASE_URL_API + "/professionnel/update/" + user?.personneId,
+        {
+          method: "POST",
+          body: JSON.stringify(professionnelData)
+        }
+      )
         .then((response) => response.json())
         .then((result) => {
           console.log("Professionnel profile updated:", result);
