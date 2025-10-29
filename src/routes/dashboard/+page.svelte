@@ -7,7 +7,12 @@
 
   let isLoad = false;
   let notificationCount = 0;
-  let user: any = [];
+  let nbPayment = 0;
+  let nbDocumentValide = 0;
+  let nbWaitingDocument = 0;
+  let notifications: any = [];
+  export let data: any;
+  let user = data.user;
 
   let expire: boolean = false;
   let info = {
@@ -16,72 +21,78 @@
     montant: "",
   };
 
-  let photoProfile: any | null = "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
-  
+  let photoProfile: any | null =
+    "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
+
   function handlePhotoChange(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     // Validation du type de fichier
-    if (!file.type.startsWith('image/')) {
-      alert('Veuillez sélectionner une image');
+    if (!file.type.startsWith("image/")) {
+      alert("Veuillez sélectionner une image");
       return;
     }
-    
+
     // Validation de la taille (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('L\'image ne doit pas dépasser 5MB');
+      alert("L'image ne doit pas dépasser 5MB");
       return;
     }
-    
+
     // Prévisualisation immédiate
     const reader = new FileReader();
     reader.onload = (e) => {
       photoProfile = e.target.result;
     };
     reader.readAsDataURL(file);
-    
+
     // Upload au serveur
     uploadPhoto(file);
   }
-  
+
   async function uploadPhoto(file) {
     const formData = new FormData();
-    formData.append('photo', file);
-    
+    formData.append("avatar", file);
+    formData.append("password", "");
+    formData.append("newPassword", "");
+    formData.append("email", user?.username || "");
+    formData.append("username", user?.username || "");
+
     try {
-      const response = await fetch(BASE_URL_API + '/user/upload-photo', {
-        method: 'POST',
+      const response = await fetch(BASE_URL_API + "/user/profil/update/" + user?.id, {
+        method: "POST",
         body: formData,
         headers: {
-          'Authorization': `Bearer ${user?.token || ''}` // Ajuster selon ton système d'auth
-        }
+          Authorization: `Bearer ${user?.token || ""}`, // Ajuster selon ton système d'auth
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         if (data.code === 200) {
           photoProfile = BASE_URL_API_UPLOAD + data.data.photoUrl;
-          console.log('Photo mise à jour avec succès');
+          console.log("Photo mise à jour avec succès");
           // Ajouter notification de succès si tu as un système de toast
         }
       } else {
-        throw new Error('Erreur lors de l\'upload');
+        throw new Error("Erreur lors de l'upload");
       }
     } catch (error) {
-      console.error('Erreur upload:', error);
-      alert('Erreur lors de l\'upload de la photo');
+      console.error("Erreur upload:", error);
+      alert("Erreur lors de l'upload de la photo");
     }
   }
 
   async function fetchData() {
     try {
       const response = await fetch(
-        BASE_URL_API + `/notification/nombre/${user?.id || "107"}`,
+        BASE_URL_API + `/notification/by/${user?.id}`
       );
       if (response.ok) {
         const result = await response.json();
         if (result.code === 200 && result.data) {
+          notifications = result.data;
           notificationCount = result.data.length;
         } else {
           console.error("Erreur dans la réponse de l'API:", result.message);
@@ -96,7 +107,9 @@
 
   async function fetchDataInfo() {
     try {
-      await fetch(BASE_URL_API + "/paiement/status/renouvellement/" + (user?.id || "107"))
+      await fetch(
+        BASE_URL_API + "/paiement/status/renouvellement/" + (user?.id )
+      )
         .then((response) => response.json())
         .then((result) => {
           info.expire = result.data.expire;
@@ -109,19 +122,36 @@
       console.error("Erreur API:", error);
     }
   }
-
-  onMount(async () => {
-    user = getAuthCookie();
-    
-    // Charger la photo de profil existante si disponible
-    if (user?.photo) {
-      photoProfile = BASE_URL_API_UPLOAD + user.photo;
+  async function fetchPaymentStats() {
+    try {
+      await fetch(
+        BASE_URL_API + "/paiement/historique/by/user/" + (user?.id )
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          
+          nbPayment = result.data.length;
+          
+          console.log("payment stats", result.data);
+        });
+    } catch (error) {
+      console.error("Erreur API:", error);
     }
-    
+  }
+  onMount(async () => {
+
+
+    console.log("=============user", user);
+
+    if (user?.avatar) {
+      photoProfile = BASE_URL_API_UPLOAD + user.avatar;
+    }
+
     console.log("user", user);
     isLoad = true;
     await fetchData();
     await fetchDataInfo();
+    await fetchPaymentStats();
     isLoad = false;
   });
 
@@ -140,7 +170,7 @@
       title: "Alertes",
       icon: "ri-notification-line",
       color: "from-orange-100 to-orange-50",
-      badge: notificationCount.toString(),
+      badge: `${notifications.length}`,
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/alerts",
       description: "Notifications importantes",
@@ -168,21 +198,21 @@
       title: "Documenthèque",
       icon: "ri-file-pdf-line",
       color: "from-red-100 to-red-50",
-      badge: "12",
+      badge: "0",
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/documentheque",
       description: "Accéder aux documents",
-      isProtected: true,
+      isProtected: false,
     },
     {
       title: "Forum",
       icon: "ri-group-line",
       color: "from-purple-100 to-purple-50",
-      badge: "5",
+      badge: "0",
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/forum",
       description: "Échanger avec la communauté",
-      isProtected: true,
+      isProtected: false,
     },
   ];
 </script>
@@ -193,7 +223,7 @@
   <HeaderNew />
 
   <section
-    class="container max-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
+    class=" min-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
   >
     <!-- Header de bienvenue -->
     <div
@@ -212,10 +242,10 @@
         <div class="flex flex-wrap gap-4 text-sm text-gray-500">
           <span class="flex items-center gap-2"
             ><i class="ri-building-line"></i>
-            {user?.nom || "Clinique de la Santé"}</span
+            {user?.type ? (user?.type).toLowerCase() + " de Santé" : "Clinique de la Santé"}</span
           >
           <span class="flex items-center gap-2"
-            ><i class="ri-map-pin-line"></i> Toulouse</span
+            ><i class="ri-map-pin-line"></i> Côte d'Ivoire</span
           >
           <span class="flex items-center gap-2"
             ><i class="ri-calendar-line"></i> Inscrit depuis 10/01/2024</span
@@ -223,7 +253,7 @@
         </div>
 
         <!-- Alerte d'expiration -->
-        {#if expire}
+        {#if expire && user.type == "PROFESSIONNEL" }
           <div
             class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
           >
@@ -237,10 +267,30 @@
                 tous les services.
               </p>
               <a
-                href="/dashboard/historique_payment"
+                href="/dashboard/renouvellement"
                 class="inline-block mt-2 text-sm font-semibold text-red-700 hover:text-red-900 underline"
               >
                 Renouveler maintenant →
+              </a>
+            </div>
+          </div>
+          {:else if expire && user.type == "ETABLISSEMENT"}
+          <div
+            class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
+          >
+            <i class="ri-error-warning-line text-red-500 text-2xl animate-pulse"></i>
+            <div>
+              <p class="font-semibold text-red-800">Abonnement expiré</p>
+              <p class="text-sm text-red-600">
+                Votre abonnement a expiré le {info.finRenouvellement}. Veuillez
+                renouveler pour un montant de {info.montant} pour continuer à utiliser
+                tous les services.
+              </p>
+              <a
+                href="/dashboard/oep_initie"
+                class="inline-block mt-2 text-sm font-semibold text-red-700 hover:text-red-900 underline"
+              >
+                Renouveler OEP →
               </a>
             </div>
           </div>
@@ -250,41 +300,55 @@
       <!-- Photo de profil (tout le bloc cliquable) -->
       <div class="mt-6 md:mt-0 flex-shrink-0 relative">
         <label for="photo-upload" class="cursor-pointer group relative block">
-          <div class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white">
+          <div
+            class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white"
+          >
             {#if photoProfile}
               <!-- Photo de profil -->
-              <img src={photoProfile} alt="Photo de profil" class="w-full h-full object-cover" />
+              <img
+                src={photoProfile}
+                alt="Photo de profil"
+                class="w-full h-full object-cover"
+              />
             {:else}
               <!-- Placeholder avec dégradé -->
-              <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+              <div
+                class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+              >
                 <i class="ri-user-line text-white text-5xl"></i>
               </div>
             {/if}
-            
+
             <!-- Overlay au survol -->
-            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center">
-              <div class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1">
+            <div
+              class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center"
+            >
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1"
+              >
                 <i class="ri-camera-line text-white text-3xl"></i>
                 <span class="text-white text-xs font-medium">Changer</span>
               </div>
             </div>
           </div>
-          
+
           <!-- Badge hôpital en bas à droite -->
-          <div class="absolute -bottom-2 -right-2 bg-white text-blue-600 rounded-full shadow-lg p-2 border-2 border-white">
+          <div
+            class="absolute -bottom-2 -right-2 bg-white text-blue-600 rounded-full shadow-lg p-2 border-2 border-white"
+          >
             <i class="ri-building-2-line text-lg"></i>
           </div>
         </label>
-        
+
         <!-- Input file caché -->
-        <input 
-          id="photo-upload" 
-          type="file" 
-          accept="image/*" 
-          class="hidden" 
+        <input
+          id="photo-upload"
+          type="file"
+          accept="image/*"
+          class="hidden"
           on:change={handlePhotoChange}
         />
-        
+
         <!-- Icône de warning si expiré -->
         {#if expire}
           <div
@@ -295,7 +359,19 @@
         {/if}
       </div>
     </div>
-
+    {#if user.status == "acp_dossier_valide_directrice"}
+      <div
+        class="col-lg-12 col-md-12 d-flex mx-[40%] justify-center items-center my-3"
+      >
+        <button
+          
+          on:click={() => (window.location.href = "/dashboard/oep_initie")}
+          style="font-size: 1.1rem; padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border: none; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;  "
+        >
+          Passer à L'initialisation OEP
+        </button>
+      </div>
+    {/if}
     <!-- Section Synthèse -->
     <section class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
       <div
@@ -303,7 +379,7 @@
       >
         <div>
           <p class="text-sm text-gray-500">Documents validés</p>
-          <p class="text-2xl font-bold text-green-600">8</p>
+          <p class="text-2xl font-bold text-green-600">{nbDocumentValide}</p>
         </div>
         <i class="ri-check-line text-green-600 text-2xl"></i>
       </div>
@@ -312,7 +388,7 @@
       >
         <div>
           <p class="text-sm text-gray-500">En attente</p>
-          <p class="text-2xl font-bold text-yellow-600">2</p>
+          <p class="text-2xl font-bold text-yellow-600">{nbWaitingDocument}</p>
         </div>
         <i class="ri-time-line text-yellow-600 text-2xl"></i>
       </div>
@@ -321,7 +397,7 @@
       >
         <div>
           <p class="text-sm text-gray-500">Paiements</p>
-          <p class="text-2xl font-bold text-blue-600">3</p>
+          <p class="text-2xl font-bold text-blue-600">{nbPayment}</p>
         </div>
         <i class="ri-bank-card-line text-blue-600 text-2xl"></i>
       </div>
@@ -440,34 +516,26 @@
       </div>
 
       <div class="space-y-5">
-        <div class="flex items-start gap-3 border-l-4 border-green-400 pl-3">
-          <i class="ri-check-line text-green-500 mt-1"></i>
-          <div>
-            <p class="font-medium text-gray-800">Document validé</p>
-            <p class="text-sm text-gray-600">Certificat d'assurance approuvé</p>
-            <p class="text-xs text-gray-400 mt-1">Il y a 2h</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 border-l-4 border-blue-400 pl-3">
-          <i class="ri-upload-line text-blue-500 mt-1"></i>
-          <div>
-            <p class="font-medium text-gray-800">Nouveau document ajouté</p>
-            <p class="text-sm text-gray-600">
-              Justificatif de domicile téléchargé
-            </p>
-            <p class="text-xs text-gray-400 mt-1">Il y a 1 jour</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 border-l-4 border-yellow-400 pl-3">
-          <i class="ri-alert-line text-yellow-500 mt-1"></i>
-          <div>
-            <p class="font-medium text-gray-800">Action requise</p>
-            <p class="text-sm text-gray-600">
-              Mettre à jour vos informations de contact
-            </p>
-            <p class="text-xs text-gray-400 mt-1">Il y a 3 jours</p>
-          </div>
-        </div>
+        {#if notificationCount === 0}
+          <p class="text-gray-600 text-center">Aucune activité récente.</p>
+        {:else}
+          {#each notifications as notification}
+            <div
+              class="flex items-start gap-3 border-l-4 border-green-400 pl-3"
+            >
+              <i class="ri-check-line text-green-500 mt-1"></i>
+              <div>
+                <p class="font-medium text-gray-800">
+                  {notification.title || "Note Informative"}
+                </p>
+                <p class="text-sm text-gray-600">{notification.libelle}</p>
+                <p class="text-xs text-gray-400 mt-1">
+                  {notification.createdAt}
+                </p>
+              </div>
+            </div>
+          {/each}
+        {/if}
       </div>
     </section>
   </section>

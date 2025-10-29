@@ -1,43 +1,43 @@
 <script lang="ts">
-  import Notification from '$components/_includes/Notification.svelte';
-  import Spinner from '$components/_skeletons/Spinner.svelte';
-  import {login} from '$lib/auth';
+  import Notification from "$components/_includes/Notification.svelte";
+  import Spinner from "$components/_skeletons/Spinner.svelte";
+  import { login } from "$lib/auth";
 
   let showNotification = false;
-  let notificationMessage = '';
-  let notificationType = 'info';
+  let notificationMessage = "";
+  let notificationType = "info";
 
-  let username = 'admin';
-  let password = '@DM1N';
+  let username = "admin";
+  let password = "@DM1N";
   $: authenticating = false;
   let showPassword = false; // To toggle password visibility
-  $: message = '';
-  let error = '';
+  $: message = "";
+  let error = "";
 
-  let passwordWarning = '';
+  let passwordWarning = "";
   let isPasswordValid = false;
 
   async function handleSubmit(event: any) {
     authenticating = true;
     event.preventDefault();
     try {
-      const success = await login(username, password);
-/* alert(JSON.stringify(success)); */
+      const success = await login(username, password, "backoffice");
+      /* alert(JSON.stringify(success)); */
 
-console.log(success);
+      console.log(success);
       if (success?.token != null) {
-        window.location.href = '/admin';
+        window.location.href = "/admin";
       } else {
-        message = 'Veuillez vérifier vos identifiants';
+        message = "Veuillez vérifier vos identifiants";
         authenticating = false;
         setTimeout(() => {
-          message = ''; // Efface le message après 3 secondes
+          message = ""; // Efface le message après 3 secondes
         }, 3000);
       }
       authenticating = false;
     } catch (error) {
       authenticating = false;
-      message = 'Une erreur est survenue';
+      message = "Une erreur est survenue";
     }
   }
 </script>
@@ -89,7 +89,7 @@ console.log(success);
           <div class="relative">
             <input
               id="newPassword"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               bind:value={password}
               placeholder="Entrez votre  mot de passe"
               required
@@ -113,7 +113,7 @@ console.log(success);
           {/if}
         </div>
         <div
-          class="mt-[23px] mb-[19px] flex items-center justify-center gap-[15px]  max-sm:flex-wrap sm:justify-between"
+          class="mt-[23px] mb-[19px] flex items-center justify-center gap-[15px] max-sm:flex-wrap sm:justify-between"
         >
           <div class="flex"></div>
           <a
@@ -130,7 +130,6 @@ console.log(success);
 
         <button
           type="submit"
-         
           class="w-full flex justify-center items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2.5 px-4 rounded disabled:opacity-50"
           disabled={authenticating}
           style="background-color: #54a0fe !important;"
@@ -142,8 +141,6 @@ console.log(success);
             Se connecter
           {/if}
         </button>
-
-        
       </form>
     </div>
   </div>

@@ -15,7 +15,7 @@
         <div class="py-12 px-4 sm:px-6 lg:px-8">
           <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-              <h1 class="text-4xl font-bold text-gray-900 mb-4">
+              <h1 class="text-4xl font-bold text-white mb-4">
                 Inscription E-DEPPS
               </h1>
               <p class="text-lg text-gray-600">
@@ -28,16 +28,7 @@
               
             </div>
             <Choice/>
-            <div class="text-center mt-12">
-              <p class="text-gray-600">
-                Vous avez déjà un compte ?<!-- -->
-                <a
-                  class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
-                  href="/connexion"
-                  >Se connecter</a
-                >
-              </p>
-            </div>
+           
           </div>
         </div>
       </div>

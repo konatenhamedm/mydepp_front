@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
-  import { CookieManager } from "$lib/auth";
+  import { CookieManager, login } from "$lib/auth";
   import axios from "axios";
 
   let email = "";
@@ -9,74 +9,60 @@
   let errorMessage = "";
   let isLoading = false;
   let showPassword = false; // Variable pour gérer l'affichage du mot de passe
+  let authenticating = false; // Variable pour gérer l'état d'authentification
 
   // Fonction pour basculer l'affichage du mot de passe
   const togglePasswordVisibility = () => {
     showPassword = !showPassword;
   };
 
-  const handleSubmit = (event) => {
+  async function handleSubmit(event: any) {
     event.preventDefault();
     errorMessage = ""; // Reset error message
-    
+
     console.log("Email:", email);
     console.log("Password:", password);
-    
+
     if (email && password) {
       isLoading = true;
-      axios
-        .post("http://backend.leadagro.net/api/login", {
-          email: email,
-          password: password,
-          plateforme: "front",
-        })
-        .then((success) => {
-          console.log(success);
-          const authData = {
-            id: success.data.data.id,
-            role: success.data.data.role,
-            username: success.data.data.username,
-            type: success.data.data.type,
-            status: success.data.data.status,
-            payement: success.data.data.payement,
-            avatar: success.data.data.avatar,
-            personneId: success.data.data.personneId,
-            nom: success.data.data.nom,
-            finRenouvellement: success.data.data.finRenouvellement,
-            expire: success.data.data.expire,
-            typePersonne: success.data.data.typePersonne,
-            token: success.data.token,
-          };
-          console.log(authData);
-          CookieManager.set("auth", authData, 1);
 
+      try {
+        const success = await login(email, password, "front");
+        /* alert(JSON.stringify(success)); */
+
+        console.log(success);
+        if (success?.token != null) {
           window.location.href = "/dashboard";
-        })
-        .catch((error) => {
-          console.log(error);
+        } else {
+          errorMessage = "Veuillez vérifier vos identifiants";
+          authenticating = false;
           isLoading = false;
-          if (error.response?.data?.error == "Invalid credentials") {
-            errorMessage = "Email ou mot de passe incorrect.";
-          } else {
-            errorMessage = "Une erreur est survenue. Veuillez réessayer plus tard.";
-          }
-        });
+          setTimeout(() => {
+            errorMessage = ""; // Efface le message après 3 secondes
+          }, 3000);
+        }
+        authenticating = false;
+      } catch (error) {
+        isLoading = false;
+        authenticating = false;
+        errorMessage = "Une erreur est survenue";
+      }
     } else {
       errorMessage = "Veuillez remplir tous les champs.";
     }
-  };
+  }
 </script>
 
 <main class="flex flex-col min-h-screen">
   <HeaderNew />
-  
+
   <!-- Container avec image de fond -->
   <div
-    class="flex-1 bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat  min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+    class="flex-1 bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
   >
     <!-- Overlay pour assombrir légèrement le fond -->
     <div class="absolute inset-0 bg-black/30"></div>
-    
+
     <!-- Contenu centré -->
     <div class="relative z-10 max-w-md w-full">
       <!-- En-tête -->
@@ -86,12 +72,18 @@
         >
           <i class="ri-login-box-line text-white text-4xl"></i>
         </div>
-        <h2 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">Connexion</h2>
-        <p class="text-white text-lg drop-shadow-md">Accédez à votre espace E-DEPPS</p>
+        <h2 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">
+          Connexion
+        </h2>
+        <p class="text-white text-lg drop-shadow-md">
+          Accédez à votre espace E-DEPPS
+        </p>
       </div>
 
       <!-- Formulaire -->
-      <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
+      <div
+        class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20"
+      >
         {#if errorMessage}
           <div
             class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
@@ -112,9 +104,9 @@
             >
               Adresse email <span class="text-red-500">*</span>
             </label>
-            <div class="relative">
+            <div class="relative items-center grid grid-cols-1">
               <div
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                class="absolute left-4  transform  pointer-events-none"
               >
                 <i class="ri-mail-line text-gray-400 text-lg"></i>
               </div>
@@ -123,8 +115,8 @@
                 id="email"
                 required
                 bind:value={email}
-                class="w-full px-4 py-3.5 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
-                placeholder="votre.email@exemple.com"
+                class="w-full px-[40px] py-3.5 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
+                placeholder="Votre.email@exemple.com"
                 name="email"
               />
             </div>
@@ -138,9 +130,9 @@
             >
               Mot de passe <span class="text-red-500">*</span>
             </label>
-            <div class="relative">
+            <div class="relative items-center grid grid-cols-1">
               <div
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                class="absolute left-4  mr-4 transform  pointer-events-none"
               >
                 <i class="ri-lock-line text-gray-400 text-lg"></i>
               </div>
@@ -149,17 +141,23 @@
                 id="password"
                 required
                 bind:value={password}
-                class="w-full px-4 py-3.5 pl-12 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
+                class="w-full px-[40px] py-3.5 pl-12 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none text-gray-900 placeholder-gray-400 bg-white"
                 placeholder="Votre mot de passe"
                 name="password"
               />
               <button
                 type="button"
                 on:click={togglePasswordVisibility}
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
-                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                class="absolute right-4  transform  text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                aria-label={showPassword
+                  ? "Masquer le mot de passe"
+                  : "Afficher le mot de passe"}
               >
-                <i class="{showPassword ? 'ri-eye-off-line' : 'ri-eye-line'} text-lg"></i>
+                <i
+                  class="{showPassword
+                    ? 'ri-eye-off-line'
+                    : 'ri-eye-line'} text-lg"
+                ></i>
               </button>
             </div>
           </div>
@@ -207,7 +205,11 @@
       <!-- Info supplémentaire -->
       <p class="mt-6 text-center text-sm text-white drop-shadow-md">
         En vous connectant, vous acceptez nos
-        <a href="#" class="text-blue-200 hover:text-white hover:underline font-medium">conditions d'utilisation</a>
+        <a
+          href="#"
+          class="text-blue-200 hover:text-white hover:underline font-medium"
+          >conditions d'utilisation</a
+        >
       </p>
     </div>
   </div>

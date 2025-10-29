@@ -1,28 +1,50 @@
 <script>
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { BASE_URL_API } from "$lib/api";
+  import { CookieManager, getAuthCookie } from "$lib/auth";
+  import axios from "axios";
+  import { onMount } from "svelte";
 
+  let userData = CookieManager.get('auth');
+  let WorkflowData=[];
+
+  async function getValidationWorkflow(){
+    await axios.get(BASE_URL_API + "/ValidationWorkflow/" + userData.personneId)
+      .then((response) => {
+        WorkflowData = response.data.data;
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des données de validation :", error);
+      });
+  }
+
+onMount(() => {
+    userData = getAuthCookie();
+    getValidationWorkflow();
+});
 </script>
 
 <main>
     <HeaderNew />
     <div
       class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50"
+      style="  background: linear-gradient(to bottom right, #eff6ff, #fff, #f3e8ff); margin-top: 80px;"
     >
-      <div class="bg-white shadow-sm border-b">
+      <div class="bg-blue-600 shadow-sm border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <a
-                class="text-blue-600 hover:text-blue-800 transition-colors"
+                class="text-white transition-colors"
                 href="/dashboard"
                 ><i class="ri-arrow-left-line text-xl"></i
               ></a>
               <div>
-                <h1 class="text-2xl font-bold text-gray-900">
+                <h1 class="text-2xl font-bold text-white">
                   Suivi de mon dossier
                 </h1>
-                <p class="text-gray-600">État d'avancement de votre dossier</p>
+                <p class="text-white">État d'avancement de votre dossier</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -36,7 +58,7 @@
       </div>
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div class="lg:col-span-1">
+          <!-- <div class="lg:col-span-1">
             <div class="bg-white rounded-xl shadow-lg p-6">
               <h2 class="text-lg font-semibold text-gray-900 mb-4">
                 Informations générales
@@ -50,7 +72,7 @@
                   <span class="text-sm text-gray-500">Progression</span>
                   <div class="mt-2">
                     <div class="flex justify-between text-sm mb-1">
-                      <span>75<!-- -->%</span>
+                      <span>75%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
                       <div
@@ -72,13 +94,18 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="lg:col-span-2">
+          </div> -->
+          <div class="lg:col-span-3">
             <div class="bg-white rounded-xl shadow-lg p-6">
-              <h2 class="text-lg font-semibold text-gray-900 mb-6">
+              <!-- <h2 class="text-lg font-semibold text-gray-900 mb-6">
                 Étapes du processus
-              </h2>
+              </h2> -->
               <div class="space-y-6">
+               {#if WorkflowData.length === 0}
+                  <p class="text-gray-600">Aucune étape de validation trouvée.</p>
+                {:else}
+                  {#each WorkflowData as step}
+                    
                 <div class="flex items-start space-x-4">
                   <div class="flex flex-col items-center">
                     <div
@@ -90,83 +117,26 @@
                   </div>
                   <div class="flex-1">
                     <h3 class="font-semibold text-gray-900">
-                      Création du dossier
+                      {step.etape}
                     </h3>
                     <p class="text-gray-600 text-sm mt-1">
-                      Dossier créé et informations de base renseignées
+                      {#if step.raison}
+                        <span class="font-medium">Raison :</span> {step.raison}
+                        <span class="text-gray-600">{step.createdAt}</span>
+                      {:else}
+                        <span class="text-gray-600">{step.createdAt}</span>
+                      {/if}
                     </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >10/01/2024</span
-                    >
+                   
                   </div>
                 </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-green-600 bg-green-100"
-                    >
-                      <i class="ri-check-line text-lg"></i>
-                    </div>
-                    <div class="w-0.5 h-12 mt-2 bg-green-300"></div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Soumission des documents
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Documents requis téléchargés et soumis
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >12/01/2024</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-blue-600 bg-blue-100"
-                    >
-                      <i class="ri-time-line text-lg"></i>
-                    </div>
-                    <div class="w-0.5 h-12 mt-2 bg-gray-300"></div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Validation des documents
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Vérification en cours par nos équipes
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >15/01/2024</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start space-x-4">
-                  <div class="flex flex-col items-center">
-                    <div
-                      class="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 bg-gray-100"
-                    >
-                      <span class="text-sm font-medium">4</span>
-                    </div>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900">
-                      Approbation finale
-                    </h3>
-                    <p class="text-gray-600 text-sm mt-1">
-                      Validation finale et activation du dossier
-                    </p>
-                    <span class="text-xs text-gray-500 mt-2 block"
-                      >En attente</span
-                    >
-                  </div>
-                </div>
+                {/each}
+                {/if}
               </div>
             </div>
           </div>
         </div>
-        <div class="mt-8">
+        <!-- <div class="mt-8">
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-6">
               Documents du dossier
@@ -297,7 +267,7 @@
               </table>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 <FooterNew />

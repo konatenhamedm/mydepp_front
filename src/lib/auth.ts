@@ -56,14 +56,14 @@ export const CookieManager = {
   }
 };
 
-export async function login(login: string, password: string) {
+export async function login(login: string, password: string, plateforme: string) {
   try {
     console.log('Tentative de connexion pour:', login);
     
     const response = await axios.post(`${BASE_URL_API}/login`, {
       email: login,
       password,
-      plateforme: 'backoffice'
+      plateforme: plateforme
     });
 
     console.log('Réponse API login:', response.data);

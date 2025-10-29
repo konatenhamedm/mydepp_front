@@ -32,7 +32,14 @@ let isModalOpen = false;
 
 
 const nextStep = () => {
-  
+ const errors2 = checkFormData(formData)
+ if(step == 1){
+  if(errors2.email.length>0 || errors2.password.length >0 ||errors2.confirmPassword.length>0){
+    return
+  }
+ }else if (step == 2){
+  // if
+ }
   step += 1;
   if (step === 4) {
     lastStep = true;
@@ -122,7 +129,7 @@ function checkFormData(formData:any) {
       let res = null;
       objects.forEach(async (element) => {
         if (!element.id) {
-          res = await axios.get(`http://backend.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+          res = await axios.get(`https://backend.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
             console.error("Erreur lors de la récupération des données:", error);
             values[element.name as keyof typeof values] = [];
           });
@@ -141,7 +148,7 @@ function checkFormData(formData:any) {
       let res = null;
       objects.forEach(async (element) => {
         if (element.id) {
-            res = await axios.get(`http://backend.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
+            res = await axios.get(`https://backend.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
             console.error("Erreur lors de la récupération des données:", error);
             values[element.name as keyof typeof values] = [];
           });
@@ -306,7 +313,7 @@ function clickPaiement() {
     console.log("formDatas", formDatas);
 
     try {
-      const response = await fetch(`http://backend.leadagro.net/api/paiement/paiement`, {
+      const response = await fetch(`https://backend.leadagro.net/api/paiement/paiement`, {
         method: "POST",
         body: formDatas,
       });
@@ -331,7 +338,7 @@ function clickPaiement() {
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -357,8 +364,8 @@ function clickPaiement() {
 <main>
   <HeaderNew />
    <section
-          class="relative  text-white"
-          style="  background-image: linear-gradient(135deg, #2563eb 0%, #7e22ce 100%);padding-top:100px;padding-bottom:50px;
+          class="relative  text-white bg-blue-600"
+          style="  padding-top:100px;padding-bottom:50px;
 "
         >
           <div class="absolute inset-0 bg-black/20"></div>
@@ -389,11 +396,11 @@ function clickPaiement() {
           {#if step >= 1}
             <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               1
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
           {:else}
             <div class="flex items-center">
@@ -409,11 +416,11 @@ function clickPaiement() {
           {#if step >= 2}
            <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               2
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-purple-600"></div>
+            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
           </div>
           {:else}
            <div class="flex items-center">
@@ -429,7 +436,7 @@ function clickPaiement() {
           {#if step == 3}
            <div class="flex items-center">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-purple-600 text-white border-purple-600"
+              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
             >
               3
             </div>
@@ -447,17 +454,17 @@ function clickPaiement() {
         </div>
         <div class="flex justify-between mb-8 text-sm">
           {#if step >= 1}
-            <span class="text-purple-600 font-medium">Information generale</span>
+            <span class="text-blue-600 font-medium">Information de Connexion</span>
           {:else}
             <span class="text-gray-500">Information generale</span>
           {/if}
           {#if step >= 2}
-            <span class="text-purple-600 font-medium">Information Établissement</span>
+            <span class="text-blue-600 font-medium">Information Établissement</span>
           {:else}
             <span class="text-gray-500">Information Établissement</span>
           {/if}
           {#if step == 3}
-            <span class="text-purple-600 font-medium">Document de Validation</span>
+            <span class="text-blue-600 font-medium">Document de Validation</span>
           {:else}
             <span class="text-gray-500">Document de Validation</span>
           {/if}
@@ -687,7 +694,7 @@ function clickPaiement() {
                 onclick={()=>{nextStep()}}
                 type="button"
                 disabled={done || lastStep}
-                class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Suivant
               </button>

@@ -39,8 +39,8 @@
 
     let typeUser: any = [
         {
-            id: "deviseISTRATEUR",
-            libelle: "deviseISTRATEUR",
+            id: "ADMINISTRATEUR",
+            libelle: "ADMINISTRATEUR",
         },
         {
             id: "DIRECTEUR",
