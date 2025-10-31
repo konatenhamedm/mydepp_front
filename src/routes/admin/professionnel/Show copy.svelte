@@ -1,30 +1,27 @@
 <script lang="ts">
-  import InputCheck from "$components/inputs/InputCheck.svelte";
-  import InputSimple from "$components/inputs/InputSimple.svelte";
-  import { apiFetch, BASE_URL_API } from "$lib/api";
-  
-  import { Button, Modal } from "flowbite-svelte";
-  import { TrashBinSolid } from "flowbite-svelte-icons";
-  import { createEventDispatcher, onMount } from "svelte";
-  import DocShow from "./DocShow.svelte";
-  import { format } from "date-fns";
-  import RecuPaiement from "./RecuPaiement.svelte";
-  import FicheInscription from "./FicheInscription.svelte";
+	import InputSimple from "$components/inputs/InputSimple.svelte";
+	import { apiFetch, BASE_URL_API } from "$lib/api";
+	import { A, Button, Modal, Select } from "flowbite-svelte";
+	import Notification from "$components/_includes/Notification.svelte";
+	import InputSelect from "$components/inputs/InputSelect.svelte";
+	import { onMount } from "svelte";
+	import InputTextArea from "$components/inputs/InputTextArea.svelte";
+	import InputUserSelect from "$components/inputs/InputUserSelect.svelte";
 
-  let isLoad = false;
+	export let open: boolean = false; // modal control
+   let isLoad = false;
 
   export let userUpdateId: any;
   export let data: Record<string, string> = {};
 
 
 
-  export let open: boolean = false;
   export let sizeModal: any = "lg";
-  const dispatch = createEventDispatcher();
+
 
   let professionLibelle: string = "";
 
-  const url_image = "https://depps.leadagro.net/uploads/";
+  const url_image = "https://backend.leadagro.net/uploads/";
   let persionneId = "";
   let numero = "";
   let nom = "";
@@ -149,15 +146,7 @@
 
   let currentImage = "";
 
-  function openDialog(imageUrl: string) {
-    currentImage = imageUrl;
-    isDialogOpen = true;
-  }
-  /* ddd */
-  function closeDialog() {
-    isDialogOpen = false;
-  }
-  async function SaveFunction() {
+async function SaveFunction() {
     console.log("Email", userEmail);
     console.log("Email", valid_endUser.status);
     console.log("Email", valid_endUser.raison);
@@ -188,101 +177,20 @@
         notificationType = "success";
         showNotification = true;
 		open = false
-        dispatch("changeStatus");
+        // dispatch("changeStatus");
       }
     } catch (error) {
       console.error("Error saving:", error);
     }
   }
-  async function SaveFunctionSingleMethode(etat: string) {
-    console.log("EmailTTT", userEmail);
-    console.log("Email", valid_endUser.status);
-    console.log("Email", valid_endUser.raison);
-    console.log("Email", userUpdateId);
-    console.log("TTGDFDFDFD", etat);
-    isLoad = true;
-    try {
-      const res = await fetch(
-        BASE_URL_API + "/professionnel/active/" + data.personne?.id,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status: etat,
-            raison: "",
-            userUpdate: userUpdateId,
-            email: userEmail,
-          }),
-        },
-      );
 
-      if (res.ok) {
-        isLoad = false;
-        open = false;
-        notificationMessage = "Traitement effectué  avec succès!";
-        notificationType = "success";
-        showNotification = true;
-        dispatch("changeStatus");
-      }
-    } catch (error) {
-      console.error("Error saving:", error);
-    }
-  }
-  function formatDateForInput(dateString: string) {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return format(date, "yyyy-MM-dd"); // Formater en YYYY-MM-DD
-    } catch (e) {
-      console.error("Erreur de formatage de date:", e);
-      return "";
-    }
-  }
-
-  async function getProfessionLibelle(code: any) {
-    console.log("Code profession:", code);
-    try {
-      const res = await fetch(BASE_URL_API + "/profession/get/by/code/" + code);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.data) {
-          console.log("Data récupérée:", data.data);
-          return data.data;
-        } else {
-          console.error("Erreur: data.data est undefined", data);
-          return null;
-        }
-      } else {
-        console.error("Erreur HTTP:", res.status, res.statusText);
-        return null;
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération des données:", error);
-      return null;
-    }
-  }
-
-  /*  onMount(async () => {
-    await getProfessionLibelle(profession);
-  }) */
-
-  let isModalOpen = false;
-  let isModalOpenRegister = false;
-
-  function openModal(url: any) {
-    pdfUrl = url; // ✅ Met à jour la variable réactive
-    isModalOpen = true;
-  }
-
-  function closeModal() {
-    isModalOpen = false;
-  }
 </script>
 
-    <form action="#" use:init>
+<!-- Modal Content Wrapper -->
+<div class="space-y-4 rounded-lg bg-white p-1">
+	<!-- Card Body -->
+	<div class="space-y-6">
+		   <form action="#" use:init>
       <!--   {#if reason }
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-5" role="alert">
         <strong class="font-bold">OOUPS</strong>
@@ -739,11 +647,11 @@ type="text"
         </fieldset>
       {/if}
     </form>
- 
+	</div>
 
-  <div  class="w-full">
-    <div class="w-full grid grid-cols-3">
-      {#if status === "attente"}
+	<!-- Card Footer -->
+	<div class="flex justify-end border-t border-gray-200 pt-4">
+		 {#if status === "attente"}
         <div class="col-span-2">
           {#if isLoad}
             <Button
@@ -820,10 +728,10 @@ type="text"
           >{"Fermer"}
         </Button>
       </div>
-    </div>
-  </div>
+	</div>
+</div>
 
-
+<!-- Notification Component -->
 {#if isModalOpen == true}
   <RecuPaiement
     bind:open={isModalOpen}

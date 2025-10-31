@@ -205,7 +205,7 @@
         URL.revokeObjectURL(url);
       } catch (error) {
         console.error('Erreur lors de l\'export CSV:', error);
-        alert('Une erreur est survenue lors de l\'export CSV');
+        // alert('Une erreur est survenue lors de l\'export CSV');
       }
     }
   
@@ -254,7 +254,7 @@
         );
       } catch (error) {
         console.error('Erreur lors de l\'export Excel:', error);
-        alert('Une erreur est survenue lors de l\'export Excel');
+        // alert('Une erreur est survenue lors de l\'export Excel');
       }
     }
   </script>

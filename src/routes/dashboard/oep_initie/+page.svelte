@@ -270,7 +270,7 @@ console.log("formDatas avant fichiers", formDatas);
       authenticating = false;
       
       if (result && result.url) {
-        alert(result.url);
+        // alert(result.url);
         localStorage.setItem("reference", result.reference);
         window.location.href = result.url + "?return=1";
       }
