@@ -75,22 +75,7 @@
   });
 </script>
 
-<div
- 
-  title={Object.keys(data).length
-    ? "Imputation"
-    : "Imputation"}
-  
-  class="m-4 modale_general"
-  on:close={handleModalClose}
->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-    crossorigin="anonymous"
-  />
-  <div class="space-y-6 p-0">
+
     <form action="#" use:init>
       <div class="grid grid-cols-1">
         <div class="grid grid-cols-1">
@@ -104,7 +89,7 @@
         </div>
       </div>
     </form>
-  </div>
+ 
 
   <!-- Modal footer -->
   <div  class="w-full">
@@ -140,4 +125,4 @@
       {/if}
     </div>
   </div>
-</div>
+
