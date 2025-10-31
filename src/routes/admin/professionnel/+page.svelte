@@ -239,7 +239,7 @@
       // Pas de 'Action' pour ADMINISTRATEUR
     }
     
-    if (activeTab === 'valide') {
+    if (activeTab) {
       const headersWithCode = [...baseHeaders, 'Code', 'Imputation'];
       if (shouldShowActionColumn()) {
         return [...headersWithCode, 'Action'];
@@ -560,7 +560,7 @@
   />
 </Modale>
 
-<Modale bind:open={openEdit} size="xl" title="Modifier un dossier professionnel">
+<Modale bind:open={openEdit} size="2xl" title="Modifier un dossier professionnel">
   <Edit
     bind:open={openEdit}
     data={current_data}
@@ -569,7 +569,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShow} size="xl" title="Détails du dossier professionnel">
+<Modale bind:open={openShow} size="2xl" title="Détails du dossier professionnel">
   <Show
     bind:open={openShow}
     data={current_data}
@@ -578,7 +578,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShowDetails} size="xl" title="Détails complémentaires">
+<Modale bind:open={openShowDetails} size="2xl" title="Détails complémentaires">
   <ShowDetails
     bind:open={openShowDetails}
     data={current_data}

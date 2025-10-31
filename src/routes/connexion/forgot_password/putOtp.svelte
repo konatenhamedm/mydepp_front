@@ -38,7 +38,7 @@ const ResendOtp = async() =>{
       });
       console.log(res);
       if(res.expired == false){
-        alert("OTP valide");
+        // alert("OTP valide");
         sessionStorage.setItem("otp", otp);
         submitted = true;
       }else{
