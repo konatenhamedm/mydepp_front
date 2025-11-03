@@ -317,7 +317,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`http://backend.leadagro.net/api${element.url}`)
+          .get(`https://backend.leadagro.net/api${element.url}`)
           .then((response) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -417,7 +417,7 @@
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -449,7 +449,7 @@
 
   async function getAllProfessions() {
     await axios
-      .get("http://backend.leadagro.net/api/typeProfession")
+      .get("https://backend.leadagro.net/api/typeProfession")
       .then((response) => {
         professions = response.data.data;
         console.log("YYYYYY", professions);

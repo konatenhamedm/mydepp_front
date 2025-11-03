@@ -40,7 +40,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`http://backend.leadagro.net/api${element.url}`)
+          .get(`https://backend.leadagro.net/api${element.url}`)
           .then((response: any) => {
             values[element.name as keyof typeof values] = response.data.data;
           })

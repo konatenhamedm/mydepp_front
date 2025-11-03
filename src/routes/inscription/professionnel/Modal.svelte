@@ -88,7 +88,7 @@
   async function getTransactionInfos() {
     isLoading = true;
     try {
-      await axios.get( "http://backend.leadagro.net/api/paiement/info/transaction/"+pdfUrl).then((response) => {
+      await axios.get( "https://backend.leadagro.net/api/paiement/info/transaction/"+pdfUrl).then((response) => {
         console.log("response", response);
         if (response.data.code === 200) {
           console.log("response.data", response.data);
