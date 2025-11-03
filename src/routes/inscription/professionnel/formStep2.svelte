@@ -7,7 +7,7 @@
   let professions = [];
 
   async function getAllProfessions() {
-    await axios.get( "http://backend.leadagro.net/api/typeProfession").then((response) => {
+    await axios.get( "https://backend.leadagro.net/api/typeProfession").then((response) => {
       professions = response.data.data;
       console.log("YYYYYY", professions);
     }).catch((error) => {
