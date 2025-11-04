@@ -13,6 +13,8 @@
   import Recap from "./recap.svelte";
   import InputSelect2 from "$components/inputs/InputSelect2.svelte";
   import InputSelect from "$components/inputs/InputSelect.svelte";
+  import Svelecte from 'svelecte';
+
   let step = 1;
   let done = false;
   let lastStep = false;
@@ -354,7 +356,7 @@ async function checkEmail(email: any) {
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`http://backend.leadagro.net/api${element.url}`)
+          .get(`https://backend.leadagro.net/api${element.url}`)
           .then((response) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -454,7 +456,7 @@ async function checkEmail(email: any) {
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -486,7 +488,7 @@ async function checkEmail(email: any) {
 
   async function getAllProfessions() {
     await axios
-      .get("http://backend.leadagro.net/api/typeProfession")
+      .get("https://backend.leadagro.net/api/typeProfession")
       .then((response) => {
         professions = response.data.data;
         console.log("YYYYYY", professions);
@@ -893,6 +895,10 @@ async function checkEmail(email: any) {
                   >Civilité *</label
                 >
                 <div class="relative">
+                  <Svelecte
+  options={values.civilite}
+  bind:value={formData.civilite}
+/>
                   <select
                     id="civilite"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
