@@ -11,6 +11,8 @@
   import LastSteps from "./last_steps.svelte";
   import { BASE_URL_API } from "$lib/api";
   import Recap from "./recap.svelte";
+  import InputSelect2 from "$components/inputs/InputSelect2.svelte";
+  import InputSelect from "$components/inputs/InputSelect.svelte";
   let step = 1;
   let done = false;
   let lastStep = false;
@@ -44,8 +46,32 @@
     return re.test(String(phone));
   };
 
+  const validatePassword = (password: string): boolean => {
+    // Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+async function checkEmail(email: any) {
+    if (!email) return false;
+
+    try {
+      const res = await fetch(
+       `${BASE_URL_API}/user/check/email/existe/${email}`
+      );
+      const data = await res.json();
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
+    } catch (error) {
+      console.error(
+        'Erreur lors de la vérification de la transaction :',
+        error
+      );
+      return false;
+    }
+  }
+
   // Fonction pour valider les champs d'une étape
-  function validateStep(currentStep: number): boolean {
+  async function validateStep(currentStep: number): Promise<boolean> {
     errors = {}; // Réinitialiser les erreurs
     let isValid = true;
 
@@ -57,6 +83,9 @@
       } else if (!validateEmail(formData.email)) {
         errors.email = "Email invalide, merci de vérifier le format";
         isValid = false;
+      }else if(await checkEmail(formData.email)){
+        errors.email = "Cet email est déjà utilisé";
+        isValid = false;
       }
 
       if (!formData.password) {
@@ -65,6 +94,10 @@
       } else if (formData.password.length < 8) {
         errors.password = "Le mot de passe doit contenir au moins 8 caractères";
         isValid = false;
+      }else if (!validatePassword(formData.password)) {
+        errors.password =
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
+        isValid = false;
       }
 
       if (!formData.confirmPassword) {
@@ -72,6 +105,10 @@
         isValid = false;
       } else if (formData.password !== formData.confirmPassword) {
         errors.confirmPassword = "Les mots de passe ne correspondent pas";
+        isValid = false;
+      }else if (!validatePassword(formData.confirmPassword)) {
+        errors.confirmPassword =
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
         isValid = false;
       }
     }
@@ -317,7 +354,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`https://backend.leadagro.net/api${element.url}`)
+          .get(`http://backend.leadagro.net/api${element.url}`)
           .then((response) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -417,7 +454,7 @@
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `http://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -449,7 +486,7 @@
 
   async function getAllProfessions() {
     await axios
-      .get("https://backend.leadagro.net/api/typeProfession")
+      .get("http://backend.leadagro.net/api/typeProfession")
       .then((response) => {
         professions = response.data.data;
         console.log("YYYYYY", professions);
@@ -825,7 +862,14 @@
                   >Nationalite *</label
                 >
                 <div class="relative">
-                  <select
+        <InputSelect2
+					label="Nationalité"
+					bind:selectedId={formData.nationalite}
+					datas={values.nationalite}
+					id="nationalite"
+					required={true}
+				></InputSelect2>
+                  <!-- <select
                     id="Nationalite"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     required={true}
@@ -836,7 +880,7 @@
                     {#each values.nationate as option}
                       <option value={option.id}>{option.libelle}</option>
                     {/each}
-                  </select>
+                  </select> -->
                 </div>
                 {#if errors.nationalite}
                   <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
@@ -1670,12 +1714,12 @@
               onclick={() => {
                 prevStep();
               }}
-              hidden={step === 1}
+              
               type="button"
               disabled={step === 1}
               class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              Précédent</button
+              {step > 1 ? "Précédent" : ""} </button
             >
             {#if lastStep}
               <button
@@ -1694,7 +1738,7 @@
                 }}
                 type="button"
                 disabled={lastStep}
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right"
               >
                 Suivant
               </button>
