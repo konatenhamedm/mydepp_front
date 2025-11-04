@@ -82,37 +82,51 @@ async function checkEmail(email: any) {
       if (!formData.email) {
         errors.email = "L'email est requis";
         isValid = false;
+       
       } else if (!validateEmail(formData.email)) {
         errors.email = "Email invalide, merci de vérifier le format";
         isValid = false;
+       
       }else if(await checkEmail(formData.email)){
         errors.email = "Cet email est déjà utilisé";
         isValid = false;
+
       }
 
       if (!formData.password) {
         errors.password = "Le mot de passe est requis";
         isValid = false;
+       
       } else if (formData.password.length < 8) {
         errors.password = "Le mot de passe doit contenir au moins 8 caractères";
         isValid = false;
+       
       }else if (!validatePassword(formData.password)) {
         errors.password =
           "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
         isValid = false;
+       
       }
 
       if (!formData.confirmPassword) {
         errors.confirmPassword = "Veuillez confirmer le mot de passe";
         isValid = false;
+     
+      }else if (formData.password.length < 8) {
+        errors.password = "Le mot de passe doit contenir au moins 8 caractères";
+        isValid = false;
+       
       } else if (formData.password !== formData.confirmPassword) {
         errors.confirmPassword = "Les mots de passe ne correspondent pas";
         isValid = false;
+    
       }else if (!validatePassword(formData.confirmPassword)) {
         errors.confirmPassword =
           "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
         isValid = false;
+ 
       }
+      return isValid;
     }
 
     if (currentStep === 2) {
@@ -241,9 +255,10 @@ async function checkEmail(email: any) {
     return isValid;
   }
 
-  const nextStep = () => {
+  const nextStep = async () => {
     // Valider l'étape actuelle avant de passer à la suivante
-    if (!validateStep(step)) {
+    const validate = await validateStep(step);
+    if (!validate) {
       message = "Veuillez remplir tous les champs obligatoires correctement";
       return;
     }
@@ -863,26 +878,18 @@ async function checkEmail(email: any) {
                   class="block text-sm font-medium text-gray-700 mb-2"
                   >Nationalite *</label
                 >
-                <div class="relative">
-        <InputSelect2
-					label="Nationalité"
-					bind:selectedId={formData.nationalite}
-					datas={values.nationalite}
-					id="nationalite"
-					required={true}
-				></InputSelect2>
-                  <!-- <select
-                    id="Nationalite"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="Nationalite"
-                    bind:value={formData.nationalite}
-                  >
-                    <option value="">Sélectionnez votre nationalité</option>
-                    {#each values.nationate as option}
-                      <option value={option.id}>{option.libelle}</option>
-                    {/each}
-                  </select> -->
+            
+        <div class="relative">
+                  <Svelecte
+                  multiple={false}
+  options={values.nationate}
+  bind:value={formData.nationalite}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre région sanitaire"
+/>
+                
                 </div>
                 {#if errors.nationalite}
                   <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
@@ -896,21 +903,15 @@ async function checkEmail(email: any) {
                 >
                 <div class="relative">
                   <Svelecte
+                  multiple={false}
   options={values.civilite}
   bind:value={formData.civilite}
+  labelField="libelle"
+  valueField="code"
+  placeholder="Sélectionnez votre civilité"
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
 />
-                  <select
-                    id="civilite"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="civilite"
-                    bind:value={formData.civilite}
-                  >
-                    <option value="">Sélectionnez votre civilité</option>
-                    {#each values.civilite as option}
-                      <option value={option.code}>{option.libelle}</option>
-                    {/each}
-                  </select>
+              
                 </div>
                 {#if errors.civilite}
                   <p class="text-red-600 text-sm mt-1">{errors.civilite}</p>
@@ -992,20 +993,16 @@ async function checkEmail(email: any) {
                   >Situation matrimoniale *</label
                 >
                 <div class="relative">
-                  <select
-                    id="situation"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="situation"
-                    bind:value={formData.situation}
-                  >
-                    <option value=""
-                      >Sélectionnez votre situation matrimoniale</option
-                    >
-                    {#each situationsMatrimoniales as option}
-                      <option value={option.value}>{option.label}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={situationsMatrimoniales}
+  bind:value={formData.situation}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="label"
+  valueField="value"
+  placeholder="Sélectionnez votre situation matrimoniale"
+/>
+                 
                 </div>
                 {#if errors.situation}
                   <p class="text-red-600 text-sm mt-1">{errors.situation}</p>
@@ -1198,20 +1195,16 @@ async function checkEmail(email: any) {
                   >Situation professionnelle *</label
                 >
                 <div class="relative">
-                  <select
-                    id="situationPro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="situationPro"
-                    bind:value={formData.situationPro}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre situation professionnelle
-                    </option>
-                    {#each values.situationProfessionnelle as situation}
-                      <option value={situation.id}>{situation.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.situationProfessionnelle}
+  bind:value={formData.situationPro}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre situation professionnelle"
+/>
+               
                 </div>
                 {#if errors.situationPro}
                   <p class="text-red-600 text-sm mt-1">{errors.situationPro}</p>
@@ -1224,20 +1217,16 @@ async function checkEmail(email: any) {
                   >Région sanitaire *</label
                 >
                 <div class="relative">
-                  <select
-                    id="region"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="region"
-                    bind:value={formData.region}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre région sanitaire
-                    </option>
-                    {#each values.region as region}
-                      <option value={region.id}>{region.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.region}
+  bind:value={formData.region}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre région sanitaire"
+/>
+                
                 </div>
                 {#if errors.region}
                   <p class="text-red-600 text-sm mt-1">{errors.region}</p>
@@ -1253,20 +1242,16 @@ async function checkEmail(email: any) {
                   >District sanitaire *</label
                 >
                 <div class="relative">
-                  <select
-                    id="district"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="district"
-                    bind:value={formData.district}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre district sanitaire
-                    </option>
-                    {#each values.district as district}
-                      <option value={district.id}>{district.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.district}
+  bind:value={formData.district}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre district sanitaire"
+/>
+                 
                 </div>
                 {#if errors.district}
                   <p class="text-red-600 text-sm mt-1">{errors.district}</p>
@@ -1279,20 +1264,16 @@ async function checkEmail(email: any) {
                   >Ville *</label
                 >
                 <div class="relative">
-                  <select
-                    id="ville"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="ville"
-                    bind:value={formData.ville}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre ville
-                    </option>
-                    {#each values.ville as ville}
-                      <option value={ville.id}>{ville.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.ville}
+  bind:value={formData.ville}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre ville"
+/>
+                 
                 </div>
                 {#if errors.ville}
                   <p class="text-red-600 text-sm mt-1">{errors.ville}</p>
@@ -1308,20 +1289,15 @@ async function checkEmail(email: any) {
                   >Commune *</label
                 >
                 <div class="relative">
-                  <select
-                    id="commune"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="commune"
-                    bind:value={formData.commune}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre commune
-                    </option>
-                    {#each values.commune as commune}
-                      <option value={commune.id}>{commune.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.commune}
+  bind:value={formData.commune}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre commune"
+/>
                 </div>
                 {#if errors.commune}
                   <p class="text-red-600 text-sm mt-1">{errors.commune}</p>
@@ -1425,21 +1401,16 @@ async function checkEmail(email: any) {
                   >Type de diplôme *</label
                 >
                 <div class="relative">
-                  <select
-                    id="typeDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="typeDiplome"
-                    bind:value={formData.typeDiplome}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre type de diplôme
-                    </option>
-                    {#each values.typeDiplome as profession}
-                      <option value={profession.id}>{profession.libelle}</option
-                      >
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.typeDiplome}
+  bind:value={formData.typeDiplome}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre type de diplôme"
+/>
+                
                 </div>
                 {#if errors.typeDiplome}
                   <p class="text-red-600 text-sm mt-1">{errors.typeDiplome}</p>
@@ -1455,20 +1426,16 @@ async function checkEmail(email: any) {
                   >Status professionnel *</label
                 >
                 <div class="relative">
-                  <select
-                    id="statusPro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="statusPro"
-                    bind:value={formData.statusPro}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre status professionnel
-                    </option>
-                    {#each values.statusPro as status}
-                      <option value={status.id}>{status.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.statusPro}
+  bind:value={formData.statusPro}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre status professionnel"
+/>
+                 
                 </div>
                 {#if errors.statusPro}
                   <p class="text-red-600 text-sm mt-1">{errors.statusPro}</p>
@@ -1481,20 +1448,16 @@ async function checkEmail(email: any) {
                   >Origine du diplôme *</label
                 >
                 <div class="relative">
-                  <select
-                    id="lieuObtentionDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="lieuObtentionDiplome"
-                    bind:value={formData.lieuObtentionDiplome}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez l'origine de votre diplôme
-                    </option>
-                    {#each values.lieuObtentionDiplome as lieu}
-                      <option value={lieu.id}>{lieu.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.lieuObtentionDiplome}
+  bind:value={formData.lieuObtentionDiplome}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez l'origine de votre diplôme"
+/>
+                
                 </div>
                 {#if errors.lieuObtentionDiplome}
                   <p class="text-red-600 text-sm mt-1">
