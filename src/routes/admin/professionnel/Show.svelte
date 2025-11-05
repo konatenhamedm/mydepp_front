@@ -25,48 +25,48 @@
   let professionLibelle: string = "";
 
   const url_image = "https://depps.leadagro.net/uploads/";
-  let persionneId = "";
-  let numero = "";
-  let nom = "";
-  let status = "";
-  let prenoms = "";
-  let professionnel = "";
-  let datePremierDiplome = "";
-  let poleSanitaire = "";
-  let poleSanitairePro = "";
-  let organisationNom = "";
-  let lieuExercicePro = "";
-  let profession = "";
-  let civilite = "";
-  let dateNaissance = "";
-  let nationalite = "";
-  let situation = "";
-  let dateDiplome = "";
-  let diplome = "";
-  let situationPro = "";
-  let userEmail = "";
-  let typeUser = "";
-  let appartenirOrganisation = "";
-  let appartenirOrdre = "";
-  let numeroInscription = "";
-  let photo = "";
-  let cni = "";
-  let cv = "";
-  let CVpath = "";
-  let CValt = "";
-  let reason = "";
+  let persionneId: any;
+  let numero: any;
+  let nom: any;
+  let status: any;
+  let prenoms: any;
+  let professionnel: any;
+  let datePremierDiplome: any;
+  let poleSanitaire: any;
+  let poleSanitairePro: any;
+  let organisationNom: any;
+  let lieuExercicePro: any;
+  let profession :any;
+  let civilite: any;
+  let dateNaissance: any;
+  let nationalite: any;
+  let situation: any;
+  let dateDiplome: any;
+  let diplome: any;
+  let situationPro: any;
+  let userEmail: any;
+  let typeUser: any;
+  let appartenirOrganisation: any;
+  let appartenirOrdre: any;
+  let numeroInscription: any;
+  let photo: any;
+  let cni: any;
+  let cv: any;
+  let CVpath: any;
+  let CValt: any;
+  let reason: any;
 
-  let Photopath = "";
-  let Photoalt = "";
-  let diplomeFilePath = "";
-  let diplomeFileAlt = "";
-  let cniPath = "";
-  let cniAlt = "";
-  let casierPath = "";
-  let casierAlt = "";
-  let certificatPath = "";
-  let certificatAlt = "";
-  let lieuDiplome = "";
+  let Photopath: any;
+  let Photoalt: any;
+  let diplomeFilePath: any;
+  let diplomeFileAlt: any;
+  let cniPath: any;
+  let cniAlt: any;
+  let casierPath: any;
+  let casierAlt: any;
+  let certificatPath: any;
+  let certificatAlt: any;
+  let lieuDiplome :any  ;
 
   
 
@@ -81,8 +81,8 @@
     prenoms = data.personne.prenoms || "";
     reason = data.personne.reason || "";
     professionnel = data.personne.professionnel || "";
-    civilite = data.personne.civilite.libelle || "";
-    nationalite = data.personne.nationate.libelle || "";
+    civilite = data.personne.civilite ? data.personne.civilite.libelle : "";
+    nationalite = data.personne.nationate ? data.personne.nationate.libelle : "";
     dateNaissance = data.personne.dateNaissance || "";
     dateDiplome = data.personne.dateDiplome || "";
     diplome = data.personne.diplome || "";
@@ -324,12 +324,22 @@ type="text"
       </div>
 
       <div class="grid grid-cols-3 gap-6">
-        <div>
+        <!-- <div>
           <InputSimple
 type="text"
             fieldName="civilite"
             label="Civilité"
             field={civilite}
+            disabled={true}
+          />
+        </div> -->
+
+         <div class="space-y-6">
+          <InputSimple
+type="text"
+            fieldName="lieuExercicePro"
+            label="Lieu d’exercice professionnel"
+            field={lieuExercicePro}
             disabled={true}
           />
         </div>
@@ -446,7 +456,7 @@ type="text"
       </div>
 
       <div class="grid grid-cols-2 gap-6">
-        <div>
+        <!-- <div>
           <InputSimple
 type="text"
             fieldName="poleSanitaire"
@@ -454,17 +464,9 @@ type="text"
             field={poleSanitaire}
             disabled={true}
           />
-        </div>
+        </div> -->
 
-        <div class="space-y-6">
-          <InputSimple
-type="text"
-            fieldName="lieuExercicePro"
-            label="Lieu d’exercice professionnel"
-            field={lieuExercicePro}
-            disabled={true}
-          />
-        </div>
+       
       </div>
       <div class="grid grid-cols-4 gap-6 mt-6">
         <!-- <div class="space-y-6"> -->
@@ -588,7 +590,7 @@ type="text"
         </div>
         {#if appartenirOrganisation === "oui"}
           <!-- <div class="grid grid-cols-1 gap-6 mt-6"> -->
-          <div class="space-y-6">
+          <!-- <div class="space-y-6">
             <InputSimple
 type="text"
               fieldName="organisation"
@@ -596,7 +598,7 @@ type="text"
               field={organisationNom}
               disabled={true}
             />
-          </div>
+          </div> -->
           <!-- </div> -->
         {/if}
       </div>

@@ -14,6 +14,7 @@
   import InputSelect2 from "$components/inputs/InputSelect2.svelte";
   import InputSelect from "$components/inputs/InputSelect.svelte";
   import Svelecte from 'svelecte';
+  import SpinnerBlue from "$components/_skeletons/SpinnerBlue.svelte";
 
   let step = 1;
   let done = false;
@@ -265,14 +266,17 @@ async function checkEmail(email: any) {
 
     message = ""; // Effacer le message d'erreur
     // alert("next step");
-   
+   if(isValidNumeroInscription){
+    step == 6;
+    lastStep = true;
+   }
       step += 1;
       if (step == 6) {
         lastStep = true;
       }
     
 
-    console.log(formData);
+    
   };
 
   const prevStep = () => {
@@ -537,17 +541,27 @@ async function checkEmail(email: any) {
 
 
   let specialite: any = null;
-
+///variable pour dire que j'ai trouvé un numero d'inscription et qu'on peut finaliser le formulaire sans payer
+let isValidNumeroInscription = false;
+let fetchId:any = null;
+let numeroTempInscription:any = null;
   ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit 
 function checkExistenceNumeroInscription(numeroInscription: any) {
     if (!numeroInscription) return;
 
     axios
       .get(
-        `https://backend.leadagro.net/api/professionnel/check/numeroInscription/${numeroInscription}`
+        `${BASE_URL_API}/professionnel/existe/code/${numeroInscription}`
       )
       .then((response) => {
+        console.log("Response existence numero d'inscription:", response.data);
+        isValidNumeroInscription = response.data.data.existeInProfessionnel;
+        if (isValidNumeroInscription) {
+          numeroTempInscription = numeroInscription;
+          formData.numeroInscription = "";
+        }
         const data = response.data;
+        console.log("data.exists", data.exists);
         if (data.exists) {
           specialite = data.specialite;
           formData.profession = specialite;
@@ -567,6 +581,27 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
       });
   }
 
+  function validateAccountWithNumInsc(){
+    if(isValidNumeroInscription){
+     axios.post(
+       `${BASE_URL_API}/professionnel/valider/inscription/avec/numero`,
+       {
+         numeroInscription: numeroTempInscription,
+       }
+     ).then((response) => {
+       console.log("Response validation avec numero d'inscription:", response.data);
+       alert("Votre inscription a été validée avec succès !");
+       // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
+     }).catch((error) => {
+       console.error(
+         "Erreur lors de la validation avec le numéro d'inscription :",
+         error
+       );
+     });
+    }
+  }
+
+$:formData.numeroInscription && checkExistenceNumeroInscription(formData.numeroInscription);
 
 </script>
 
@@ -772,11 +807,14 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               </h2>
               <div class="space-y-6">
                 <div>
+
+                 
                   <label
                     for="email"
                     class="block text-sm font-medium text-gray-700 mb-2"
                     >E-mail *</label
-                  ><input
+                  >
+                  <input
                     type="email"
                     id="email"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
@@ -785,6 +823,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                     name="email"
                     bind:value={formData.email}
                   />
+                  
                   {#if errors.email}
                     <p class="text-red-600 text-sm mt-1">{errors.email}</p>
                   {/if}
@@ -913,7 +952,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.nationate}
   bind:value={formData.nationalite}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+   class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre région sanitaire"
@@ -938,7 +977,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
   labelField="libelle"
   valueField="code"
   placeholder="Sélectionnez votre civilité"
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
 />
               
                 </div>
@@ -1026,7 +1065,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={situationsMatrimoniales}
   bind:value={formData.situation}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="label"
   valueField="value"
   placeholder="Sélectionnez votre situation matrimoniale"
@@ -1039,19 +1078,52 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               </div>
             </div>
           {:else if step === 3 && intermed == 0}
+           <div>
+                <label
+                  for="numeroInscription"
+                  class="block text-lg font-medium text-gray-700 mb-2"
+                  >Numéro d'inscription au registre</label
+                >
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="numeroInscription"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                    placeholder="Votre numéro d'inscription"
+                    required={true}
+                    name="numeroInscription"
+                    bind:value={formData.numeroInscription}
+                  />
+                </div>
+                {#if errors.numeroInscription}
+                  <p class="text-red-600 text-sm mt-1">
+                    {errors.numeroInscription}
+                  </p>
+                {/if}
+              </div>
+              {#if !isValidNumeroInscription == false}
             <div class=" p-6 rounded-lg shadow-m mb-4">
               <!-- Radios: Profession -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Profession *</label>
                    <Svelecte
                   multiple={false}
   options={professions}
   bind:value={specialite}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="libelle"
   placeholder="Sélectionnez votre groupe de spécialisation"
-/>
+/></div>
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Spécialité *</label>
 
 <Svelecte
                   multiple={false}
@@ -1059,11 +1131,12 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                     (prof:any) => prof.libelle === specialite
                   )?.professions || []}
   bind:value={formData.profession}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+class="w-full h-full"
   labelField="libelle"
   valueField="code"
   placeholder="Sélectionnez votre spécialité"
 />
+</div>
 
 
 
@@ -1102,30 +1175,9 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
             </div>
           <!-- {/if}
           {#if intermed == 1 && step === 3} -->
+
             <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="numeroInscription"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Numéro d'inscription au registre</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="numeroInscription"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre numéro d'inscription"
-                    required={true}
-                    name="numeroInscription"
-                    bind:value={formData.numeroInscription}
-                  />
-                </div>
-                {#if errors.numeroInscription}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.numeroInscription}
-                  </p>
-                {/if}
-              </div>
+             
               <div>
                 <label
                   for="emailPro"
@@ -1253,7 +1305,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.situationProfessionnelle}
   bind:value={formData.situationPro}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre situation professionnelle"
@@ -1275,7 +1327,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.region}
   bind:value={formData.region}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre région sanitaire"
@@ -1300,7 +1352,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.district}
   bind:value={formData.district}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre district sanitaire"
@@ -1322,7 +1374,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.ville}
   bind:value={formData.ville}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre ville"
@@ -1347,7 +1399,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.commune}
   bind:value={formData.commune}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre commune"
@@ -1459,7 +1511,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.typeDiplome}
   bind:value={formData.typeDiplome}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre type de diplôme"
@@ -1484,7 +1536,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.statusPro}
   bind:value={formData.statusPro}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez votre status professionnel"
@@ -1506,7 +1558,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   multiple={false}
   options={values.lieuObtentionDiplome}
   bind:value={formData.lieuObtentionDiplome}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  class="w-full h-full"
   labelField="libelle"
   valueField="id"
   placeholder="Sélectionnez l'origine de votre diplôme"
@@ -1520,8 +1572,9 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                 {/if}
               </div>
             </div>
+            {/if}
           {/if}
-          {#if step === 4}
+          {#if step === 4 && isValidNumeroInscription == false}
             <div class="space-y-6">
               <h2 class="text-2xl font-bold text-gray-900 mb-6">
                 Documents requis
@@ -1701,7 +1754,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                 </div>
               </div>
             </div>
-          {:else if step == 5}
+          {:else if step == 5 && isValidNumeroInscription == false}
               <div
         class="grid grid-cols-1 md:grid-cols-2  gap-6 mb-4"
       >
@@ -1787,16 +1840,18 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
            
           </div>
       </div>
-          {:else if step == 6}
+          {:else if step == 6 }
             <div class="text-center">
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
                 Finalisation de l'inscription
               </h2>
-              <Recap formdata={formData} values={values} />
+              
+              <Recap formdata={formData} values={values} isValidated={isValidNumeroInscription} />
               {#if isPaiementProcessing}
                 <p class="text-purple-600 mb-4">
                   Traitement du paiement, veuillez patienter...
                 </p>
+                <SpinnerBlue/>
               {:else if authenticating}
                 <p class="text-purple-600 mb-4">
                   Authentification en cours, veuillez patienter...
@@ -1816,7 +1871,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
             </div>
           {/if}
 
-          <div class="flex justify-between mt-8 pt-6 border-t">
+          <div class="flex justify-between mt-8 pt-6 ">
             <button
               onclick={() => {
                 prevStep();
@@ -1829,6 +1884,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               {step > 1 ? "Précédent" : ""} </button
             >
             {#if lastStep}
+            {#if isValidNumeroInscription == false}
               <button
                 onclick={() => {
                   clickPaiement();
@@ -1838,6 +1894,17 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               >
                 Terminer
               </button>
+              {:else}
+                <button
+                onclick={() => {
+                  clickPaiement();
+                }}
+                type="button"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              >
+                Terminer
+              </button>
+              {/if}
             {:else}
               <button
                 onclick={() => {

@@ -1,6 +1,7 @@
 <script lang="ts">
   export let formdata: any;
   export let values: any;
+  export let isValidated: boolean;
   let allValuesAsTables : any[] = Object.values(values);
   // Fonction pour afficher les valeurs de manière lisible
   function displayValue(value: any): string {
@@ -81,7 +82,7 @@
       {/if}
     </div>
   </div>
-
+  {#if isValidated == false}
   <!-- Section 3: Informations professionnelles -->
   <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
     <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
@@ -234,5 +235,5 @@
       <strong>⚠️ Important :</strong> Une fois le paiement effectué, vous ne pourrez plus modifier ces informations. Assurez-vous que tout est correct.
     </p>
   </div>
-
+{/if}
 </div>
