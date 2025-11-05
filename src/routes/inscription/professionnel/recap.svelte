@@ -10,10 +10,25 @@
     return String(value);
   }
 
-  console.log("value as table dans recap professionnel:", allValuesAsTables);
+  // PDF
+  let recapRef: HTMLDivElement;
+  async function printRecapPDF() {
+    const jsPDF = (await import('jspdf')).jsPDF;
+    const html2canvas = (await import('html2canvas')).default;
+    const element = recapRef;
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - 40;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+    pdf.save('recapitulatif_inscription.pdf');
+  }
 </script>
 
-<div class="space-y-6">
+<div class="space-y-6" bind:this={recapRef} >
   <h2 class="text-2xl font-bold text-gray-900 mb-6">
     Récapitulatif de votre inscription
   </h2>
@@ -234,6 +249,10 @@
     <p class="text-sm text-yellow-800">
       <strong>⚠️ Important :</strong> Une fois le paiement effectué, vous ne pourrez plus modifier ces informations. Assurez-vous que tout est correct.
     </p>
+   
   </div>
 {/if}
+ <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all" on:click={printRecapPDF}>
+      Imprimer en PDF
+    </button>
 </div>
