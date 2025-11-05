@@ -11,6 +11,10 @@
   import LastSteps from "./last_steps.svelte";
   import { BASE_URL_API } from "$lib/api";
   import Recap from "./recap.svelte";
+  import InputSelect2 from "$components/inputs/InputSelect2.svelte";
+  import InputSelect from "$components/inputs/InputSelect.svelte";
+  import Svelecte from 'svelecte';
+
   let step = 1;
   let done = false;
   let lastStep = false;
@@ -44,8 +48,32 @@
     return re.test(String(phone));
   };
 
+  const validatePassword = (password: string): boolean => {
+    // Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+async function checkEmail(email: any) {
+    if (!email) return false;
+
+    try {
+      const res = await fetch(
+       `${BASE_URL_API}/user/check/email/existe/${email}`
+      );
+      const data = await res.json();
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
+    } catch (error) {
+      console.error(
+        'Erreur lors de la vérification de la transaction :',
+        error
+      );
+      return false;
+    }
+  }
+
   // Fonction pour valider les champs d'une étape
-  function validateStep(currentStep: number): boolean {
+  async function validateStep(currentStep: number): Promise<boolean> {
     errors = {}; // Réinitialiser les erreurs
     let isValid = true;
 
@@ -54,26 +82,51 @@
       if (!formData.email) {
         errors.email = "L'email est requis";
         isValid = false;
+       
       } else if (!validateEmail(formData.email)) {
         errors.email = "Email invalide, merci de vérifier le format";
         isValid = false;
+       
+      }else if(await checkEmail(formData.email)){
+        errors.email = "Cet email est déjà utilisé";
+        isValid = false;
+
       }
 
       if (!formData.password) {
         errors.password = "Le mot de passe est requis";
         isValid = false;
+       
       } else if (formData.password.length < 8) {
         errors.password = "Le mot de passe doit contenir au moins 8 caractères";
         isValid = false;
+       
+      }else if (!validatePassword(formData.password)) {
+        errors.password =
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
+        isValid = false;
+       
       }
 
       if (!formData.confirmPassword) {
         errors.confirmPassword = "Veuillez confirmer le mot de passe";
         isValid = false;
+     
+      }else if (formData.password.length < 8) {
+        errors.password = "Le mot de passe doit contenir au moins 8 caractères";
+        isValid = false;
+       
       } else if (formData.password !== formData.confirmPassword) {
         errors.confirmPassword = "Les mots de passe ne correspondent pas";
         isValid = false;
+    
+      }else if (!validatePassword(formData.confirmPassword)) {
+        errors.confirmPassword =
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
+        isValid = false;
+ 
       }
+      return isValid;
     }
 
     if (currentStep === 2) {
@@ -202,24 +255,22 @@
     return isValid;
   }
 
-  const nextStep = () => {
+  const nextStep = async () => {
     // Valider l'étape actuelle avant de passer à la suivante
-    if (!validateStep(step)) {
+    const validate = await validateStep(step);
+    if (!validate) {
       message = "Veuillez remplir tous les champs obligatoires correctement";
       return;
     }
 
     message = ""; // Effacer le message d'erreur
     // alert("next step");
-    if (step == 3 && intermed == 0) {
-      intermed = 1;
-      // alert("intermed");
-    } else {
+   
       step += 1;
       if (step == 6) {
         lastStep = true;
       }
-    }
+    
 
     console.log(formData);
   };
@@ -228,9 +279,7 @@
     if (step > 1) {
       step -= 1;
     }
-    if (step < 3) {
-      intermed = 0;
-    }
+   
     lastStep = false;
     message = ""; // Effacer les messages d'erreur
   };
@@ -485,6 +534,40 @@
       }
     }
   }
+
+
+  let specialite: any = null;
+
+  ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit 
+function checkExistenceNumeroInscription(numeroInscription: any) {
+    if (!numeroInscription) return;
+
+    axios
+      .get(
+        `https://backend.leadagro.net/api/professionnel/check/numeroInscription/${numeroInscription}`
+      )
+      .then((response) => {
+        const data = response.data;
+        if (data.exists) {
+          specialite = data.specialite;
+          formData.profession = specialite;
+          if (errors["profession"]) {
+            delete errors["profession"];
+          }
+        } else {
+          specialite = null;
+          formData.profession = "";
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la vérification du numéro d'inscription :",
+          error
+        );
+      });
+  }
+
+
 </script>
 
 <main>
@@ -654,10 +737,10 @@
         {/if}
         {#if step >= 3}
           <span class="text-blue-600 font-medium"
-            >Information professionnelles</span
+            >Informations professionnelles</span
           >
         {:else}
-          <span class="text-gray-500">Information professionnelles</span>
+          <span class="text-gray-500">Informations professionnelles</span>
         {/if}
         {#if step >= 4}
           <span class="text-blue-600 font-medium"
@@ -824,19 +907,18 @@
                   class="block text-sm font-medium text-gray-700 mb-2"
                   >Nationalite *</label
                 >
-                <div class="relative">
-                  <select
-                    id="Nationalite"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="Nationalite"
-                    bind:value={formData.nationalite}
-                  >
-                    <option value="">Sélectionnez votre nationalité</option>
-                    {#each values.nationate as option}
-                      <option value={option.id}>{option.libelle}</option>
-                    {/each}
-                  </select>
+            
+        <div class="relative">
+                  <Svelecte
+                  multiple={false}
+  options={values.nationate}
+  bind:value={formData.nationalite}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre région sanitaire"
+/>
+                
                 </div>
                 {#if errors.nationalite}
                   <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
@@ -849,18 +931,16 @@
                   >Civilité *</label
                 >
                 <div class="relative">
-                  <select
-                    id="civilite"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="civilite"
-                    bind:value={formData.civilite}
-                  >
-                    <option value="">Sélectionnez votre civilité</option>
-                    {#each values.civilite as option}
-                      <option value={option.code}>{option.libelle}</option>
-                    {/each}
-                  </select>
+                  <Svelecte
+                  multiple={false}
+  options={values.civilite}
+  bind:value={formData.civilite}
+  labelField="libelle"
+  valueField="code"
+  placeholder="Sélectionnez votre civilité"
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+/>
+              
                 </div>
                 {#if errors.civilite}
                   <p class="text-red-600 text-sm mt-1">{errors.civilite}</p>
@@ -942,20 +1022,16 @@
                   >Situation matrimoniale *</label
                 >
                 <div class="relative">
-                  <select
-                    id="situation"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    required={true}
-                    name="situation"
-                    bind:value={formData.situation}
-                  >
-                    <option value=""
-                      >Sélectionnez votre situation matrimoniale</option
-                    >
-                    {#each situationsMatrimoniales as option}
-                      <option value={option.value}>{option.label}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={situationsMatrimoniales}
+  bind:value={formData.situation}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="label"
+  valueField="value"
+  placeholder="Sélectionnez votre situation matrimoniale"
+/>
+                 
                 </div>
                 {#if errors.situation}
                   <p class="text-red-600 text-sm mt-1">{errors.situation}</p>
@@ -966,7 +1042,32 @@
             <div class=" p-6 rounded-lg shadow-m mb-4">
               <!-- Radios: Profession -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                {#each professions as professionGP}
+
+                   <Svelecte
+                  multiple={false}
+  options={professions}
+  bind:value={specialite}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="libelle"
+  placeholder="Sélectionnez votre groupe de spécialisation"
+/>
+
+<Svelecte
+                  multiple={false}
+  options={professions.find(
+                    (prof:any) => prof.libelle === specialite
+                  )?.professions || []}
+  bind:value={formData.profession}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="code"
+  placeholder="Sélectionnez votre spécialité"
+/>
+
+
+
+                <!-- {#each professions as professionGP}
                   <div class="form__group mb-4">
                     <label
                       class="form_label font-bold block mb-2"
@@ -993,14 +1094,14 @@
                       </div>
                     {/each}
                   </div>
-                {/each}
+                {/each} -->
               </div>
               {#if errors.profession}
                 <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
               {/if}
             </div>
-          {/if}
-          {#if intermed == 1 && step === 3}
+          <!-- {/if}
+          {#if intermed == 1 && step === 3} -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -1148,20 +1249,16 @@
                   >Situation professionnelle *</label
                 >
                 <div class="relative">
-                  <select
-                    id="situationPro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="situationPro"
-                    bind:value={formData.situationPro}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre situation professionnelle
-                    </option>
-                    {#each values.situationProfessionnelle as situation}
-                      <option value={situation.id}>{situation.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.situationProfessionnelle}
+  bind:value={formData.situationPro}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre situation professionnelle"
+/>
+               
                 </div>
                 {#if errors.situationPro}
                   <p class="text-red-600 text-sm mt-1">{errors.situationPro}</p>
@@ -1174,20 +1271,16 @@
                   >Région sanitaire *</label
                 >
                 <div class="relative">
-                  <select
-                    id="region"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="region"
-                    bind:value={formData.region}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre région sanitaire
-                    </option>
-                    {#each values.region as region}
-                      <option value={region.id}>{region.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.region}
+  bind:value={formData.region}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre région sanitaire"
+/>
+                
                 </div>
                 {#if errors.region}
                   <p class="text-red-600 text-sm mt-1">{errors.region}</p>
@@ -1203,20 +1296,16 @@
                   >District sanitaire *</label
                 >
                 <div class="relative">
-                  <select
-                    id="district"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="district"
-                    bind:value={formData.district}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre district sanitaire
-                    </option>
-                    {#each values.district as district}
-                      <option value={district.id}>{district.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.district}
+  bind:value={formData.district}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre district sanitaire"
+/>
+                 
                 </div>
                 {#if errors.district}
                   <p class="text-red-600 text-sm mt-1">{errors.district}</p>
@@ -1229,20 +1318,16 @@
                   >Ville *</label
                 >
                 <div class="relative">
-                  <select
-                    id="ville"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="ville"
-                    bind:value={formData.ville}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre ville
-                    </option>
-                    {#each values.ville as ville}
-                      <option value={ville.id}>{ville.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.ville}
+  bind:value={formData.ville}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre ville"
+/>
+                 
                 </div>
                 {#if errors.ville}
                   <p class="text-red-600 text-sm mt-1">{errors.ville}</p>
@@ -1258,20 +1343,15 @@
                   >Commune *</label
                 >
                 <div class="relative">
-                  <select
-                    id="commune"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="commune"
-                    bind:value={formData.commune}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre commune
-                    </option>
-                    {#each values.commune as commune}
-                      <option value={commune.id}>{commune.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.commune}
+  bind:value={formData.commune}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre commune"
+/>
                 </div>
                 {#if errors.commune}
                   <p class="text-red-600 text-sm mt-1">{errors.commune}</p>
@@ -1375,21 +1455,16 @@
                   >Type de diplôme *</label
                 >
                 <div class="relative">
-                  <select
-                    id="typeDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="typeDiplome"
-                    bind:value={formData.typeDiplome}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre type de diplôme
-                    </option>
-                    {#each values.typeDiplome as profession}
-                      <option value={profession.id}>{profession.libelle}</option
-                      >
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.typeDiplome}
+  bind:value={formData.typeDiplome}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre type de diplôme"
+/>
+                
                 </div>
                 {#if errors.typeDiplome}
                   <p class="text-red-600 text-sm mt-1">{errors.typeDiplome}</p>
@@ -1405,20 +1480,16 @@
                   >Status professionnel *</label
                 >
                 <div class="relative">
-                  <select
-                    id="statusPro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="statusPro"
-                    bind:value={formData.statusPro}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez votre status professionnel
-                    </option>
-                    {#each values.statusPro as status}
-                      <option value={status.id}>{status.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.statusPro}
+  bind:value={formData.statusPro}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez votre status professionnel"
+/>
+                 
                 </div>
                 {#if errors.statusPro}
                   <p class="text-red-600 text-sm mt-1">{errors.statusPro}</p>
@@ -1431,20 +1502,16 @@
                   >Origine du diplôme *</label
                 >
                 <div class="relative">
-                  <select
-                    id="lieuObtentionDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                    required={true}
-                    name="lieuObtentionDiplome"
-                    bind:value={formData.lieuObtentionDiplome}
-                  >
-                    <option value="" disabled selected>
-                      Sélectionnez l'origine de votre diplôme
-                    </option>
-                    {#each values.lieuObtentionDiplome as lieu}
-                      <option value={lieu.id}>{lieu.libelle}</option>
-                    {/each}
-                  </select>
+                   <Svelecte
+                  multiple={false}
+  options={values.lieuObtentionDiplome}
+  bind:value={formData.lieuObtentionDiplome}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="id"
+  placeholder="Sélectionnez l'origine de votre diplôme"
+/>
+                
                 </div>
                 {#if errors.lieuObtentionDiplome}
                   <p class="text-red-600 text-sm mt-1">
@@ -1635,7 +1702,91 @@
               </div>
             </div>
           {:else if step == 5}
-            <LastSteps formdata={formData} />
+              <div
+        class="grid grid-cols-1 md:grid-cols-2  gap-6 mb-4"
+      >
+        
+          <div class="form__group mb-4">
+            <label
+              class="form_label font-bold block mb-2"
+              for="appartenance"
+            >
+              <big>Appartenez-vous à une organisation ? </big>
+            </label>
+
+         
+              <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"appartenance_oui"}
+                  name="rd_profession"
+                  class="cursor-pointer"
+                  value={"oui"}
+                  checked={formData.appartenirOrganisation === "oui"}
+                  onchange={() => (formData.appartenirOrganisation = "oui")}
+                />
+                <label for={"appartenance_oui"} class="cursor-pointer"
+                  >Oui</label
+                >
+              </div>
+               <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"appartenance_non"}
+                  name="rd_profession"
+                  class="cursor-pointer"
+                  value={"non"}
+                  checked={formData.appartenirOrganisation === "non"}
+                  onchange={() => (formData.appartenirOrganisation = "non")}
+                />
+                <label for={"appartenance_non"} class="cursor-pointer"
+                  >Non</label
+                >
+              </div>
+           
+          </div>
+      
+
+           <div class="form__group mb-4">
+            <label
+              class="form_label font-bold block mb-2"
+              for="ordre"
+            >
+              <big>Appartenez-vous à un ordre ? </big>
+            </label>
+
+         
+              <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"ordre_oui"}
+                  name="rd_ordre"
+                  class="cursor-pointer"
+                  value={"oui"}
+                  checked={formData.appartenirOrdre === "oui"}
+                  onchange={() => (formData.appartenirOrdre = "oui")}
+                />
+                <label for={"ordre_oui"} class="cursor-pointer"
+                  >Oui</label
+                >
+              </div>
+               <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"ordre_non"}
+                  name="rd_ordre"
+                  class="cursor-pointer"
+                  value={"non"}
+                  checked={formData.appartenirOrdre === "non"}
+                  onchange={() => (formData.appartenirOrdre = "non")}
+                />
+                <label for={"ordre_non"} class="cursor-pointer"
+                  >Non</label
+                >
+              </div>
+           
+          </div>
+      </div>
           {:else if step == 6}
             <div class="text-center">
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
@@ -1670,12 +1821,12 @@
               onclick={() => {
                 prevStep();
               }}
-              hidden={step === 1}
+              
               type="button"
               disabled={step === 1}
               class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              Précédent</button
+              {step > 1 ? "Précédent" : ""} </button
             >
             {#if lastStep}
               <button
@@ -1694,7 +1845,7 @@
                 }}
                 type="button"
                 disabled={lastStep}
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right"
               >
                 Suivant
               </button>

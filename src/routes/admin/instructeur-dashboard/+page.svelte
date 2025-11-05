@@ -376,7 +376,7 @@
   }
 </script>
 
-<div class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
+<div class="sm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
   <!-- Indicateur de chargement global -->
   {#if loading && !dataLoaded}
     <div class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">

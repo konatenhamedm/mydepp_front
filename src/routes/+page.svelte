@@ -1,6 +1,40 @@
 <script lang="ts">
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
+  import { BASE_URL_API } from "$lib/api";
+  import axios from "axios";
+  import { onMount } from "svelte";
+let Nbprofessionel = 0
+let Nbetab = 0
+let Nbvisite = 0
+
+async function FetchData(){
+  await axios.get(`${BASE_URL_API}/professionnel/`)
+  .then(response => {
+    Nbprofessionel = response.data.length;
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+  });
+  await axios.get(`${BASE_URL_API}/etablissement/`)
+  .then(response => {
+    Nbetab = response.data.length;
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+  });
+  // await axios.get(`${BASE_URL_API}/visite/`)
+  // .then(response => {
+  //   Nbvisite = response.data.length;
+  // })
+  // .catch(error => {
+  //   console.error("Error fetching data:", error);
+  // });
+}
+
+onMount(() => {
+  FetchData();
+});
 
 </script>
 
@@ -276,7 +310,7 @@
                 continuer notre route
               </p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mx-auto w-full">
               <div class="text-center group">
                 <div
                   class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
@@ -291,9 +325,9 @@
                     />
                   </div>
                   <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    20
+                    {Nbprofessionel}
                   </div>
-                  <div class="text-white/80 font-medium">Médecins</div>
+                  <div class="text-white/80 font-medium">Professionnels</div>
                 </div>
               </div>
               <div class="text-center group">
@@ -310,9 +344,9 @@
                     />
                   </div>
                   <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    10
+                    {Nbetab}
                   </div>
-                  <div class="text-white/80 font-medium">Patients</div>
+                  <div class="text-white/80 font-medium">Etablissement</div>
                 </div>
               </div>
               <div class="text-center group">
@@ -329,12 +363,12 @@
                     />
                   </div>
                   <div class="text-3xl md:text-4xl font-bold text-white mb-2">
-                    20
+                    {Nbvisite}
                   </div>
-                  <div class="text-white/80 font-medium">Chirurgies</div>
+                  <div class="text-white/80 font-medium">Visiteurs</div>
                 </div>
               </div>
-              <div class="text-center group">
+              <!-- <div class="text-center group">
                 <div
                   class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 group-hover:scale-105"
                 >
@@ -371,7 +405,7 @@
                   </div>
                   <div class="text-white/80 font-medium">Récompenses</div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </section>

@@ -390,9 +390,9 @@
       "title": "Gestion dossiers"
     },
      {
-      "title": "Etablissements",
+      "title": "Professionnels",
       "icon": "uil uil-apps",
-      "path": "/admin/inspection_etablissement",
+      "path": "/admin/professionnel",
       "exact": false
     },
      {
