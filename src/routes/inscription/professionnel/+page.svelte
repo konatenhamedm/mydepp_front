@@ -265,15 +265,12 @@ async function checkEmail(email: any) {
 
     message = ""; // Effacer le message d'erreur
     // alert("next step");
-    if (step == 3 && intermed == 0) {
-      intermed = 1;
-      // alert("intermed");
-    } else {
+   
       step += 1;
       if (step == 6) {
         lastStep = true;
       }
-    }
+    
 
     console.log(formData);
   };
@@ -282,9 +279,7 @@ async function checkEmail(email: any) {
     if (step > 1) {
       step -= 1;
     }
-    if (step < 3) {
-      intermed = 0;
-    }
+   
     lastStep = false;
     message = ""; // Effacer les messages d'erreur
   };
@@ -539,6 +534,40 @@ async function checkEmail(email: any) {
       }
     }
   }
+
+
+  let specialite: any = null;
+
+  ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit 
+function checkExistenceNumeroInscription(numeroInscription: any) {
+    if (!numeroInscription) return;
+
+    axios
+      .get(
+        `https://backend.leadagro.net/api/professionnel/check/numeroInscription/${numeroInscription}`
+      )
+      .then((response) => {
+        const data = response.data;
+        if (data.exists) {
+          specialite = data.specialite;
+          formData.profession = specialite;
+          if (errors["profession"]) {
+            delete errors["profession"];
+          }
+        } else {
+          specialite = null;
+          formData.profession = "";
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la vérification du numéro d'inscription :",
+          error
+        );
+      });
+  }
+
+
 </script>
 
 <main>
@@ -708,10 +737,10 @@ async function checkEmail(email: any) {
         {/if}
         {#if step >= 3}
           <span class="text-blue-600 font-medium"
-            >Information professionnelles</span
+            >Informations professionnelles</span
           >
         {:else}
-          <span class="text-gray-500">Information professionnelles</span>
+          <span class="text-gray-500">Informations professionnelles</span>
         {/if}
         {#if step >= 4}
           <span class="text-blue-600 font-medium"
@@ -1013,7 +1042,32 @@ async function checkEmail(email: any) {
             <div class=" p-6 rounded-lg shadow-m mb-4">
               <!-- Radios: Profession -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                {#each professions as professionGP}
+
+                   <Svelecte
+                  multiple={false}
+  options={professions}
+  bind:value={specialite}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="libelle"
+  placeholder="Sélectionnez votre groupe de spécialisation"
+/>
+
+<Svelecte
+                  multiple={false}
+  options={professions.find(
+                    (prof:any) => prof.libelle === specialite
+                  )?.professions || []}
+  bind:value={formData.profession}
+  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+  labelField="libelle"
+  valueField="code"
+  placeholder="Sélectionnez votre spécialité"
+/>
+
+
+
+                <!-- {#each professions as professionGP}
                   <div class="form__group mb-4">
                     <label
                       class="form_label font-bold block mb-2"
@@ -1040,14 +1094,14 @@ async function checkEmail(email: any) {
                       </div>
                     {/each}
                   </div>
-                {/each}
+                {/each} -->
               </div>
               {#if errors.profession}
                 <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
               {/if}
             </div>
-          {/if}
-          {#if intermed == 1 && step === 3}
+          <!-- {/if}
+          {#if intermed == 1 && step === 3} -->
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -1648,7 +1702,91 @@ async function checkEmail(email: any) {
               </div>
             </div>
           {:else if step == 5}
-            <LastSteps formdata={formData} />
+              <div
+        class="grid grid-cols-1 md:grid-cols-2  gap-6 mb-4"
+      >
+        
+          <div class="form__group mb-4">
+            <label
+              class="form_label font-bold block mb-2"
+              for="appartenance"
+            >
+              <big>Appartenez-vous à une organisation ? </big>
+            </label>
+
+         
+              <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"appartenance_oui"}
+                  name="rd_profession"
+                  class="cursor-pointer"
+                  value={"oui"}
+                  checked={formData.appartenirOrganisation === "oui"}
+                  onchange={() => (formData.appartenirOrganisation = "oui")}
+                />
+                <label for={"appartenance_oui"} class="cursor-pointer"
+                  >Oui</label
+                >
+              </div>
+               <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"appartenance_non"}
+                  name="rd_profession"
+                  class="cursor-pointer"
+                  value={"non"}
+                  checked={formData.appartenirOrganisation === "non"}
+                  onchange={() => (formData.appartenirOrganisation = "non")}
+                />
+                <label for={"appartenance_non"} class="cursor-pointer"
+                  >Non</label
+                >
+              </div>
+           
+          </div>
+      
+
+           <div class="form__group mb-4">
+            <label
+              class="form_label font-bold block mb-2"
+              for="ordre"
+            >
+              <big>Appartenez-vous à un ordre ? </big>
+            </label>
+
+         
+              <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"ordre_oui"}
+                  name="rd_ordre"
+                  class="cursor-pointer"
+                  value={"oui"}
+                  checked={formData.appartenirOrdre === "oui"}
+                  onchange={() => (formData.appartenirOrdre = "oui")}
+                />
+                <label for={"ordre_oui"} class="cursor-pointer"
+                  >Oui</label
+                >
+              </div>
+               <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={"ordre_non"}
+                  name="rd_ordre"
+                  class="cursor-pointer"
+                  value={"non"}
+                  checked={formData.appartenirOrdre === "non"}
+                  onchange={() => (formData.appartenirOrdre = "non")}
+                />
+                <label for={"ordre_non"} class="cursor-pointer"
+                  >Non</label
+                >
+              </div>
+           
+          </div>
+      </div>
           {:else if step == 6}
             <div class="text-center">
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
