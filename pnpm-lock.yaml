@@ -41,6 +41,9 @@ importers:
       highcharts:
         specifier: ^11.4.8
         version: 11.4.8
+      html2canvas:
+        specifier: ^1.4.1
+        version: 1.4.1
       jspdf:
         specifier: ^3.0.3
         version: 3.0.3
@@ -53,6 +56,15 @@ importers:
       pdfjs-dist:
         specifier: ^4.10.38
         version: 4.10.38
+      svelecte:
+        specifier: ^5.3.0
+        version: 5.3.0(svelte@5.41.4)
+      svelte-calendar:
+        specifier: ^3.1.6
+        version: 3.1.6
+      svelte-datepicker:
+        specifier: ^1.0.0
+        version: 1.0.0
       svelte-meta-tags:
         specifier: ^4.4.0
         version: 4.5.0(svelte@5.41.4)
@@ -1252,6 +1264,9 @@ packages:
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
+  dayjs@1.11.19:
+    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
+
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
     engines: {node: '>=6.0'}
@@ -1605,6 +1620,9 @@ packages:
 
   jspdf@3.0.3:
     resolution: {integrity: sha512-eURjAyz5iX1H8BOYAfzvdPfIKK53V7mCpBTe7Kb16PaM8JSXEcUQNBQaiWMI8wY5RvNOPj4GccMjTlfwRBd+oQ==}
+
+  just-throttle@2.3.1:
+    resolution: {integrity: sha512-0H4miIAWZYpnpg7oD/Y/PBb77ISSHAETif5xK9EnwIgYCO6oC8ErkJxDumMUTR44shSOwptRIArRuvNuvN/hOw==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -2072,6 +2090,14 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  svelecte@5.3.0:
+    resolution: {integrity: sha512-9WKD6KxPf31CweyZtObTetGtkq1TncBA2E+aSHcT+bfjALgP+LUGMMQUU+2qhlfSoGpw9JYmLfxphGjb0q350g==}
+    peerDependencies:
+      svelte: ^5.2.7
+
+  svelte-calendar@3.1.6:
+    resolution: {integrity: sha512-jOHiPlxBAa1LGVFQZoczdAGnCSI2RKcuQQHj32TjLbXO/P2Povx4JphPEcP7XjKj/s/jimBC6xQyFhyjD0vxbg==}
+
   svelte-check@4.3.3:
     resolution: {integrity: sha512-RYP0bEwenDXzfv0P1sKAwjZSlaRyqBn0Fz1TVni58lqyEiqgwztTpmodJrGzP6ZT2aHl4MbTvWP6gbmQ3FOnBg==}
     engines: {node: '>= 18.0.0'}
@@ -2079,6 +2105,9 @@ packages:
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
+
+  svelte-datepicker@1.0.0:
+    resolution: {integrity: sha512-c4B4GH4bEKY9e/ZKSFNR8dOxgHY8MB/U4XKv5r9YJ0xkpcJdzxzVD5ADn3y2bHvIJLLed/Ft4MfMzHLGfL8OXw==}
 
   svelte-eslint-parser@1.4.0:
     resolution: {integrity: sha512-fjPzOfipR5S7gQ/JvI9r2H8y9gMGXO3JtmrylHLLyahEMquXI0lrebcjT+9/hNgDej0H7abTyox5HpHmW1PSWA==}
@@ -3071,8 +3100,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  base64-arraybuffer@1.0.2:
-    optional: true
+  base64-arraybuffer@1.0.2: {}
 
   brace-expansion@1.1.12:
     dependencies:
@@ -3164,11 +3192,12 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   cssesc@3.0.0: {}
 
   date-fns@4.1.0: {}
+
+  dayjs@1.11.19: {}
 
   debug@4.4.3:
     dependencies:
@@ -3511,7 +3540,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    optional: true
 
   ignore@5.3.2: {}
 
@@ -3576,6 +3604,8 @@ snapshots:
       core-js: 3.46.0
       dompurify: 3.3.0
       html2canvas: 1.4.1
+
+  just-throttle@2.3.1: {}
 
   keyv@4.5.4:
     dependencies:
@@ -3953,6 +3983,15 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
+  svelecte@5.3.0(svelte@5.41.4):
+    dependencies:
+      svelte: 5.41.4
+
+  svelte-calendar@3.1.6:
+    dependencies:
+      dayjs: 1.11.19
+      just-throttle: 2.3.1
+
   svelte-check@4.3.3(picomatch@4.0.3)(svelte@5.41.4)(typescript@5.9.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -3964,6 +4003,8 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte-datepicker@1.0.0: {}
 
   svelte-eslint-parser@1.4.0(svelte@5.41.4):
     dependencies:
@@ -4022,7 +4063,6 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   tinyglobby@0.2.15:
     dependencies:
@@ -4069,7 +4109,6 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
-    optional: true
 
   vite@7.1.12(jiti@2.6.1)(lightningcss@1.30.2):
     dependencies:
