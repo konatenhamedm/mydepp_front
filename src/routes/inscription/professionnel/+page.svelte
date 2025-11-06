@@ -249,8 +249,8 @@
   const nextStep = async () => {
     // Valider l'étape actuelle avant de passer à la suivante
     const validate = await validateStep(step);
-    
-    if (!validate && isValidNumeroInscription== false) {
+
+    if (!validate && isValidNumeroInscription == false) {
       message = "Veuillez remplir tous les champs obligatoires correctement";
       return;
     }
@@ -268,6 +268,10 @@
   };
 
   const prevStep = () => {
+    if (step == 6 && isValidNumeroInscription == true) {
+      step = 3;
+      lastStep = false;
+    }
     if (step > 1) {
       step -= 1;
     }
@@ -533,25 +537,32 @@
   let fetchId: any = null;
   let numeroTempInscription: any = null;
   let numeroInscriptionErrors: string = "";
+  let checkAction = 0;
   ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit
+
   function checkExistenceNumeroInscription(numeroInscription: any) {
     if (!numeroInscription) return;
-
+    if (numeroInscription.length < 21) return;
+    if (numeroTempInscription == numeroInscription) {
+      checkAction = 1;
+    }
+    if (checkAction == 1) return;
     axios
       .get(
         `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}`
       )
       .then((response) => {
         console.log("Response existence numero d'inscription:", response.data);
+        numeroTempInscription = numeroInscription;
         isValidNumeroInscription = response.data.data.statut;
         if (isValidNumeroInscription) {
-          numeroTempInscription = numeroInscription;
           fetchId = response.data.data.id;
           step = 6;
           lastStep = true;
           formData.numeroInscription = "";
-        }else{
+        } else {
           fetchId = null;
+          formData.numeroInscription = "";
           numeroTempInscription = null;
           numeroInscriptionErrors = "Numéro d'inscription invalide.";
         }
@@ -574,17 +585,16 @@
           error
         );
       });
-    formData.numeroInscription = "";
   }
 
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
+      let formulaire = new FormData();
+      formulaire.append("code", numeroTempInscription);
+      formulaire.append("email", formData.email);
+      formulaire.append("password", formData.password);
       axios
-        .post(`${BASE_URL_API}/user/api/create-new-user-with-code`, {
-          numeroInscodecription: numeroTempInscription,
-          email: formData.email,
-          password: formData.password,
-        })
+        .post(`${BASE_URL_API}/user/api/create-new-user-with-code`, formulaire)
         .then((response) => {
           console.log(
             "Response validation avec numero d'inscription:",
@@ -604,6 +614,25 @@
 
   $: formData.numeroInscription &&
     checkExistenceNumeroInscription(formData.numeroInscription);
+
+  let specialiteFetched: any[] = [];
+  function handleSpecialiteChange(event: any) {
+    console.log("Selected typeProfession ID:", event);
+    axios
+      .get(
+        `${BASE_URL_API}/profession/get/profession/typeProfession/${event.id}`
+      )
+      .then((response: any) => {
+        specialiteFetched.push(response.data.data);
+        console.log("Specialite fetched:", specialiteFetched);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération de la spécialité :",
+          error
+        );
+      });
+  }
 </script>
 
 <main>
@@ -1092,48 +1121,72 @@
                   {errors.numeroInscription}
                 </p>
               {/if}
+              {#if isValidNumeroInscription == true}
+                <div
+                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
+                >
+                  <p class="text-green-800">
+                    Numéro d'inscription valide. Cliquer sur le bouton "Valider
+                    les informations" pour finaliser l'inscription.
+                  </p>
+                </div>
+              {:else if numeroInscriptionErrors.length > 0}
+                <div
+                  class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg"
+                >
+                  <p class="text-red-800">
+                    Numéro d'inscription invalide. Veuillez vérifier et
+                    réessayer.
+                  </p>
+                </div>
+              {/if}
             </div>
             {#if isValidNumeroInscription == false}
               <!-- <div class=" p-6 rounded-lg shadow-m mb-4"> -->
-                <!-- Radios: Profession -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                  <div>
-                    <label
-                      for="profession"
-                      class="block text-lg font-medium text-gray-700 mb-2"
-                      >Profession *</label
-                    >
-                    <Svelecte
-                      multiple={false}
-                      options={professions}
-                      bind:value={specialite}
-                      class="w-full h-full"
-                      labelField="libelle"
-                      valueField="libelle"
-                      placeholder="Sélectionnez votre groupe de spécialisation"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      for="profession"
-                      class="block text-lg font-medium text-gray-700 mb-2"
-                      >Spécialité *</label
-                    >
+              <!-- Radios: Profession -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Profession *</label
+                  >
+                  <Svelecte
+                    multiple={false}
+                    options={professions}
+                    bind:value={specialite}
+                    onChange={(event: any) => handleSpecialiteChange(event)}
+                    class="w-full h-full"
+                    labelField="libelle"
+                    valueField="libelle"
+                    placeholder="Sélectionnez votre groupe de spécialisation"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Spécialité *</label
+                  >
 
-                    <Svelecte
-                      multiple={false}
-                      options={professions.find(
-                        (prof: any) => prof.libelle === specialite
-                      )?.professions || []}
-                      bind:value={formData.profession}
-                      class="w-full h-full"
-                      labelField="libelle"
-                      valueField="code"
-                      placeholder="Sélectionnez votre spécialité"
-                    />
-                  </div>
+                  <!-- 
+                  A mettre pour l'ancien systeme avec les groupes de professions
+                  options={professions.find(
+                    (prof: any) => prof.libelle === specialite
+                  )?.professions || []} -->
 
-                  <!-- {#each professions as professionGP}
+                  <Svelecte
+                    multiple={false}
+                    options={specialiteFetched || []}
+                    bind:value={formData.profession}
+                    class="w-full h-full"
+                    labelField="libelle"
+                    valueField="code"
+                    placeholder="Sélectionnez votre spécialité"
+                  />
+                </div>
+
+                <!-- {#each professions as professionGP}
                   <div class="form__group mb-4">
                     <label
                       class="form_label font-bold block mb-2"
@@ -1161,10 +1214,10 @@
                     {/each}
                   </div>
                 {/each} -->
-                </div>
-                {#if errors.profession}
-                  <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
-                {/if}
+              </div>
+              {#if errors.profession}
+                <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
+              {/if}
               <!-- </div> -->
               <!-- {/if}
           {#if intermed == 1 && step === 3} -->
@@ -1565,21 +1618,13 @@
                   {/if}
                 </div>
               </div>
-              {:else}
-              {#if isValidNumeroInscription == true}
-                <div class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg">
-                  <p class="text-green-800">
-                    Numéro d'inscription valide. Cliquer sur le bouton "Suivant" pour continuer l'inscription.
-                  </p>
-                </div>
-                {:else}
-                <div class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg">
-                  <p class="text-red-800">
-                    Numéro d'inscription invalide. Veuillez vérifier et réessayer.
-                  </p>
-                </div>
-                {/if}
-              {/if}
+            {:else}
+              <Recap
+                formdata={formData}
+                {values}
+                isValidated={isValidNumeroInscription}
+              />
+            {/if}
           {/if}
           {#if step === 4 && isValidNumeroInscription == false}
             <div class="space-y-6">
@@ -1752,12 +1797,26 @@
                   <label class="block text-sm font-medium text-gray-700 mb-2">
                     CV (optionnel)
                   </label>
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onchange={(e) => handleFileUpload(e, "cv")}
-                    class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
-                  />
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.cv}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.cv}
+                          alt="Aperçu CV"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onchange={(e) => handleFileUpload(e, "cv")}
+                        class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1858,11 +1917,16 @@
                 </p>
               {:else if message}
                 <p class="text-red-600 mb-4">{message}</p>
-              {:else}
+                <!-- {:else} -->
+                <!-- {#if isValidNumeroInscription == false}
                 <p class="text-gray-700 mb-4">
                   Cliquez sur "Terminer" pour finaliser votre inscription et
                   procéder au paiement.
                 </p>
+                {:else}
+                <p class="text-gray-700 mb-4">
+                  Cliquez sur "Terminer" pour finaliser votre inscription.
+                </p> -->
               {/if}
             </div>
           {/if}
@@ -1892,7 +1956,7 @@
               {:else}
                 <button
                   onclick={() => {
-                    validateNumeroInscription();
+                    validateAccountWithNumInsc();
                   }}
                   type="button"
                   class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"

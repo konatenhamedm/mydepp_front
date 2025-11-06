@@ -30,7 +30,7 @@
     <h2 style="font-size:2rem; font-weight:bold; color:#1f2937; margin:0;">
       Récapitulatif de votre inscription
     </h2>
-    <button style="background:#000; color:#fff; padding:0.5rem 1rem; border-radius:0.5rem; font-weight:500; border:none; cursor:pointer; transition:background 0.2s;" on:click={printRecapPDF}>
+    <button style="background:#2563eb; color:#fff; padding:0.5rem 1rem; border-radius:0.5rem; font-weight:500; border:none; cursor:pointer; transition:background 0.2s;" on:click={printRecapPDF}>
       Imprimer en PDF
     </button>
   </div>
