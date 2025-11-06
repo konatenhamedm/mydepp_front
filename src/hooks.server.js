@@ -92,6 +92,7 @@ export async function handle({ event, resolve }) {
     "/services",
     "/contact",
     "/connexion/forgot_password",
+    "/connexion/forgot_password_admin",
     "/connexion",
     "/login"
 
