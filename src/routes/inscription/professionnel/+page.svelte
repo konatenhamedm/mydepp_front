@@ -13,7 +13,8 @@
   import Recap from "./recap.svelte";
   import InputSelect2 from "$components/inputs/InputSelect2.svelte";
   import InputSelect from "$components/inputs/InputSelect.svelte";
-  import Svelecte from 'svelecte';
+  import Svelecte from "svelecte";
+  import SpinnerBlue from "$components/_skeletons/SpinnerBlue.svelte";
 
   let step = 1;
   let done = false;
@@ -54,23 +55,23 @@
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return re.test(password);
   };
-async function checkEmail(email: any) {
+  async function checkEmail(email: any) {
     if (!email) return false;
 
     try {
       const res = await fetch(
-       `${BASE_URL_API}/user/check/email/existe/${email}`
+        `${BASE_URL_API}/user/check/email/existe/${email}`
       );
       const data = await res.json();
       return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
     } catch (error) {
       console.error(
-        'Erreur lors de la vérification de la transaction :',
+        "Erreur lors de la vérification de la transaction :",
         error
       );
       return false;
-    }
-  }
+    }
+  }
 
   // Fonction pour valider les champs d'une étape
   async function validateStep(currentStep: number): Promise<boolean> {
@@ -82,49 +83,39 @@ async function checkEmail(email: any) {
       if (!formData.email) {
         errors.email = "L'email est requis";
         isValid = false;
-       
       } else if (!validateEmail(formData.email)) {
         errors.email = "Email invalide, merci de vérifier le format";
         isValid = false;
-       
-      }else if(await checkEmail(formData.email)){
+      } else if (await checkEmail(formData.email)) {
         errors.email = "Cet email est déjà utilisé";
         isValid = false;
-
       }
 
       if (!formData.password) {
         errors.password = "Le mot de passe est requis";
         isValid = false;
-       
       } else if (formData.password.length < 8) {
         errors.password = "Le mot de passe doit contenir au moins 8 caractères";
         isValid = false;
-       
-      }else if (!validatePassword(formData.password)) {
+      } else if (!validatePassword(formData.password)) {
         errors.password =
           "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
         isValid = false;
-       
       }
 
       if (!formData.confirmPassword) {
         errors.confirmPassword = "Veuillez confirmer le mot de passe";
         isValid = false;
-     
-      }else if (formData.password.length < 8) {
+      } else if (formData.password.length < 8) {
         errors.password = "Le mot de passe doit contenir au moins 8 caractères";
         isValid = false;
-       
       } else if (formData.password !== formData.confirmPassword) {
         errors.confirmPassword = "Les mots de passe ne correspondent pas";
         isValid = false;
-    
-      }else if (!validatePassword(formData.confirmPassword)) {
+      } else if (!validatePassword(formData.confirmPassword)) {
         errors.confirmPassword =
           "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
         isValid = false;
- 
       }
       return isValid;
     }
@@ -258,28 +249,33 @@ async function checkEmail(email: any) {
   const nextStep = async () => {
     // Valider l'étape actuelle avant de passer à la suivante
     const validate = await validateStep(step);
-    if (!validate) {
+
+    if (!validate && isValidNumeroInscription == false) {
       message = "Veuillez remplir tous les champs obligatoires correctement";
       return;
     }
 
     message = ""; // Effacer le message d'erreur
     // alert("next step");
-   
-      step += 1;
-      if (step == 6) {
-        lastStep = true;
-      }
-    
-
-    console.log(formData);
+    if (isValidNumeroInscription) {
+      step == 6;
+      lastStep = true;
+    }
+    step += 1;
+    if (step == 6) {
+      lastStep = true;
+    }
   };
 
   const prevStep = () => {
+    if (step == 6 && isValidNumeroInscription == true) {
+      step = 3;
+      lastStep = false;
+    }
     if (step > 1) {
       step -= 1;
     }
-   
+
     lastStep = false;
     message = ""; // Effacer les messages d'erreur
   };
@@ -535,19 +531,43 @@ async function checkEmail(email: any) {
     }
   }
 
-
   let specialite: any = null;
+  ///variable pour dire que j'ai trouvé un numero d'inscription et qu'on peut finaliser le formulaire sans payer
+  let isValidNumeroInscription = false;
+  let fetchId: any = null;
+  let numeroTempInscription: any = null;
+  let numeroInscriptionErrors: string = "";
+  let checkAction = 0;
+  ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit
 
-  ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit 
-function checkExistenceNumeroInscription(numeroInscription: any) {
+  function checkExistenceNumeroInscription(numeroInscription: any) {
     if (!numeroInscription) return;
-
+    if (numeroInscription.length < 21) return;
+    if (numeroTempInscription == numeroInscription) {
+      checkAction = 1;
+    }
+    if (checkAction == 1) return;
     axios
       .get(
-        `https://backend.leadagro.net/api/professionnel/check/numeroInscription/${numeroInscription}`
+        `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}`
       )
       .then((response) => {
+        console.log("Response existence numero d'inscription:", response.data);
+        numeroTempInscription = numeroInscription;
+        isValidNumeroInscription = response.data.data.statut;
+        if (isValidNumeroInscription) {
+          fetchId = response.data.data.id;
+          step = 6;
+          lastStep = true;
+          formData.numeroInscription = "";
+        } else {
+          fetchId = null;
+          formData.numeroInscription = "";
+          numeroTempInscription = null;
+          numeroInscriptionErrors = "Numéro d'inscription invalide.";
+        }
         const data = response.data;
+        console.log("data.exists", data.exists);
         if (data.exists) {
           specialite = data.specialite;
           formData.profession = specialite;
@@ -566,8 +586,58 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
         );
       });
   }
+let accountCreationLoader = false;
+  function validateAccountWithNumInsc() {
+    if (isValidNumeroInscription) {
+      let formulaire = new FormData();
+      accountCreationLoader = true;
+      axios
+        .post(`${BASE_URL_API}/user/api/create-new-user-with-code`, {
+          code: numeroTempInscription,
+          email: formData.email,
+          password: formData.password,
+        })
+        .then((response) => {
+          console.log(
+            "Response validation avec numero d'inscription:",
+            response.data
+          );
+          accountCreationLoader = false;
+          alert("Votre inscription a été validée avec succès !");
+          windows.location.href = "/connexion";
+          // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
+        })
+        .catch((error) => {
+          accountCreationLoader = false;
+          console.error(
+            "Erreur lors de la validation avec le numéro d'inscription :",
+            error
+          );
+        });
+    }
+  }
 
+  $: formData.numeroInscription &&
+    checkExistenceNumeroInscription(formData.numeroInscription);
 
+  let specialiteFetched: any[] = [];
+  function handleSpecialiteChange(event: any) {
+    console.log("Selected typeProfession ID:", event);
+    axios
+      .get(
+        `${BASE_URL_API}/profession/get/profession/typeProfession/${event.id}`
+      )
+      .then((response: any) => {
+        specialiteFetched = response.data.data;
+        console.log("Specialite fetched:", specialiteFetched);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération de la spécialité :",
+          error
+        );
+      });
+  }
 </script>
 
 <main>
@@ -722,15 +792,13 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
       </div>
       <div class="flex justify-between mb-8 text-sm">
         {#if step >= 1}
-          <span class="text-blue-600 font-medium"
-            >Information de Connexion</span
+          <span class="text-blue-600 font-medium">Information de Connexion</span
           >
         {:else}
           <span class="text-gray-500">Information de Connexion</span>
         {/if}
         {#if step >= 2}
-          <span class="text-blue-600 font-medium"
-            >Information Personnelles</span
+          <span class="text-blue-600 font-medium">Information Personnelles</span
           >
         {:else}
           <span class="text-gray-500">Information Personnelles</span>
@@ -743,8 +811,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
           <span class="text-gray-500">Informations professionnelles</span>
         {/if}
         {#if step >= 4}
-          <span class="text-blue-600 font-medium"
-            >Documents Administratifs</span
+          <span class="text-blue-600 font-medium">Documents Administratifs</span
           >
         {:else}
           <span class="text-gray-500">Documents Administratifs</span>
@@ -757,8 +824,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
           <span class="text-gray-500">Informations Organisationnelles </span>
         {/if}
         {#if step == 6}
-          <span class="text-blue-600 font-medium">Document de Validation</span
-          >
+          <span class="text-blue-600 font-medium">Document de Validation</span>
         {:else}
           <span class="text-gray-500">Document de Validation</span>
         {/if}
@@ -776,7 +842,8 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                     for="email"
                     class="block text-sm font-medium text-gray-700 mb-2"
                     >E-mail *</label
-                  ><input
+                  >
+                  <input
                     type="email"
                     id="email"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
@@ -785,6 +852,7 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                     name="email"
                     bind:value={formData.email}
                   />
+
                   {#if errors.email}
                     <p class="text-red-600 text-sm mt-1">{errors.email}</p>
                   {/if}
@@ -907,18 +975,17 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   class="block text-sm font-medium text-gray-700 mb-2"
                   >Nationalite *</label
                 >
-            
-        <div class="relative">
+
+                <div class="relative">
                   <Svelecte
-                  multiple={false}
-  options={values.nationate}
-  bind:value={formData.nationalite}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre région sanitaire"
-/>
-                
+                    multiple={false}
+                    options={values.nationate}
+                    bind:value={formData.nationalite}
+                    class="w-full h-full"
+                    labelField="libelle"
+                    valueField="id"
+                    placeholder="Sélectionnez votre région sanitaire"
+                  />
                 </div>
                 {#if errors.nationalite}
                   <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
@@ -932,15 +999,14 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                 >
                 <div class="relative">
                   <Svelecte
-                  multiple={false}
-  options={values.civilite}
-  bind:value={formData.civilite}
-  labelField="libelle"
-  valueField="code"
-  placeholder="Sélectionnez votre civilité"
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-/>
-              
+                    multiple={false}
+                    options={values.civilite}
+                    bind:value={formData.civilite}
+                    labelField="libelle"
+                    valueField="code"
+                    placeholder="Sélectionnez votre civilité"
+                    class="w-full h-full"
+                  />
                 </div>
                 {#if errors.civilite}
                   <p class="text-red-600 text-sm mt-1">{errors.civilite}</p>
@@ -1022,16 +1088,15 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   >Situation matrimoniale *</label
                 >
                 <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={situationsMatrimoniales}
-  bind:value={formData.situation}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="label"
-  valueField="value"
-  placeholder="Sélectionnez votre situation matrimoniale"
-/>
-                 
+                  <Svelecte
+                    multiple={false}
+                    options={situationsMatrimoniales}
+                    bind:value={formData.situation}
+                    class="w-full h-full"
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Sélectionnez votre situation matrimoniale"
+                  />
                 </div>
                 {#if errors.situation}
                   <p class="text-red-600 text-sm mt-1">{errors.situation}</p>
@@ -1039,33 +1104,92 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               </div>
             </div>
           {:else if step === 3 && intermed == 0}
-            <div class=" p-6 rounded-lg shadow-m mb-4">
+            <div>
+              <label
+                for="numeroInscription"
+                class="block text-lg font-medium text-gray-700 mb-2"
+                >Numéro d'inscription au registre</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="numeroInscription"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                  placeholder="Votre numéro d'inscription"
+                  required={true}
+                  name="numeroInscription"
+                  bind:value={formData.numeroInscription}
+                />
+              </div>
+              {#if errors.numeroInscription}
+                <p class="text-red-600 text-sm mt-1">
+                  {errors.numeroInscription}
+                </p>
+              {/if}
+              {#if isValidNumeroInscription == true}
+                <div
+                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
+                >
+                  <p class="text-green-800">
+                    Numéro d'inscription valide. Cliquer sur le bouton "Valider
+                    les informations" pour finaliser l'inscription.
+                  </p>
+                </div>
+              {:else if numeroInscriptionErrors.length > 0}
+                <div
+                  class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg"
+                >
+                  <p class="text-red-800">
+                    Numéro d'inscription invalide. Veuillez vérifier et
+                    réessayer.
+                  </p>
+                </div>
+              {/if}
+            </div>
+            {#if isValidNumeroInscription == false}
+              <!-- <div class=" p-6 rounded-lg shadow-m mb-4"> -->
               <!-- Radios: Profession -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Profession *</label
+                  >
+                  <Svelecte
+                    multiple={false}
+                    options={professions}
+                    bind:value={specialite}
+                    onChange={(event: any) => handleSpecialiteChange(event)}
+                    class="w-full h-full"
+                    labelField="libelle"
+                    valueField="libelle"
+                    placeholder="Sélectionnez votre groupe de spécialisation"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="profession"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Spécialité *</label
+                  >
 
-                   <Svelecte
-                  multiple={false}
-  options={professions}
-  bind:value={specialite}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="libelle"
-  placeholder="Sélectionnez votre groupe de spécialisation"
-/>
+                  <!-- 
+                  A mettre pour l'ancien systeme avec les groupes de professions
+                  options={professions.find(
+                    (prof: any) => prof.libelle === specialite
+                  )?.professions || []} -->
 
-<Svelecte
-                  multiple={false}
-  options={professions.find(
-                    (prof:any) => prof.libelle === specialite
-                  )?.professions || []}
-  bind:value={formData.profession}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="code"
-  placeholder="Sélectionnez votre spécialité"
-/>
-
-
+                  <Svelecte
+                    multiple={false}
+                    options={specialiteFetched || []}
+                    bind:value={formData.profession}
+                    class="w-full h-full"
+                    labelField="libelle"
+                    valueField="code"
+                    placeholder="Sélectionnez votre spécialité"
+                  />
+                </div>
 
                 <!-- {#each professions as professionGP}
                   <div class="form__group mb-4">
@@ -1099,429 +1223,415 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
               {#if errors.profession}
                 <p class="text-red-600 text-sm mt-1">{errors.profession}</p>
               {/if}
-            </div>
-          <!-- {/if}
+              <!-- </div> -->
+              <!-- {/if}
           {#if intermed == 1 && step === 3} -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="numeroInscription"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Numéro d'inscription au registre</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="numeroInscription"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre numéro d'inscription"
-                    required={true}
-                    name="numeroInscription"
-                    bind:value={formData.numeroInscription}
-                  />
-                </div>
-                {#if errors.numeroInscription}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.numeroInscription}
-                  </p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="emailPro"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Adresse email professionnel *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="emailPro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Confirmez votre adresse email"
-                    required={true}
-                    name="emailPro"
-                    bind:value={formData.emailPro}
-                  />
-                </div>
-                {#if errors.emailPro}
-                  <p class="text-red-600 text-sm mt-1">{errors.emailPro}</p>
-                {/if}
-              </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="dateDiplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Date d'obtention du diplôme *</label
-                >
-                <div class="relative">
-                  <input
-                    type="date"
-                    id="dateDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre date d'obtention du diplôme"
-                    required={true}
-                    name="dateDiplome"
-                    bind:value={formData.dateDiplome}
-                  />
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="emailPro"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Adresse email professionnel *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="emailPro"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Confirmez votre adresse email"
+                      required={true}
+                      name="emailPro"
+                      bind:value={formData.emailPro}
+                    />
+                  </div>
+                  {#if errors.emailPro}
+                    <p class="text-red-600 text-sm mt-1">{errors.emailPro}</p>
+                  {/if}
                 </div>
-                {#if errors.dateDiplome}
-                  <p class="text-red-600 text-sm mt-1">{errors.dateDiplome}</p>
-                {/if}
               </div>
-              <div>
-                <label
-                  for="lieuDiplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Lieu d'obtention du diplôme *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="lieuDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre lieu d'obtention du diplôme"
-                    required={true}
-                    name="lieuDiplome"
-                    bind:value={formData.lieuDiplome}
-                  />
-                </div>
-                {#if errors.lieuDiplome}
-                  <p class="text-red-600 text-sm mt-1">{errors.lieuDiplome}</p>
-                {/if}
-              </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="datePremierDiplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Date du premier emploi *</label
-                >
-                <div class="relative">
-                  <input
-                    type="date"
-                    id="datePremierDiplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre date d'obtention du diplôme"
-                    required={true}
-                    name="datePremierDiplome"
-                    bind:value={formData.datePremierDiplome}
-                  />
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="dateDiplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Date d'obtention du diplôme *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="date"
+                      id="dateDiplome"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre date d'obtention du diplôme"
+                      required={true}
+                      name="dateDiplome"
+                      bind:value={formData.dateDiplome}
+                    />
+                  </div>
+                  {#if errors.dateDiplome}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.dateDiplome}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.datePremierDiplome}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.datePremierDiplome}
-                  </p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="diplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Dénomination du diplôme *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="diplome"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Denomination du  diplôme"
-                    required={true}
-                    name="diplome"
-                    bind:value={formData.diplome}
-                  />
+                <div>
+                  <label
+                    for="lieuDiplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Lieu d'obtention du diplôme *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="lieuDiplome"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre lieu d'obtention du diplôme"
+                      required={true}
+                      name="lieuDiplome"
+                      bind:value={formData.lieuDiplome}
+                    />
+                  </div>
+                  {#if errors.lieuDiplome}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.lieuDiplome}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.diplome}
-                  <p class="text-red-600 text-sm mt-1">{errors.diplome}</p>
-                {/if}
               </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="situationPro"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Situation professionnelle *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.situationProfessionnelle}
-  bind:value={formData.situationPro}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre situation professionnelle"
-/>
-               
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="datePremierDiplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Date du premier emploi *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="date"
+                      id="datePremierDiplome"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre date d'obtention du diplôme"
+                      required={true}
+                      name="datePremierDiplome"
+                      bind:value={formData.datePremierDiplome}
+                    />
+                  </div>
+                  {#if errors.datePremierDiplome}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.datePremierDiplome}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.situationPro}
-                  <p class="text-red-600 text-sm mt-1">{errors.situationPro}</p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="region"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Région sanitaire *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.region}
-  bind:value={formData.region}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre région sanitaire"
-/>
-                
+                <div>
+                  <label
+                    for="diplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Dénomination du diplôme *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="diplome"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Denomination du  diplôme"
+                      required={true}
+                      name="diplome"
+                      bind:value={formData.diplome}
+                    />
+                  </div>
+                  {#if errors.diplome}
+                    <p class="text-red-600 text-sm mt-1">{errors.diplome}</p>
+                  {/if}
                 </div>
-                {#if errors.region}
-                  <p class="text-red-600 text-sm mt-1">{errors.region}</p>
-                {/if}
               </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="district"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >District sanitaire *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.district}
-  bind:value={formData.district}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre district sanitaire"
-/>
-                 
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="situationPro"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Situation professionnelle *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.situationProfessionnelle}
+                      bind:value={formData.situationPro}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre situation professionnelle"
+                    />
+                  </div>
+                  {#if errors.situationPro}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.situationPro}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.district}
-                  <p class="text-red-600 text-sm mt-1">{errors.district}</p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="ville"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Ville *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.ville}
-  bind:value={formData.ville}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre ville"
-/>
-                 
+                <div>
+                  <label
+                    for="region"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Région sanitaire *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.region}
+                      bind:value={formData.region}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre région sanitaire"
+                    />
+                  </div>
+                  {#if errors.region}
+                    <p class="text-red-600 text-sm mt-1">{errors.region}</p>
+                  {/if}
                 </div>
-                {#if errors.ville}
-                  <p class="text-red-600 text-sm mt-1">{errors.ville}</p>
-                {/if}
               </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="commune"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Commune *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.commune}
-  bind:value={formData.commune}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre commune"
-/>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="district"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >District sanitaire *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.district}
+                      bind:value={formData.district}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre district sanitaire"
+                    />
+                  </div>
+                  {#if errors.district}
+                    <p class="text-red-600 text-sm mt-1">{errors.district}</p>
+                  {/if}
                 </div>
-                {#if errors.commune}
-                  <p class="text-red-600 text-sm mt-1">{errors.commune}</p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="quartier"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Quartier *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="quartier"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre quartier"
-                    required={true}
-                    name="quartier"
-                    bind:value={formData.quartier}
-                  />
+                <div>
+                  <label
+                    for="ville"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Ville *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.ville}
+                      bind:value={formData.ville}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre ville"
+                    />
+                  </div>
+                  {#if errors.ville}
+                    <p class="text-red-600 text-sm mt-1">{errors.ville}</p>
+                  {/if}
                 </div>
-                {#if errors.quartier}
-                  <p class="text-red-600 text-sm mt-1">{errors.quartier}</p>
-                {/if}
               </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="Ilot,lot"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Ilot,lot</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="Ilot,lot"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre Ilot,lot"
-                    required={true}
-                    name="Ilot,lot"
-                    bind:value={formData.Ilot}
-                  />
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="commune"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Commune *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.commune}
+                      bind:value={formData.commune}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre commune"
+                    />
+                  </div>
+                  {#if errors.commune}
+                    <p class="text-red-600 text-sm mt-1">{errors.commune}</p>
+                  {/if}
+                </div>
+                <div>
+                  <label
+                    for="quartier"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Quartier *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="quartier"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre quartier"
+                      required={true}
+                      name="quartier"
+                      bind:value={formData.quartier}
+                    />
+                  </div>
+                  {#if errors.quartier}
+                    <p class="text-red-600 text-sm mt-1">{errors.quartier}</p>
+                  {/if}
                 </div>
               </div>
-              <div>
-                <label
-                  for="professionnel"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Structure d'exercice professionnel *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="professionnel"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre strucuture d'exercice professionnel"
-                    required={true}
-                    name="professionnel"
-                    bind:value={formData.professionnel}
-                  />
-                </div>
-                {#if errors.professionnel}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.professionnel}
-                  </p>
-                {/if}
-              </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="lieuExercicePro"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Lieu d'exercice professionnel *</label
-                >
-                <div class="relative">
-                  <input
-                    type="text"
-                    id="lieuExercicePro"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Votre lieu d'exercice professionnel"
-                    required={true}
-                    name="lieuExercicePro"
-                    bind:value={formData.lieuExercicePro}
-                  />
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="Ilot,lot"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Ilot,lot</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="Ilot,lot"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre Ilot,lot"
+                      required={true}
+                      name="Ilot,lot"
+                      bind:value={formData.Ilot}
+                    />
+                  </div>
                 </div>
-                {#if errors.lieuExercicePro}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.lieuExercicePro}
-                  </p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="typeDiplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Type de diplôme *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.typeDiplome}
-  bind:value={formData.typeDiplome}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre type de diplôme"
-/>
-                
+                <div>
+                  <label
+                    for="professionnel"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Structure d'exercice professionnel *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="professionnel"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre strucuture d'exercice professionnel"
+                      required={true}
+                      name="professionnel"
+                      bind:value={formData.professionnel}
+                    />
+                  </div>
+                  {#if errors.professionnel}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.professionnel}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.typeDiplome}
-                  <p class="text-red-600 text-sm mt-1">{errors.typeDiplome}</p>
-                {/if}
               </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="statusPro"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Status professionnel *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.statusPro}
-  bind:value={formData.statusPro}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez votre status professionnel"
-/>
-                 
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="lieuExercicePro"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Lieu d'exercice professionnel *</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="lieuExercicePro"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                      placeholder="Votre lieu d'exercice professionnel"
+                      required={true}
+                      name="lieuExercicePro"
+                      bind:value={formData.lieuExercicePro}
+                    />
+                  </div>
+                  {#if errors.lieuExercicePro}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.lieuExercicePro}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.statusPro}
-                  <p class="text-red-600 text-sm mt-1">{errors.statusPro}</p>
-                {/if}
-              </div>
-              <div>
-                <label
-                  for="lieuObtentionDiplome"
-                  class="block text-lg font-medium text-gray-700 mb-2"
-                  >Origine du diplôme *</label
-                >
-                <div class="relative">
-                   <Svelecte
-                  multiple={false}
-  options={values.lieuObtentionDiplome}
-  bind:value={formData.lieuObtentionDiplome}
-  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-  labelField="libelle"
-  valueField="id"
-  placeholder="Sélectionnez l'origine de votre diplôme"
-/>
-                
+                <div>
+                  <label
+                    for="typeDiplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Type de diplôme *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.typeDiplome}
+                      bind:value={formData.typeDiplome}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre type de diplôme"
+                    />
+                  </div>
+                  {#if errors.typeDiplome}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.typeDiplome}
+                    </p>
+                  {/if}
                 </div>
-                {#if errors.lieuObtentionDiplome}
-                  <p class="text-red-600 text-sm mt-1">
-                    {errors.lieuObtentionDiplome}
-                  </p>
-                {/if}
               </div>
-            </div>
+
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="statusPro"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Status professionnel *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.statusPro}
+                      bind:value={formData.statusPro}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez votre status professionnel"
+                    />
+                  </div>
+                  {#if errors.statusPro}
+                    <p class="text-red-600 text-sm mt-1">{errors.statusPro}</p>
+                  {/if}
+                </div>
+                <div>
+                  <label
+                    for="lieuObtentionDiplome"
+                    class="block text-lg font-medium text-gray-700 mb-2"
+                    >Origine du diplôme *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.lieuObtentionDiplome}
+                      bind:value={formData.lieuObtentionDiplome}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez l'origine de votre diplôme"
+                    />
+                  </div>
+                  {#if errors.lieuObtentionDiplome}
+                    <p class="text-red-600 text-sm mt-1">
+                      {errors.lieuObtentionDiplome}
+                    </p>
+                  {/if}
+                </div>
+              </div>
+            {:else}
+              <Recap
+                formdata={formData}
+                {values}
+                isValidated={isValidNumeroInscription}
+              />
+            {/if}
           {/if}
-          {#if step === 4}
+          {#if step === 4 && isValidNumeroInscription == false}
             <div class="space-y-6">
               <h2 class="text-2xl font-bold text-gray-900 mb-6">
                 Documents requis
@@ -1692,111 +1802,116 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                   <label class="block text-sm font-medium text-gray-700 mb-2">
                     CV (optionnel)
                   </label>
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onchange={(e) => handleFileUpload(e, "cv")}
-                    class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
-                  />
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.cv}
+                      <div class="flex-shrink-0">
+                        <img
+                          style="height: 50px !important;width: 124px !important;"
+                          src={imagePreview.cv}
+                          alt="Aperçu CV"
+                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onchange={(e) => handleFileUpload(e, "cv")}
+                        class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          {:else if step == 5}
-              <div
-        class="grid grid-cols-1 md:grid-cols-2  gap-6 mb-4"
-      >
-        
-          <div class="form__group mb-4">
-            <label
-              class="form_label font-bold block mb-2"
-              for="appartenance"
-            >
-              <big>Appartenez-vous à une organisation ? </big>
-            </label>
+          {:else if step == 5 && isValidNumeroInscription == false}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              <div class="form__group mb-4">
+                <label
+                  class="form_label font-bold block mb-2"
+                  for="appartenance"
+                >
+                  <big>Appartenez-vous à une organisation ? </big>
+                </label>
 
-         
-              <div class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id={"appartenance_oui"}
-                  name="rd_profession"
-                  class="cursor-pointer"
-                  value={"oui"}
-                  checked={formData.appartenirOrganisation === "oui"}
-                  onchange={() => (formData.appartenirOrganisation = "oui")}
-                />
-                <label for={"appartenance_oui"} class="cursor-pointer"
-                  >Oui</label
-                >
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id={"appartenance_oui"}
+                    name="rd_profession"
+                    class="cursor-pointer"
+                    value={"oui"}
+                    checked={formData.appartenirOrganisation === "oui"}
+                    onchange={() => (formData.appartenirOrganisation = "oui")}
+                  />
+                  <label for={"appartenance_oui"} class="cursor-pointer"
+                    >Oui</label
+                  >
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id={"appartenance_non"}
+                    name="rd_profession"
+                    class="cursor-pointer"
+                    value={"non"}
+                    checked={formData.appartenirOrganisation === "non"}
+                    onchange={() => (formData.appartenirOrganisation = "non")}
+                  />
+                  <label for={"appartenance_non"} class="cursor-pointer"
+                    >Non</label
+                  >
+                </div>
               </div>
-               <div class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id={"appartenance_non"}
-                  name="rd_profession"
-                  class="cursor-pointer"
-                  value={"non"}
-                  checked={formData.appartenirOrganisation === "non"}
-                  onchange={() => (formData.appartenirOrganisation = "non")}
-                />
-                <label for={"appartenance_non"} class="cursor-pointer"
-                  >Non</label
-                >
-              </div>
-           
-          </div>
-      
 
-           <div class="form__group mb-4">
-            <label
-              class="form_label font-bold block mb-2"
-              for="ordre"
-            >
-              <big>Appartenez-vous à un ordre ? </big>
-            </label>
+              <div class="form__group mb-4">
+                <label class="form_label font-bold block mb-2" for="ordre">
+                  <big>Appartenez-vous à un ordre ? </big>
+                </label>
 
-         
-              <div class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id={"ordre_oui"}
-                  name="rd_ordre"
-                  class="cursor-pointer"
-                  value={"oui"}
-                  checked={formData.appartenirOrdre === "oui"}
-                  onchange={() => (formData.appartenirOrdre = "oui")}
-                />
-                <label for={"ordre_oui"} class="cursor-pointer"
-                  >Oui</label
-                >
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id={"ordre_oui"}
+                    name="rd_ordre"
+                    class="cursor-pointer"
+                    value={"oui"}
+                    checked={formData.appartenirOrdre === "oui"}
+                    onchange={() => (formData.appartenirOrdre = "oui")}
+                  />
+                  <label for={"ordre_oui"} class="cursor-pointer">Oui</label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id={"ordre_non"}
+                    name="rd_ordre"
+                    class="cursor-pointer"
+                    value={"non"}
+                    checked={formData.appartenirOrdre === "non"}
+                    onchange={() => (formData.appartenirOrdre = "non")}
+                  />
+                  <label for={"ordre_non"} class="cursor-pointer">Non</label>
+                </div>
               </div>
-               <div class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  id={"ordre_non"}
-                  name="rd_ordre"
-                  class="cursor-pointer"
-                  value={"non"}
-                  checked={formData.appartenirOrdre === "non"}
-                  onchange={() => (formData.appartenirOrdre = "non")}
-                />
-                <label for={"ordre_non"} class="cursor-pointer"
-                  >Non</label
-                >
-              </div>
-           
-          </div>
-      </div>
+            </div>
           {:else if step == 6}
             <div class="text-center">
               <h2 class="text-xl font-semibold text-gray-900 mb-6">
                 Finalisation de l'inscription
               </h2>
-              <Recap formdata={formData} values={values} />
+
+              <Recap
+                formdata={formData}
+                {values}
+                isValidated={isValidNumeroInscription}
+              />
               {#if isPaiementProcessing}
                 <p class="text-purple-600 mb-4">
                   Traitement du paiement, veuillez patienter...
                 </p>
+                <SpinnerBlue />
               {:else if authenticating}
                 <p class="text-purple-600 mb-4">
                   Authentification en cours, veuillez patienter...
@@ -1807,37 +1922,58 @@ function checkExistenceNumeroInscription(numeroInscription: any) {
                 </p>
               {:else if message}
                 <p class="text-red-600 mb-4">{message}</p>
-              {:else}
+                <!-- {:else} -->
+                <!-- {#if isValidNumeroInscription == false}
                 <p class="text-gray-700 mb-4">
                   Cliquez sur "Terminer" pour finaliser votre inscription et
                   procéder au paiement.
                 </p>
+                {:else}
+                <p class="text-gray-700 mb-4">
+                  Cliquez sur "Terminer" pour finaliser votre inscription.
+                </p> -->
               {/if}
             </div>
           {/if}
+          {#if accountCreationLoader}
+            <div class="flex justify-center items-center mt-6">
+              <SpinnerBlue />
+            </div>
+          {/if}
 
-          <div class="flex justify-between mt-8 pt-6 border-t">
+          <div class="flex justify-between mt-8 pt-6">
             <button
               onclick={() => {
                 prevStep();
               }}
-              
               type="button"
               disabled={step === 1}
               class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              {step > 1 ? "Précédent" : ""} </button
-            >
+              {step > 1 ? "Précédent" : ""}
+            </button>
             {#if lastStep}
-              <button
-                onclick={() => {
-                  clickPaiement();
-                }}
-                type="button"
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                Terminer
-              </button>
+              {#if isValidNumeroInscription == false}
+                <button
+                  onclick={() => {
+                    clickPaiement();
+                  }}
+                  type="button"
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  Passer au paiement
+                </button>
+              {:else}
+                <button
+                  onclick={() => {
+                    validateAccountWithNumInsc();
+                  }}
+                  type="button"
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  Valider les informations
+                </button>
+              {/if}
             {:else}
               <button
                 onclick={() => {

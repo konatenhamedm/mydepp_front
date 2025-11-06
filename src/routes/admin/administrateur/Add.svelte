@@ -85,8 +85,25 @@
     function init(form: HTMLFormElement) {}
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      async function checkEmail(email: any) {
+    if (!email) return false;
 
-    function validateForm() {
+    try {
+      const res = await fetch(
+        `${BASE_URL_API}/user/check/email/existe/${email}`
+      );
+      const data = await res.json();
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
+    } catch (error) {
+      console.error(
+        "Erreur lors de la vérification de la transaction :",
+        error
+      );
+      return false;
+    }
+  }
+
+   async function validateForm() {
         let isValid = true;
         errors = {
             nom: "",
@@ -112,6 +129,9 @@
             isValid = false;
         } else if (!emailRegex.test(devise.email)) {
             errors.email = "L'email n'est pas valide";
+            isValid = false;
+        }else if (await checkEmail(devise.email)) {
+            errors.email = "L'email existe déjà";
             isValid = false;
         }
 

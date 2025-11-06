@@ -8,28 +8,15 @@ let Nbprofessionel = 0
 let Nbetab = 0
 let Nbvisite = 0
 
-async function FetchData(){
-  await axios.get(`${BASE_URL_API}/professionnel/`)
+ function FetchData(){
+   axios.get(`${BASE_URL_API}/statistique/web-site-statistique/`)
   .then(response => {
-    Nbprofessionel = response.data.length;
+    Nbetab = response.data.data.countEtablissement;
+    Nbprofessionel = response.data.data.countProfessionnel;
   })
   .catch(error => {
     console.error("Error fetching data:", error);
-  });
-  await axios.get(`${BASE_URL_API}/etablissement/`)
-  .then(response => {
-    Nbetab = response.data.length;
-  })
-  .catch(error => {
-    console.error("Error fetching data:", error);
-  });
-  // await axios.get(`${BASE_URL_API}/visite/`)
-  // .then(response => {
-  //   Nbvisite = response.data.length;
-  // })
-  // .catch(error => {
-  //   console.error("Error fetching data:", error);
-  // });
+  }); 
 }
 
 onMount(() => {
