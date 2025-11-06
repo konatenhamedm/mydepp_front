@@ -118,7 +118,7 @@
           <div class="flex"></div>
           <a
             class=" hover:text-dark dark:hover:text-title-dark text-blue-200 font-medium"
-            href="/connexion/forgot_password">Mot de passe oublié?</a
+            href="/connexion/forgot_password_admin">Mot de passe oublié?</a
           >
         </div>
 
