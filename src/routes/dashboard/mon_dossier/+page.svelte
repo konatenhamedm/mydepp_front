@@ -7,7 +7,7 @@
   import { BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
   import SelectInput from "../../site/SelectInput.svelte";
   import axios from "axios";
-
+//de
   let user = getAuthCookie();
 
   let values = {
