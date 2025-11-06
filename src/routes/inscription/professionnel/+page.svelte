@@ -586,24 +586,29 @@
         );
       });
   }
-
+let accountCreationLoader = false;
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
       let formulaire = new FormData();
-      formulaire.append("code", numeroTempInscription);
-      formulaire.append("email", formData.email);
-      formulaire.append("password", formData.password);
+      accountCreationLoader = true;
       axios
-        .post(`${BASE_URL_API}/user/api/create-new-user-with-code`, formulaire)
+        .post(`${BASE_URL_API}/user/api/create-new-user-with-code`, {
+          code: numeroTempInscription,
+          email: formData.email,
+          password: formData.password,
+        })
         .then((response) => {
           console.log(
             "Response validation avec numero d'inscription:",
             response.data
           );
+          accountCreationLoader = false;
           alert("Votre inscription a été validée avec succès !");
+          windows.location.href = "/connexion";
           // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
         })
         .catch((error) => {
+          accountCreationLoader = false;
           console.error(
             "Erreur lors de la validation avec le numéro d'inscription :",
             error
@@ -623,7 +628,7 @@
         `${BASE_URL_API}/profession/get/profession/typeProfession/${event.id}`
       )
       .then((response: any) => {
-        specialiteFetched.push(response.data.data);
+        specialiteFetched = response.data.data;
         console.log("Specialite fetched:", specialiteFetched);
       })
       .catch((error) => {
@@ -1928,6 +1933,11 @@
                   Cliquez sur "Terminer" pour finaliser votre inscription.
                 </p> -->
               {/if}
+            </div>
+          {/if}
+          {#if accountCreationLoader}
+            <div class="flex justify-center items-center mt-6">
+              <SpinnerBlue />
             </div>
           {/if}
 
