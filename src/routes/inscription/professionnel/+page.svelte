@@ -1003,7 +1003,7 @@ let accountCreationLoader = false;
                     options={values.civilite}
                     bind:value={formData.civilite}
                     labelField="libelle"
-                    valueField="code"
+                    valueField="id"
                     placeholder="Sélectionnez votre civilité"
                     class="w-full h-full"
                   />
