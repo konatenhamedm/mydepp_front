@@ -393,7 +393,7 @@
      {
       "title": "Professionnels",
       "icon": "uil uil-apps",
-      "path": "/admin/professionnel",
+      "path": "/admin/professionnel_instructeur",
       "exact": false
     },
      {
