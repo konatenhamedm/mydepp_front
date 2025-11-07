@@ -1,5 +1,5 @@
 <script>
-    let isChecked = false;
+    export let isChecked;
   export let label;
     function toggleCheckbox() {
       isChecked = !isChecked;

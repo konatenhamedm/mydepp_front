@@ -137,7 +137,7 @@
         {#if isLoading}
           <p>Chargement en cours...</p>
         {:else if pdfUrlAffiche}
-          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="700px" type="application/pdf"></iframe>
+          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="500px" type="application/pdf"></iframe>
         {/if}
       </div>
     </div>
@@ -147,7 +147,7 @@
 <style>
   .modal {
     position: fixed;
-    top: 0;
+    top: 50;
     left: 0;
     right: 0;
     bottom: 0;
