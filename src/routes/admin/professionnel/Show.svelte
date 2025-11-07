@@ -166,23 +166,17 @@
 
     isLoad = true;
     try {
-      const res = await fetch(
-        BASE_URL_API + "/professionnel/active/" + data.personne?.id,
+      const res = await apiFetch(true,
+         "/professionnel/active/" + data.personne?.id,"PUT",
         {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
             status: valid_endUser.status,
             raison: valid_endUser.raison,
-            userUpdate: userUpdateId,
+			      userUpdate: userUpdateId,
             email: userEmail,
-          }),
         },
       );
 
-      if (res.ok) {
+      if (res.code == 200) {
         isLoad = false;
         open = false;
         notificationMessage = "Traitement effectué  avec succès!";
@@ -631,8 +625,8 @@ type="text"
             </fieldset>
           </div>
         </div>
-        {#if appartenirOrdre === "oui"}
-          <!-- <div class="grid grid-cols-1 gap-6 mt-6"> -->
+        <!-- {#if appartenirOrdre === "oui"}
+          <div class="grid grid-cols-1 gap-6 mt-6">
           <div class="space-y-6">
             <InputSimple
 type="text"
@@ -642,8 +636,8 @@ type="text"
               disabled={true}
             />
           </div>
-          <!-- </div> -->
-        {/if}
+           </div> 
+        {/if} -->
       </div>
 
       <br />

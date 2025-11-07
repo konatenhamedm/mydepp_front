@@ -225,6 +225,7 @@
     // if (activeTab === 'valide') {
       return user.type === 'SOUS-DIRECTEUR-ETAB' || 
              user.type === 'SOUS-DIRECTEUR-PROF' || 
+             user.type === 'INSTRUCTEUR-PROF' || 
              user.type === 'DIRECTEUR';
     // }
     
