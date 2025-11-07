@@ -1,7 +1,7 @@
 <script lang="ts">
   import InputCheck from "$components/inputs/InputCheck.svelte";
   import InputSimple from "$components/inputs/InputSimple.svelte";
-  import { apiFetch, BASE_URL_API } from "$lib/api";
+  import { apiFetch, BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
   
   import { Button, Modal } from "flowbite-svelte";
   import { TrashBinSolid } from "flowbite-svelte-icons";
@@ -10,6 +10,7 @@
   import { format } from "date-fns";
   import RecuPaiement from "./RecuPaiement.svelte";
   import FicheInscription from "./FicheInscription.svelte";
+  import Modale from "$components/Modales/Modale.svelte";
 
   let isLoad = false;
 
@@ -24,7 +25,7 @@
 
   let professionLibelle: string = "";
 
-  const url_image = "https://depps.leadagro.net/uploads/";
+  const url_image = BASE_URL_API_UPLOAD;
   let persionneId: any;
   let numero: any;
   let nom: any;
@@ -473,6 +474,7 @@ type="text"
         <button
           type="button"
           on:click={() => (
+            console.log("CVpath", url_image + CVpath + "/" + CValt),
             (current_data = url_image + CVpath + "/" + CValt), (openShow = true)
           )}
           class="w-full h-9 flex justify-center bg-gray-700 hover:bg-gray-700 text-white font-bold py-2 pb-[1.9rem] px-4 border border-white rounded cursor-pointer"
@@ -572,14 +574,14 @@ type="text"
               <div class="flex items-center">
                 <div class="mr-2">
                   <InputCheck
-                    checked={appartenirOrganisation === "non" ? true : false}
+                    isChecked={appartenirOrganisation === "non" ? true : false}
                     label="Non"
                     disabled={true}
                   />
                 </div>
                 <div>
                   <InputCheck
-                    checked={appartenirOrganisation === "oui" ? true : false}
+                    isChecked={appartenirOrganisation === "oui" ? true : false}
                     label="Oui"
                     disabled={true}
                   />
@@ -613,14 +615,14 @@ type="text"
               <div class="flex items-center">
                 <div class="mr-2">
                   <InputCheck
-                    checked={appartenirOrdre === "non" ? true : false}
+                    isChecked={appartenirOrdre === "non" ? true : false}
                     label="Non"
                     disabled={true}
                   />
                 </div>
                 <div>
                   <InputCheck
-                    checked={appartenirOrdre === "oui" ? true : false}
+                    isChecked={appartenirOrdre === "oui" ? true : false}
                     label="Oui"
                     disabled={true}
                   />
@@ -843,5 +845,7 @@ type="text"
     {userUpdateId}
   />
 {/if}
+<Modale bind:open={openShow} size="2xl" title="Détails du dossier professionnel">
 
-<DocShow bind:open={openShow} data={current_data} sizeModal="xl" />
+  <DocShow bind:open={openShow} data={current_data}  />
+</Modale>

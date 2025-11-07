@@ -254,7 +254,8 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      
+      "path":"#",
       "exact": false
     },
     {
@@ -272,7 +273,7 @@
     {
       "title": "Dashboard",
       "icon": "uil uil-apps",
-      "path": "/admin/sous-directeur-dashboard",
+      "path": "/admin/sous-directeur-etab-dashboard",
       "exact": true
     },
     {
@@ -298,7 +299,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -316,7 +317,7 @@
      {
       "title": "Dashboard",
       "icon": "uil uil-apps",
-      "path": "/admin/sous-directeur-dashboard",
+      "path": "/admin/sous-directeur-prof-dashboard",
       "exact": true
     },
     {
@@ -336,7 +337,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -374,7 +375,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     }
   ],
@@ -402,7 +403,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -440,7 +441,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -478,7 +479,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement",
+      "path":"#",
       "exact": false
     },
     {
@@ -506,7 +507,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement",
+      "path":"#",
       "exact": false
     },
     {

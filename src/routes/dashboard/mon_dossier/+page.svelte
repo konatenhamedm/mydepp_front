@@ -647,7 +647,7 @@
                       </select>
                     </div>
                   </div>
-                  <div>
+                  <!-- <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Status professionnel *</label
                     >
@@ -667,7 +667,7 @@
                         {/each}
                       </select>
                     </div>
-                  </div>
+                  </div> -->
                   <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Origine du diplôme *</label
