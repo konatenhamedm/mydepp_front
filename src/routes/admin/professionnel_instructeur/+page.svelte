@@ -148,6 +148,8 @@
         main_data = res.data as professionnel[];
         totalItems = res.data.length ?? 0;
         perPage = get(pageSize);
+
+        console.log("main_data", main_data);
       } else {
         console.error("Structure inattendue:", res);
       }
@@ -277,23 +279,40 @@
   });
 
   // Réactivité
-  $: statusCounts = main_data.reduce((acc, user) => {
-    acc[user.personne.status] = (acc[user.personne.status] || 0) + 1;
+$: statusCounts = main_data.reduce((acc, item) => {
+    const status = item.personne.status;
+    
+    // Pour l'onglet "accepte", ne compter que les professionnels imputés à l'utilisateur connecté
+    if (status === "accepte") {
+      if (item.personne.imputation === user.id) {
+        acc[status] = (acc[status] || 0) + 1;
+      }
+    } else {
+      // Pour les autres onglets, compter normalement
+      acc[status] = (acc[status] || 0) + 1;
+    }
+    
     return acc;
   }, {});
 
-  $: filteredData = main_data
-    .filter((user) => user.personne.status === activeTab)
-    .filter((user) => {
+$: filteredData = main_data
+    .filter((item) => item.personne.status === activeTab)
+    .filter((item) => {
+      // Si on est dans l'onglet "accepte", filtrer par imputation
+      if (activeTab === "accepte" && item.personne.imputation !== user.id) {
+        return false;
+      }
+      
+      // Filtre de recherche
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
       return (
-        user.personne.nom?.toLowerCase().includes(query) ||
-        user.personne.prenoms?.toLowerCase().includes(query) ||
-        user.personne.number?.toLowerCase().includes(query) ||
-        user.email?.toLowerCase().includes(query) ||
-        user.personne.profession?.libelle?.toLowerCase().includes(query) ||
-        user.personne.code?.toLowerCase().includes(query)
+        item.personne.nom?.toLowerCase().includes(query) ||
+        item.personne.prenoms?.toLowerCase().includes(query) ||
+        item.personne.number?.toLowerCase().includes(query) ||
+        item.email?.toLowerCase().includes(query) ||
+        item.personne.profession?.libelle?.toLowerCase().includes(query) ||
+        item.personne.code?.toLowerCase().includes(query)
       );
     });
 

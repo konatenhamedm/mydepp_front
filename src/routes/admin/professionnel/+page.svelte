@@ -79,30 +79,12 @@
       icon: 'eye',
       color: 'success',
     },
-    // {
-    //   action: 'edit',
-    //   title: 'Modifier',
-    //   icon: 'edit',
-    //   color: 'warning',
-    // },
-    // {
-    //   action: 'delete',
-    //   title: 'Supprimer',
-    //   icon: 'trash-alt',
-    //   color: 'danger',
-    // },
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
       color: 'warning',
     },
-    // {
-    //   action: 'details',
-    //   title: 'Détails',
-    //   icon: 'info-circle',
-    //   color: 'primary',
-    // },
   ];
 
   // Liste des onglets avec leur label
@@ -124,19 +106,20 @@
     );
   }
 
-   // Fonction pour déterminer quelles actions afficher selon le type d'utilisateur
-  function getUserSpecificActions(userType: string): ActionType[] {
-    const baseActions: ActionType[] = ['view', 'details'];
-    
-    switch(userType) {
-      case 'ADMINISTRATEUR':
-        return []; 
-      case 'SOUS-DIRECTEUR-ETAB':
-      case 'SOUS-DIRECTEUR-PROF':
-      case 'DIRECTEUR':
-        return [...baseActions, 'edit', 'delete', 'imputation'];
+  // Fonction pour obtenir les actions selon l'onglet actif
+  function getActionsForTab(tab: string): Action[] {
+    switch(tab) {
+      case 'attente':
+        // Onglet attente : seulement l'action "view"
+        return allActions.filter(action => action.action === 'view');
+      
+      case 'accepte':
+        // Onglet accepté : seulement l'action "imputation"
+        return allActions.filter(action => action.action === 'imputation');
+      
       default:
-        return baseActions;
+        // Tous les autres onglets : seulement l'action "view"
+        return allActions.filter(action => action.action === 'view');
     }
   }
 
@@ -217,18 +200,14 @@
   };
 
   // Fonction pour déterminer si une colonne Action doit être affichée
- // Fonction pour déterminer si une colonne Action doit être affichée
   function shouldShowActionColumn(): boolean {
     // ADMINISTRATEUR ne voit JAMAIS la colonne Action
     if (user.type === 'ADMINISTRATEUR') return false;
     
-    // if (activeTab === 'valide') {
-      return user.type === 'SOUS-DIRECTEUR-ETAB' || 
-             user.type === 'SOUS-DIRECTEUR-PROF' || 
-             user.type === 'INSTRUCTEUR-PROF' || 
-             user.type === 'DIRECTEUR';
-    // }
-    
+    return user.type === 'SOUS-DIRECTEUR-ETAB' || 
+           user.type === 'SOUS-DIRECTEUR-PROF' || 
+           user.type === 'INSTRUCTEUR-PROF' || 
+           user.type === 'DIRECTEUR';
   }
 
   // Fonction pour déterminer les colonnes à afficher
@@ -237,7 +216,6 @@
     
     if (user.type === 'ADMINISTRATEUR') {
       return [...baseHeaders, 'Code', 'Imputation'];
-      // Pas de 'Action' pour ADMINISTRATEUR
     }
     
     if (activeTab) {
@@ -249,7 +227,6 @@
     }
     
     const headersWithoutCode = [...baseHeaders, 'Imputation'];
-  
     
     if (showActions) {
       return [...headersWithoutCode, 'Action'];
@@ -262,13 +239,6 @@
     user = getAuthCookie();
     await fetchData();
     permission = 'CRUD';
-    
-    // Filtrer les actions selon le type d'utilisateur
-    const allowedActions = getUserSpecificActions(user.type);
-    actions = allActions.filter(action => allowedActions.includes(action.action));
-
-    console.log('Actions autorisées:', actions);
-    console.log('Type d\'utilisateur:', allowedActions);
   });
 
   // Réactivité
@@ -322,10 +292,13 @@
 
   $: tableHeaders = getTableHeaders();
   $: showActions = shouldShowActionColumn();
-
   
+  // Mise à jour des actions selon l'onglet actif
+  $: actions = getActionsForTab(activeTab);
+
 </script>
 
+<!-- Le reste du template reste identique -->
 <div
   class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
@@ -497,26 +470,10 @@
                     </td>
 
                     <!-- Actions -->
-            {#if showActions}
+                    {#if showActions}
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
-                          {#if user.type === 'SOUS-DIRECTEUR-ETAB' || user.type === 'SOUS-DIRECTEUR-PROF' || user.type === 'DIRECTEUR'}
-                            <Menu {item} onAction={handleAction} {actions} />
-                            <!-- <Button
-                              color="red"
-                              size="sm"
-                              class="gap-2 px-3 bg-red-600 hover:bg-red-700"
-                              on:click={() => DisablePro(item)}
-                            >
-                              <TrashBinSolid size="sm" class="mr-1" /> 
-                              <span class="hidden sm:inline">Supprimer</span>
-                            </Button> -->
-                          {:else}
-
-                         <!--  { JSON.stringify(showActions, null, 2) } -->
-                            <!-- Pour les autres types d'utilisateurs autorisés -->
-                            <Menu {item} onAction={handleAction} {actions} />
-                          {/if}
+                          <Menu {item} onAction={handleAction} {actions} />
                         </div>
                       </td>
                     {/if}
@@ -587,7 +544,7 @@
     userUpdateId={user?.id}
   />
 </Modale>
-
+<!-- 
 <Modale bind:open={openImputation} size="md" title="Imputation">
   <Imputation
     bind:open={openImputation}
@@ -595,6 +552,10 @@
     on:updated={fetchData}
     userUpdateId={user?.id}
   />
+</Modale> -->
+
+<Modale bind:open={openImputation} size="md" title="Imputation">
+  <Imputation bind:open={openImputation} data={current_data} on:updated={fetchData} />
 </Modale>
 
 <Modale bind:open={openDelete} size="xl" title="Supprimer dossier professionnel">
