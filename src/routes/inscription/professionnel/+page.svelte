@@ -458,7 +458,7 @@
           authenticating = false;
         });
     }else{
-      await fetch(BASE_URL_API + "professionnel/create",{
+      await fetch(BASE_URL_API + "/professionnel/create",{
         method: "POST",
         body: formDatas,
       }).then((response) => response.json())
