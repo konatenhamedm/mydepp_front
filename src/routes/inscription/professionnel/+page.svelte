@@ -381,6 +381,7 @@
   onMount(() => {
     fetchDataFirst();
     console.log(values);
+
     let references = localStorage.getItem("reference");
     if (references) {
       checkTransactionID(references);
@@ -437,25 +438,40 @@
     }
 
     console.log(formDatas);
+    if (await checkPaiementStatus(formData.profession)) {
+      await fetch(BASE_URL_API + "/paiement/paiement", {
+        method: "POST",
+        body: formDatas,
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          authenticating = false;
 
-    await fetch(BASE_URL_API + "/paiement/paiement", {
-      method: "POST",
-      body: formDatas,
-    })
-      .then((response) => response.json())
+          if (result.data.url) {
+            localStorage.setItem("reference", result.data.reference);
+            window.location.href = result.data.url + "?return=1"; // 🔥 Ajout du paramètre `return`
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur paiements :", error);
+          isPaiementProcessing = false;
+          authenticating = false;
+        });
+    }else{
+      await fetch(BASE_URL_API + "professionnel/create",{
+        method: "POST",
+        body: formDatas,
+      }).then((response) => response.json())
       .then((result) => {
         authenticating = false;
-
-        if (result.data.url) {
-          localStorage.setItem("reference", result.data.reference);
-          window.location.href = result.data.url + "?return=1"; // 🔥 Ajout du paramètre `return`
-        }
-      })
-      .catch((error) => {
-        console.error("Erreur paiements :", error);
-        isPaiementProcessing = false;
-        authenticating = false;
-      });
+        alert("Inscription réussie !");
+        window.location.href = "/connexion";
+      }).catch((error) => {
+          console.error("Erreur paiements :", error);
+          isPaiementProcessing = false;
+          authenticating = false;
+        });
+    }
   }
   async function checkTransactionID(idtransaction: any) {
     if (!idtransaction) return false;
@@ -586,7 +602,7 @@
         );
       });
   }
-let accountCreationLoader = false;
+  let accountCreationLoader = false;
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
       let formulaire = new FormData();
@@ -637,6 +653,26 @@ let accountCreationLoader = false;
           error
         );
       });
+  }
+
+  async function checkPaiementStatus(professionCode: any): Promise<boolean> {
+    if (!professionCode) return false;
+
+    try {
+      const res = await fetch(
+        BASE_URL_API + `/profession/get/status/paiement/${professionCode}`
+      );
+      const data = await res.json();
+      // paiementStatus = data.data;
+      console.log("Paiement status:", data.data);
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé `valid`
+    } catch (error) {
+      console.error(
+        "Erreur lors de la vérification de la transaction :",
+        error
+      );
+      return false;
+    }
   }
 </script>
 
