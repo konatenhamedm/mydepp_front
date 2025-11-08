@@ -85,6 +85,12 @@
       icon: 'user-check',
       color: 'warning',
     },
+    {
+      action: 'details',
+      title: 'Détails',
+      icon: 'eye',
+      color: 'success',
+    },
   ];
 
   // Liste des onglets avec leur label
@@ -116,10 +122,10 @@
       case 'accepte':
         // Onglet accepté : seulement l'action "imputation"
         return allActions.filter(action => action.action === 'imputation');
-      
+
       default:
         // Tous les autres onglets : seulement l'action "view"
-        return allActions.filter(action => action.action === 'view');
+        return allActions.filter(action => action.action === 'details');
     }
   }
 
@@ -321,7 +327,7 @@
           Liste des dossiers professionnels 
         </h1>
 
-        {#if PERMISSION_MAP['add'].includes(permission as Permission)}
+       <!--  {#if PERMISSION_MAP['add'].includes(permission as Permission)}
           <button
             class="bg-blue-600 hover:bg-blue-700 inline-flex h-[40px] items-center justify-center gap-[6px] rounded-[6px] border-1 border-solid px-[20px] text-[14px] leading-[22px] font-semibold whitespace-nowrap text-white capitalize transition duration-300 ease-in-out"
             on:click={() => ((current_data = {}), (openAdd = true))}
@@ -329,7 +335,7 @@
             <i class="uil uil-plus text-[18px]"></i>
             Nouveau
           </button>
-        {/if}
+        {/if} -->
       </div>
 
       <!-- Onglets -->

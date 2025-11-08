@@ -337,7 +337,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path":"#",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -403,7 +403,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path":"#",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -479,7 +479,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path":"#",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -507,7 +507,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path":"#",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {

@@ -554,7 +554,7 @@
       {:else}
         <div class="overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
-            <HeaderTable  afficheAction
+            <HeaderTable  afficheAction={false}
               item={dossierFilter === 'etablissement'
                 ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
                 : ['N°', 'Nom & Prénoms', 'Téléphone/Adresse', 'Email', 'Profession / Entité Juridique', 'Statut']} 

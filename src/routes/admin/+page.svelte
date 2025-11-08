@@ -11,6 +11,8 @@
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
   import InputSimple from '$components/inputs/InputSimple.svelte';
   import InputSelect from '$components/inputs/InputSelect.svelte';
+    import { getAuthCookie } from '$lib/auth';
+    import { goto } from '$app/navigation';
 
   export let data;
  
@@ -41,6 +43,32 @@
     year: 'numeric',
   });
   let currentTime = currentDate.toLocaleTimeString('fr-FR');
+
+let user : any;
+
+  onMount(() => {
+     user = getAuthCookie();
+      console.log("User from cookie:", user);
+
+    if (!user) {
+      goto("/login");
+      return;
+    }
+
+
+    // Redirection selon le rôle
+    if (user.type === "ADMINISTRATEUR") {
+      goto("/admin");
+    } else if (user.type === "INSTRUCTEUR" || user.type === "INSTRUCTEUR-SECOND-PROF" || user.type === "INSTRUCTEUR-PROF" ) {
+      goto("/admin/instructeur-dashboard");
+    } else if ( user.type === "SOUS-DIRECTEUR-PROF"  ) {
+      goto("/admin/sous-directeur-prof-dashboard");
+    }else if (user.type === "COMPTABLE") {
+      goto("/admin/comptable-dashboard");
+    } else {
+      goto("/unauthorized");
+    }
+  })
 
   async function fetchInitialData() {
     loading = true;

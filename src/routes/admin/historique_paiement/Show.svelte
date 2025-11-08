@@ -1,15 +1,23 @@
 <script lang="ts">
-    import InputCheck from "$components/inputs/InputCheck.svelte";
-    import InputSimple from "$components/inputs/InputSimple.svelte";
-    import { Button, Modal } from "flowbite-svelte";
- 
+	import InputSimple from '$components/inputs/InputSimple.svelte';
+	import { BASE_URL_API } from '$lib/api';
+	import { Button, Modal, Select } from 'flowbite-svelte';
+	import Notification from '$components/_includes/Notification.svelte';
+	import InputSelect from '$components/inputs/InputSelect.svelte';
+	import { onMount } from 'svelte';
   import { formatDate } from "$lib/dateUtils";
 
-    export let open: boolean = false;
-    export let sizeModal: string = "lg";
-    export let data: Record<string, any> = {};
-    
-    const url_image = "https://depps.leadagro.net/uploads/";
+    function cancelDelete() {
+        open = false;
+    }
+	export let open: boolean = false; // modal control
+	let isLoad = false;
+
+	let showNotification = false;
+	let notificationMessage = '';
+	let notificationType = 'info';
+
+	// Initializing the user object with only email and status
 
     let montant = "";
     let reference = "";
@@ -19,6 +27,7 @@
     let user = {
         username: "",
         typeUser: "",
+
         typePersonne: "",
         nom: "",
         prenoms: "",
@@ -28,9 +37,10 @@
              data : []
     };
     let createdAt = "";
+	export let data: Record<string, string> = {};
 
-    function init() {
-        console.log("Données reçues :", data);
+	function init(form: HTMLFormElement) {
+
 
         montant = data?.montant || "";
         reference = data?.reference || "";
@@ -48,51 +58,75 @@
        
         createdAt = data?.createdAt || "";
         user.data = data?.user?.data || [];
+		
+
     }
+
+	onMount(() => {});
+
+	
+
+	function handleModalClose(event: Event) {
+		if (isLoad) {
+			event.preventDefault();
+		}
+	}
 </script>
 
-<Modal bind:open title="Détails" size={sizeModal} class="m-4 modale_general" on:open={init}>
-    <div class="space-y-6 p-4">
-        <form>
-            <div class="grid grid-cols-2 gap-6">
+
+
+
+<!-- Modal Content Wrapper -->
+<div class="bg-white rounded-lg  p-1 space-y-4">
+
+    <!-- Card Body -->
+    <div class="space-y-6">
+        <form action="#" use:init>
+			<div class="grid grid-cols-1 gap-1 mb-1">
+				       <div class="grid grid-cols-2 gap-6">
                 <div class="space-y-6">
                     {#if user.typeUser == "PROFESSIONNEL"}
 
-                    <InputSimple fieldName="username" label="Nom et prénoms utilisateur" field={user.nom + " " + user.prenoms} disabled={true} />
+                    <InputSimple type="text" fieldName="username" label="Nom et prénoms utilisateur" field={user.nom + " " + user.prenoms} disabled={true} />
                     {:else}
-                    <InputSimple fieldName="username" label="Nom utilisateur" field={user.username} disabled={true} />
+                    <InputSimple type="text" fieldName="username" label="Nom utilisateur" field={user.username} disabled={true} />
 
                     {/if}
-                    <InputSimple fieldName="email" label="Email" field={user.email} disabled={true} />
-                    <InputSimple fieldName="typeUser" label="Type d'utilisateur" field={user.typeUser} disabled={true} />
-                    <InputSimple fieldName="createdAt" label="Date de création" field={formatDate(createdAt)} disabled={true} />
+                    <InputSimple type="text" fieldName="email" label="Email" field={user.email} disabled={true} />
+                    <InputSimple type="text" fieldName="typeUser" label="Type d'utilisateur" field={user.typeUser} disabled={true} />
+                    <InputSimple  type="text" fieldName="createdAt" label="Date de création" field={formatDate(createdAt)} disabled={true} />
                 </div>
                 <div class="space-y-6">
-                    <InputSimple fieldName="montant" label="Montant" field={montant} disabled={true} />
-                    <InputSimple fieldName="reference" label="Référence" field={reference} disabled={true} />
-                    <InputSimple fieldName="channel" label="Canal" field={channel} disabled={true} />
-                    <InputSimple fieldName="state" label="État" field={state == "1" ? "Paiement éffectué" : "Paiement échoué"} disabled={true} />
+                    <InputSimple type="text" fieldName="montant" label="Montant" field={montant} disabled={true} />
+                    <InputSimple type="text" fieldName="reference" label="Référence" field={reference} disabled={true} />
+                    <InputSimple type="text" fieldName="channel" label="Canal" field={channel} disabled={true} />
+                    <InputSimple type="text" fieldName="state" label="État" field={state == "1" ? "Paiement éffectué" : "Paiement échoué"} disabled={true} />
                     
                 </div>
             </div>
-        </form>
-    </div>
-    <div slot="footer" class="w-full grid grid-cols-3">
-  <!-- Place le bouton dans la troisième colonne -->
-  <div class="col-start-3 flex justify-end">
-    <Button
-    color="alternative"
-    style="background-color: gray !important; color: white;"
-    on:click={() => (open = false)}
-    type="submit">{"Fermer"}</Button
-  >
 
-   <!--  <Button
-    color="dark"
-    style="background-color: black;"
-    on:click={() => (open = false)}>Annuler</Button
-  > -->
-  </div>
+			</div>
+            
+			
+
+		</form>
+    </div>
+
+    <!-- Card Footer -->
+    <div class="flex justify-end pt-4 border-t border-gray-200">
+        <button style="margin-right: 9px;"
+        on:click={cancelDelete}
+        disabled={isLoad}
+        class="px-4 py-2  mr-[9px] text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+    >
+        Annuler
+    </button>
+    </div>
+
 </div>
 
-</Modal>
+<!-- Notification Component -->
+{#if showNotification}
+    <Notification message={notificationMessage} type={notificationType} duration={5000} />
+{/if}
+
