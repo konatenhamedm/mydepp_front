@@ -79,30 +79,18 @@
       icon: 'eye',
       color: 'success',
     },
-    // {
-    //   action: 'edit',
-    //   title: 'Modifier',
-    //   icon: 'edit',
-    //   color: 'warning',
-    // },
-    // {
-    //   action: 'delete',
-    //   title: 'Supprimer',
-    //   icon: 'trash-alt',
-    //   color: 'danger',
-    // },
     {
       action: 'imputation',
       title: 'Imputation',
       icon: 'user-check',
       color: 'warning',
     },
-    // {
-    //   action: 'details',
-    //   title: 'Détails',
-    //   icon: 'info-circle',
-    //   color: 'primary',
-    // },
+    {
+      action: 'details',
+      title: 'Détails',
+      icon: 'eye',
+      color: 'success',
+    },
   ];
 
   // Liste des onglets avec leur label
@@ -124,19 +112,20 @@
     );
   }
 
-   // Fonction pour déterminer quelles actions afficher selon le type d'utilisateur
-  function getUserSpecificActions(userType: string): ActionType[] {
-    const baseActions: ActionType[] = ['view', 'details'];
-    
-    switch(userType) {
-      case 'ADMINISTRATEUR':
-        return []; 
-      case 'SOUS-DIRECTEUR-ETAB':
-      case 'SOUS-DIRECTEUR-PROF':
-      case 'DIRECTEUR':
-        return [...baseActions, 'edit', 'delete', 'imputation'];
+  // Fonction pour obtenir les actions selon l'onglet actif
+  function getActionsForTab(tab: string): Action[] {
+    switch(tab) {
+      case 'attente':
+        // Onglet attente : seulement l'action "view"
+        return allActions.filter(action => action.action === 'view');
+      
+      case 'accepte':
+        // Onglet accepté : seulement l'action "imputation"
+        return allActions.filter(action => action.action === 'imputation');
+
       default:
-        return baseActions;
+        // Tous les autres onglets : seulement l'action "view"
+        return allActions.filter(action => action.action === 'details');
     }
   }
 
@@ -217,17 +206,14 @@
   };
 
   // Fonction pour déterminer si une colonne Action doit être affichée
- // Fonction pour déterminer si une colonne Action doit être affichée
   function shouldShowActionColumn(): boolean {
     // ADMINISTRATEUR ne voit JAMAIS la colonne Action
     if (user.type === 'ADMINISTRATEUR') return false;
     
-    // if (activeTab === 'valide') {
-      return user.type === 'SOUS-DIRECTEUR-ETAB' || 
-             user.type === 'SOUS-DIRECTEUR-PROF' || 
-             user.type === 'DIRECTEUR';
-    // }
-    
+    return user.type === 'SOUS-DIRECTEUR-ETAB' || 
+           user.type === 'SOUS-DIRECTEUR-PROF' || 
+           user.type === 'INSTRUCTEUR-PROF' || 
+           user.type === 'DIRECTEUR';
   }
 
   // Fonction pour déterminer les colonnes à afficher
@@ -236,10 +222,9 @@
     
     if (user.type === 'ADMINISTRATEUR') {
       return [...baseHeaders, 'Code', 'Imputation'];
-      // Pas de 'Action' pour ADMINISTRATEUR
     }
     
-    if (activeTab === 'valide') {
+    if (activeTab) {
       const headersWithCode = [...baseHeaders, 'Code', 'Imputation'];
       if (shouldShowActionColumn()) {
         return [...headersWithCode, 'Action'];
@@ -248,7 +233,6 @@
     }
     
     const headersWithoutCode = [...baseHeaders, 'Imputation'];
-  
     
     if (showActions) {
       return [...headersWithoutCode, 'Action'];
@@ -261,13 +245,6 @@
     user = getAuthCookie();
     await fetchData();
     permission = 'CRUD';
-    
-    // Filtrer les actions selon le type d'utilisateur
-    const allowedActions = getUserSpecificActions(user.type);
-    actions = allActions.filter(action => allowedActions.includes(action.action));
-
-    console.log('Actions autorisées:', actions);
-    console.log('Type d\'utilisateur:', allowedActions);
   });
 
   // Réactivité
@@ -321,10 +298,13 @@
 
   $: tableHeaders = getTableHeaders();
   $: showActions = shouldShowActionColumn();
-
   
+  // Mise à jour des actions selon l'onglet actif
+  $: actions = getActionsForTab(activeTab);
+
 </script>
 
+<!-- Le reste du template reste identique -->
 <div
   class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]"
 >
@@ -347,7 +327,7 @@
           Liste des dossiers professionnels 
         </h1>
 
-        {#if PERMISSION_MAP['add'].includes(permission as Permission)}
+       <!--  {#if PERMISSION_MAP['add'].includes(permission as Permission)}
           <button
             class="bg-blue-600 hover:bg-blue-700 inline-flex h-[40px] items-center justify-center gap-[6px] rounded-[6px] border-1 border-solid px-[20px] text-[14px] leading-[22px] font-semibold whitespace-nowrap text-white capitalize transition duration-300 ease-in-out"
             on:click={() => ((current_data = {}), (openAdd = true))}
@@ -355,7 +335,7 @@
             <i class="uil uil-plus text-[18px]"></i>
             Nouveau
           </button>
-        {/if}
+        {/if} -->
       </div>
 
       <!-- Onglets -->
@@ -496,26 +476,10 @@
                     </td>
 
                     <!-- Actions -->
-            {#if showActions}
+                    {#if showActions}
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
-                          {#if user.type === 'SOUS-DIRECTEUR-ETAB' || user.type === 'SOUS-DIRECTEUR-PROF' || user.type === 'DIRECTEUR'}
-                            <Menu {item} onAction={handleAction} {actions} />
-                            <!-- <Button
-                              color="red"
-                              size="sm"
-                              class="gap-2 px-3 bg-red-600 hover:bg-red-700"
-                              on:click={() => DisablePro(item)}
-                            >
-                              <TrashBinSolid size="sm" class="mr-1" /> 
-                              <span class="hidden sm:inline">Supprimer</span>
-                            </Button> -->
-                          {:else}
-
-                         <!--  { JSON.stringify(showActions, null, 2) } -->
-                            <!-- Pour les autres types d'utilisateurs autorisés -->
-                            <Menu {item} onAction={handleAction} {actions} />
-                          {/if}
+                          <Menu {item} onAction={handleAction} {actions} />
                         </div>
                       </td>
                     {/if}
@@ -560,7 +524,7 @@
   />
 </Modale>
 
-<Modale bind:open={openEdit} size="xl" title="Modifier un dossier professionnel">
+<Modale bind:open={openEdit} size="2xl" title="Modifier un dossier professionnel">
   <Edit
     bind:open={openEdit}
     data={current_data}
@@ -569,7 +533,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShow} size="xl" title="Détails du dossier professionnel">
+<Modale bind:open={openShow} size="2xl" title="Détails du dossier professionnel">
   <Show
     bind:open={openShow}
     data={current_data}
@@ -578,7 +542,7 @@
   />
 </Modale>
 
-<Modale bind:open={openShowDetails} size="xl" title="Détails complémentaires">
+<Modale bind:open={openShowDetails} size="2xl" title="Détails complémentaires">
   <ShowDetails
     bind:open={openShowDetails}
     data={current_data}
@@ -586,7 +550,7 @@
     userUpdateId={user?.id}
   />
 </Modale>
-
+<!-- 
 <Modale bind:open={openImputation} size="md" title="Imputation">
   <Imputation
     bind:open={openImputation}
@@ -594,6 +558,10 @@
     on:updated={fetchData}
     userUpdateId={user?.id}
   />
+</Modale> -->
+
+<Modale bind:open={openImputation} size="md" title="Imputation">
+  <Imputation bind:open={openImputation} data={current_data} on:updated={fetchData} />
 </Modale>
 
 <Modale bind:open={openDelete} size="xl" title="Supprimer dossier professionnel">

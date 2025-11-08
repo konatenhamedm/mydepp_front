@@ -7,7 +7,7 @@
   import { BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
   import SelectInput from "../../site/SelectInput.svelte";
   import axios from "axios";
-
+//de
   let user = getAuthCookie();
 
   let values = {
@@ -40,7 +40,7 @@
       let res = null;
       objects.forEach(async (element) => {
         res = await axios
-          .get(`http://backend.leadagro.net/api${element.url}`)
+          .get(`https://backend.leadagro.net/api${element.url}`)
           .then((response: any) => {
             values[element.name as keyof typeof values] = response.data.data;
           })
@@ -120,7 +120,7 @@
         Documents = userData?.personne?.documents || [];
       });
   }
-
+//hh
   onMount(async () => {
     user = await getAuthCookie();
     fetchDataFirst();
@@ -487,15 +487,14 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="situationPro"
-                        bind:value={professionnelData.situationPro}
+                        
+                        bind:value={professionnelData.situationPro.id}
                       >
-                        <option value="" disabled selected>
+                        <option value=""  >
                           Sélectionnez votre situation professionnelle
                         </option>
                         {#each values.situationProfessionnelle as situation}
-                          <option value={situation.id}
-                            >{situation.libelle}</option
-                          >
+                         <option value={situation.id} selected={situation.libelle == professionnelData.situationPro.libelle}>{situation.libelle}</option>
                         {/each}
                       </select>
                     </div>
@@ -510,7 +509,7 @@
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                       required={true}
                       name="region"
-                      bind:value={professionnelData.region}
+                      bind:value={professionnelData.region.id}
                     >
                       <option value="" disabled >
                         Sélectionnez votre région sanitaire
@@ -531,7 +530,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="district"
-                        bind:value={professionnelData.district}
+                        bind:value={professionnelData.district.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez votre district sanitaire
@@ -553,7 +552,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="ville"
-                        bind:value={professionnelData.ville}
+                        bind:value={professionnelData.ville.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez votre ville
@@ -574,7 +573,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="commune"
-                        bind:value={professionnelData.commune}
+                        bind:value={professionnelData.commune.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez votre commune
@@ -635,7 +634,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="typeDiplome"
-                        bind:value={professionnelData.typeDiplome}
+                        bind:value={professionnelData.typeDiplome.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez votre type de diplôme
@@ -648,7 +647,7 @@
                       </select>
                     </div>
                   </div>
-                  <div>
+                  <!-- <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Status professionnel *</label
                     >
@@ -658,7 +657,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="statusPro"
-                        bind:value={professionnelData.statusPro}
+                        bind:value={professionnelData.statusPro.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez votre status professionnel
@@ -668,7 +667,7 @@
                         {/each}
                       </select>
                     </div>
-                  </div>
+                  </div> -->
                   <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Origine du diplôme *</label
@@ -679,7 +678,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="lieuObtentionDiplome"
-                        bind:value={professionnelData.lieuObtentionDiplome}
+                        bind:value={professionnelData.lieuObtentionDiplome.id}
                       >
                         <option value="" disabled selected>
                           Sélectionnez l'origine de votre diplôme
@@ -750,7 +749,8 @@
                     <span class="ml-2">Non</span>
                   </div>
                 </div>
-              {:else if Documents.length > 0}
+              {:else if activeTab === "documents"}
+              {#if Documents.length > 0 }
                 <ul class="space-y-4">
                   {#each Documents as document}
                     <li
@@ -838,7 +838,7 @@
                         <a
                           class="text-lg"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.certificat.url
+                          href={professionnelData.certificat
                             ? BASE_URL_API_UPLOAD +
                               professionnelData.certificat.url
                             : "#"}>Voir Document</a
@@ -856,7 +856,7 @@
                         <a
                           class="text-lg"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.diplomeFile.url
+                          href={professionnelData.diplomeFile
                             ? BASE_URL_API_UPLOAD +
                               professionnelData.diplomeFile.url
                             : "#"}>Voir Document</a
@@ -874,7 +874,7 @@
                         <a
                           class="text-lg"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.cv.url
+                          href={professionnelData.cv
                             ? BASE_URL_API_UPLOAD + professionnelData.cv.url
                             : "#"}>Voir Document</a
                         >
@@ -887,6 +887,7 @@
                   <i class="ri-folder-2-line text-6xl text-gray-400 mb-4"></i>
                   <p class="text-lg">Aucun document ajouté pour le moment.</p>
                 </div>
+              {/if}
               {/if}
               <div class="flex justify-end space-x-4 pt-6">
                 <a

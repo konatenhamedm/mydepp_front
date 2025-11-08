@@ -376,7 +376,7 @@
   }
 </script>
 
-<div class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
+<div class="sm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
   <!-- Indicateur de chargement global -->
   {#if loading && !dataLoaded}
     <div class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
@@ -554,7 +554,7 @@
       {:else}
         <div class="overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
-            <HeaderTable  afficheAction
+            <HeaderTable  afficheAction={false}
               item={dossierFilter === 'etablissement'
                 ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
                 : ['N°', 'Nom & Prénoms', 'Téléphone/Adresse', 'Email', 'Profession / Entité Juridique', 'Statut']} 

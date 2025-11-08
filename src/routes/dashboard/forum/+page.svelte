@@ -1979,6 +1979,7 @@
   .__variable_0caaa8 {
     --font-geist-mono: "Geist Mono", "Geist Mono Fallback";
   }
+
   .leading-relaxed {
     line-height: 1.625;
   }

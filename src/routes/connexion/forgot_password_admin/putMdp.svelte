@@ -1,51 +1,27 @@
 <script>
-
-  export let submitted;
   import { apiFetch } from "$lib/api";
-  import { parse } from "cookie";
-
-  
- let otp1 = "";
- let otp2 = "";
- let otp3 = "";
- let otp4 = "";
- let otp5 = "";
- let otp6 = "";
-
- const checkOtp = (otp) => {
-   const otpRegex = /^\d{6}$/;
-   return otpRegex.test(otp);
- };
-
-const ResendOtp = async() =>{
-    const res = await apiFetch(true,'/reset-password/request', "POST",{
-				email:sessionStorage.getItem("resetEmail"),
-			});
-
-}
+    
+ let mdp = "";
+const checkMdp = (mdp) => {
+  const mdpRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  return mdpRegex.test(mdp);
+};
+ $ : mdp && console.log("Mot de passe valide :", checkMdp(mdp));
 
  const handleSubmit = async (event) => {
   event.preventDefault();
-    const otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
-    console.log("Submitted OTP:", otp);
-    if(!checkOtp(otp)){
-        alert("OTP invalide");
-        return;
-    }else{
-     const res = await apiFetch(true,'/reset-password/verify-token-expired', "POST",{
-        email: sessionStorage.getItem("resetEmail"),
-        token: otp
-      });
-      console.log(res);
-      if(res.expired == false){
-        // alert("OTP valide");
-        sessionStorage.setItem("otp", otp);
-        submitted = true;
-      }else{
-        alert("OTP invalide ou expiré");
-      }
-        
-    }
+  if (checkMdp(mdp)) {
+    const email = sessionStorage.getItem("resetEmail");
+    const otp = sessionStorage.getItem("otp");
+    const res = await apiFetch(true,'/reset-password/reset', "POST",{
+      email:email,
+      token:otp,
+				newPassword:mdp,
+			});
+
+  } else {
+    console.log("Mot de passe invalide");
+  }
 };
 </script>
 
@@ -68,89 +44,41 @@ const ResendOtp = async() =>{
         </div>
         <div class="text-center mb-8">
           <h1 class="text-2xl font-semibold text-gray-900 mb-2">
-            Reinitialisation de mot de passe
+            Modification de mot de passe
           </h1>
           <p class="text-gray-600 text-sm">
-           Entrez votre adresse e-mail pour recevoir un code de vérification afin de réinitialiser votre mot de passe.
+           Entrez votre nouveau mot de passe
           </p>
         </div>
         <form class="space-y-6" on:submit|preventDefault={handleSubmit}>
-          <div style="display: flex; justify-content:space-between;  gap:10px;">
-            <input
-              type="text"
-              maxlength="1"
-              id="otp1"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Mot de Passe</label
+            ><input
+              type="password"
+              id="password"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+              placeholder="Entrez votre mot de passe"
               required={true}
-              bind:value={otp1}
+              bind:value={mdp}
             />
-             <input
-              type="text"
-              maxlength="1"
-              id="otp2"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
-              required={true}
-              bind:value={otp2}
-            />
-             <input
-              type="text"
-              maxlength="1"
-              id="otp3"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
-              required={true}
-              bind:value={otp3}
-            />
-             <input
-              type="text"
-              maxlength="1"
-              id="otp4"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
-              required={true}
-              bind:value={otp4}
-            />
-             <input
-              type="text"
-              maxlength="1"
-              id="otp5"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
-              required={true}
-              bind:value={otp5}
-            />
-             <input
-              type="text"
-              maxlength="1"
-              id="otp6"
-              class="w-1/6 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              
-              required={true}
-              bind:value={otp6}
-            />
-           
           </div>
-            <div class="text-sm text-right mb-4">
-              <button type="button" class="text-blue-500 hover:text-blue-600 transition-colors" on:click={ResendOtp}>
-                Renvoyer le code OTP
-              </button>
           <button
             type="submit"
-            
+            disabled={!checkMdp(mdp)}
 
             class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
           >
-           Verifier OTP
+            Modifier Mot de Passe
           </button>
         </form>
-      
         <div class="text-center mt-6">
           <a
             class="text-blue-500 text-sm hover:text-blue-600 transition-colors cursor-pointer"
             href="/connexion"
-            >← Retour à la connexion</a
+            >← Back to Login</a
           >
         </div>
       </div>
