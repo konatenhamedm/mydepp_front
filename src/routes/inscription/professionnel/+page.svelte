@@ -681,6 +681,10 @@
       return false;
     }
   }
+
+  const openCalendar = (event: any) => {
+    event.target.showPicker();
+  };
 </script>
 
 <main>
@@ -1024,7 +1028,7 @@
                     multiple={false}
                     options={values.nationate}
                     bind:value={formData.nationalite}
-                    class="w-full h-full"
+                    controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="libelle"
                     valueField="id"
                     placeholder="Sélectionnez votre région sanitaire"
@@ -1048,7 +1052,7 @@
                     labelField="libelle"
                     valueField="id"
                     placeholder="Sélectionnez votre civilité"
-                    class="w-full h-full"
+                    controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                   />
                 </div>
                 {#if errors.civilite}
@@ -1116,6 +1120,7 @@
                     required={true}
                     name="dateNaissance"
                     bind:value={formData.dateNaissance}
+                    onclick={openCalendar}
                   />
                 </div>
                 {#if errors.dateNaissance}
@@ -1135,7 +1140,7 @@
                     multiple={false}
                     options={situationsMatrimoniales}
                     bind:value={formData.situation}
-                    class="w-full h-full"
+                    controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="label"
                     valueField="value"
                     placeholder="Sélectionnez votre situation matrimoniale"
@@ -1204,7 +1209,7 @@
                     options={professions}
                     bind:value={specialite}
                     onChange={(event: any) => handleSpecialiteChange(event)}
-                    class="w-full h-full"
+                    controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="libelle"
                     valueField="libelle"
                     placeholder="Sélectionnez votre groupe de spécialisation"
@@ -1227,7 +1232,7 @@
                     multiple={false}
                     options={specialiteFetched || []}
                     bind:value={formData.profession}
-                    class="w-full h-full"
+                    controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="libelle"
                     valueField="code"
                     placeholder="Sélectionnez votre spécialité"
@@ -1310,6 +1315,7 @@
                       required={true}
                       name="dateDiplome"
                       bind:value={formData.dateDiplome}
+                      onclick={openCalendar}
                     />
                   </div>
                   {#if errors.dateDiplome}
@@ -1359,6 +1365,7 @@
                       required={true}
                       name="datePremierDiplome"
                       bind:value={formData.datePremierDiplome}
+                      onclick={openCalendar}
                     />
                   </div>
                   {#if errors.datePremierDiplome}
@@ -1402,7 +1409,7 @@
                       multiple={false}
                       options={values.situationProfessionnelle}
                       bind:value={formData.situationPro}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre situation professionnelle"
@@ -1425,7 +1432,7 @@
                       multiple={false}
                       options={values.region}
                       bind:value={formData.region}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre région sanitaire"
@@ -1449,7 +1456,7 @@
                       multiple={false}
                       options={values.district}
                       bind:value={formData.district}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre district sanitaire"
@@ -1470,7 +1477,7 @@
                       multiple={false}
                       options={values.ville}
                       bind:value={formData.ville}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre ville"
@@ -1494,7 +1501,7 @@
                       multiple={false}
                       options={values.commune}
                       bind:value={formData.commune}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre commune"
@@ -1606,7 +1613,7 @@
                       multiple={false}
                       options={values.typeDiplome}
                       bind:value={formData.typeDiplome}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre type de diplôme"
@@ -1632,7 +1639,7 @@
                       multiple={false}
                       options={values.statusPro}
                       bind:value={formData.statusPro}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez votre status professionnel"
@@ -1653,7 +1660,7 @@
                       multiple={false}
                       options={values.lieuObtentionDiplome}
                       bind:value={formData.lieuObtentionDiplome}
-                      class="w-full h-full"
+                      controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
                       placeholder="Sélectionnez l'origine de votre diplôme"
@@ -1690,7 +1697,7 @@
                     {#if imagePreview.photo}
                       <div class="flex-shrink-0">
                         <img
-                          style="height: 50px !important;width: 124px !important;"
+                          
                           src={imagePreview.photo}
                           alt="Aperçu photo"
                           class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
@@ -1698,14 +1705,25 @@
                       </div>
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onchange={(e) => handleFileUpload(e, "photo")}
-                        class="w-full h-[50px] px-4 py-2 border rounded-lg
-            {errors.photo ? 'border-red-500' : 'border-gray-300'}"
-                        required
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-photo"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-photo"
+                          accept="image/*"
+                          onchange={(e) => handleFileUpload(e, "photo")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
                       {#if errors.photo}
                         <p class="mt-1 text-sm text-red-600">{errors.photo}</p>
                       {/if}
@@ -1724,7 +1742,7 @@
                     {#if imagePreview.cni}
                       <div class="flex-shrink-0">
                         <img
-                          style="height: 50px !important;width: 124px !important;"
+                          
                           src={imagePreview.cni}
                           alt="Aperçu CNI"
                           class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
@@ -1732,14 +1750,25 @@
                       </div>
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onchange={(e) => handleFileUpload(e, "cni")}
-                        class="w-full h-[50px] px-4 py-2 border rounded-lg
-            {errors.cni ? 'border-red-500' : 'border-gray-300'}"
-                        required
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-cni"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-cni"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "cni")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
                       {#if errors.cni}
                         <p class="mt-1 text-sm text-red-600">{errors.cni}</p>
                       {/if}
@@ -1756,7 +1785,7 @@
                     {#if imagePreview.diplomeFile}
                       <div class="flex-shrink-0">
                         <img
-                          style="height: 50px !important;width: 124px !important;"
+                          
                           src={imagePreview.diplomeFile}
                           alt="Aperçu diplôme"
                           class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
@@ -1764,14 +1793,25 @@
                       </div>
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onchange={(e) => handleFileUpload(e, "diplomeFile")}
-                        class="w-full h-[50px] px-4 py-2 border rounded-lg
-            {errors.diplomeFile ? 'border-red-500' : 'border-gray-300'}"
-                        required
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-diplomeFile"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-diplomeFile"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "diplomeFile")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
                       {#if errors.diplomeFile}
                         <p class="mt-1 text-sm text-red-600">
                           {errors.diplomeFile}
@@ -1789,23 +1829,48 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.casier}
                       <div class="flex-shrink-0">
-                        <img
-                          style="height: 50px !important;width: 124px !important;"
-                          src={imagePreview.casier}
-                          alt="Aperçu casier"
-                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
-                        />
+                        {console.log(
+                          "imagePreview.casier",
+                          imagePreview.casier.startsWith("data:image")
+                        )}
+                        {#if imagePreview.casier.startsWith("data:image")}
+                          <img
+                            
+                            src={imagePreview.casier}
+                            alt="Aperçu casier"
+                            class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          />
+                        {:else}
+                          <!-- <span style="display:flex;align-items:center;justify-content:center;height:50px;width:50px;background:#f3f4f6;border-radius:8px;border:1px solid #eee;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#2563eb"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 1.5V9h5.5L13 3.5zM6 4h6v5a1 1 0 0 0 1 1h5v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4zm2 10v2h8v-2H8z"/></svg>
+                          </span> -->
+                          <iframe
+                            src={imagePreview.casier}
+                            class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          ></iframe>
+                        {/if}
                       </div>
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onchange={(e) => handleFileUpload(e, "casier")}
-                        class="w-full h-[50px] px-4 py-2 border rounded-lg
-            {errors.casier ? 'border-red-500' : 'border-gray-300'}"
-                        required
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-casier"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-casier"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "casier")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
                       {#if errors.casier}
                         <p class="mt-1 text-sm text-red-600">{errors.casier}</p>
                       {/if}
@@ -1822,7 +1887,7 @@
                     {#if imagePreview.certificat}
                       <div class="flex-shrink-0">
                         <img
-                          style="height: 50px !important;width: 124px !important;"
+                          
                           src={imagePreview.certificat}
                           alt="Aperçu certificat"
                           class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
@@ -1830,12 +1895,24 @@
                       </div>
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onchange={(e) => handleFileUpload(e, "certificat")}
-                        class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-certificat"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-certificat"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "certificat")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1846,23 +1923,52 @@
                     CV (optionnel)
                   </label>
                   <div class="flex gap-4 items-start">
-                    {#if imagePreview.cv}
-                      <div class="flex-shrink-0">
+                    {#if imagePreview?.cv}
+                      {#if imagePreview.cv.startsWith("data:image")}
                         <img
-                          style="height: 50px !important;width: 124px !important;"
                           src={imagePreview.cv}
                           alt="Aperçu CV"
                           class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
                         />
-                      </div>
+                      {:else}
+                        <svg
+                          width="64px"
+                          height="64px"
+                          viewBox="-4 0 40 40"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          ></g><g id="SVGRepo_iconCarrier">
+                            <path
+                              d="M25.6686 26.0962C25.1812 26.2401 24.4656 26.2563 23.6984 26.145C22.875 26.0256 22.0351 25.7739 21.2096 25.403C22.6817 25.1888 23.8237 25.2548 24.8005 25.6009C25.0319 25.6829 25.412 25.9021 25.6686 26.0962ZM17.4552 24.7459C17.3953 24.7622 17.3363 24.7776 17.2776 24.7939C16.8815 24.9017 16.4961 25.0069 16.1247 25.1005L15.6239 25.2275C14.6165 25.4824 13.5865 25.7428 12.5692 26.0529C12.9558 25.1206 13.315 24.178 13.6667 23.2564C13.9271 22.5742 14.193 21.8773 14.468 21.1894C14.6075 21.4198 14.7531 21.6503 14.9046 21.8814C15.5948 22.9326 16.4624 23.9045 17.4552 24.7459ZM14.8927 14.2326C14.958 15.383 14.7098 16.4897 14.3457 17.5514C13.8972 16.2386 13.6882 14.7889 14.2489 13.6185C14.3927 13.3185 14.5105 13.1581 14.5869 13.0744C14.7049 13.2566 14.8601 13.6642 14.8927 14.2326ZM9.63347 28.8054C9.38148 29.2562 9.12426 29.6782 8.86063 30.0767C8.22442 31.0355 7.18393 32.0621 6.64941 32.0621C6.59681 32.0621 6.53316 32.0536 6.44015 31.9554C6.38028 31.8926 6.37069 31.8476 6.37359 31.7862C6.39161 31.4337 6.85867 30.8059 7.53527 30.2238C8.14939 29.6957 8.84352 29.2262 9.63347 28.8054ZM27.3706 26.1461C27.2889 24.9719 25.3123 24.2186 25.2928 24.2116C24.5287 23.9407 23.6986 23.8091 22.7552 23.8091C21.7453 23.8091 20.6565 23.9552 19.2582 24.2819C18.014 23.3999 16.9392 22.2957 16.1362 21.0733C15.7816 20.5332 15.4628 19.9941 15.1849 19.4675C15.8633 17.8454 16.4742 16.1013 16.3632 14.1479C16.2737 12.5816 15.5674 11.5295 14.6069 11.5295C13.948 11.5295 13.3807 12.0175 12.9194 12.9813C12.0965 14.6987 12.3128 16.8962 13.562 19.5184C13.1121 20.5751 12.6941 21.6706 12.2895 22.7311C11.7861 24.0498 11.2674 25.4103 10.6828 26.7045C9.04334 27.3532 7.69648 28.1399 6.57402 29.1057C5.8387 29.7373 4.95223 30.7028 4.90163 31.7107C4.87693 32.1854 5.03969 32.6207 5.37044 32.9695C5.72183 33.3398 6.16329 33.5348 6.6487 33.5354C8.25189 33.5354 9.79489 31.3327 10.0876 30.8909C10.6767 30.0029 11.2281 29.0124 11.7684 27.8699C13.1292 27.3781 14.5794 27.011 15.985 26.6562L16.4884 26.5283C16.8668 26.4321 17.2601 26.3257 17.6635 26.2153C18.0904 26.0999 18.5296 25.9802 18.976 25.8665C20.4193 26.7844 21.9714 27.3831 23.4851 27.6028C24.7601 27.7883 25.8924 27.6807 26.6589 27.2811C27.3486 26.9219 27.3866 26.3676 27.3706 26.1461ZM30.4755 36.2428C30.4755 38.3932 28.5802 38.5258 28.1978 38.5301H3.74486C1.60224 38.5301 1.47322 36.6218 1.46913 36.2428L1.46884 3.75642C1.46884 1.6039 3.36763 1.4734 3.74457 1.46908H20.263L20.2718 1.4778V7.92396C20.2718 9.21763 21.0539 11.6669 24.0158 11.6669H30.4203L30.4753 11.7218L30.4755 36.2428ZM28.9572 10.1976H24.0169C21.8749 10.1976 21.7453 8.29969 21.7424 7.92417V2.95307L28.9572 10.1976ZM31.9447 36.2428V11.1157L21.7424 0.871022V0.823357H21.6936L20.8742 0H3.74491C2.44954 0 0 0.785336 0 3.75711V36.2435C0 37.5427 0.782956 40 3.74491 40H28.2001C29.4952 39.9997 31.9447 39.2143 31.9447 36.2428Z"
+                              fill="#EB5757"
+                            ></path>
+                          </g></svg
+                        >
+                      {/if}
                     {/if}
                     <div class="flex-1">
-                      <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onchange={(e) => handleFileUpload(e, "cv")}
-                        class="w-full h-[50px] px-4 py-2 border border-gray-300 rounded-lg"
-                      />
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-cv"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-cv"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "cv")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1908,22 +2014,26 @@
                 </div>
                 {#if formData.appartenirOrganisation === "oui"}
                   <label class="form_label font-bold block mb-2" for="ordre">
-                  <big>Nom de l'organisation </big>
-                </label>
+                    <big>Nom de l'organisation </big>
+                  </label>
 
-                <div class="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    id={"appartenance_organisation"}
+                  <div class="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      id={"appartenance_organisation"}
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    bind:value={formData.organisationNom}
-                  />
-                  {#if errors.organisationNom}
-                    <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
-                      <p class="text-red-800 text-sm">{errors.organisationNom}</p>
-                    </div>
-                  {/if}
-                </div>
+                      bind:value={formData.organisationNom}
+                    />
+                    {#if errors.organisationNom}
+                      <div
+                        class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg"
+                      >
+                        <p class="text-red-800 text-sm">
+                          {errors.organisationNom}
+                        </p>
+                      </div>
+                    {/if}
+                  </div>
                 {/if}
               </div>
 
@@ -2010,7 +2120,9 @@
               }}
               type="button"
               disabled={step === 1}
-              class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              class="{step == 1
+                ? 'bg-white text-gray-900'
+                : 'bg-gray-200 text-gray-700'} px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {step > 1 ? "Précédent" : ""}
             </button>
