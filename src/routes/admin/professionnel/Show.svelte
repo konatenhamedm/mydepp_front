@@ -8,6 +8,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import DocShow from "./DocShow.svelte";
   import { format } from "date-fns";
+  import { fr } from "date-fns/locale";
   import RecuPaiement from "./RecuPaiement.svelte";
   import FicheInscription from "./FicheInscription.svelte";
   import Modale from "$components/Modales/Modale.svelte";
@@ -69,39 +70,39 @@
 
   function init(form: HTMLFormElement) {
     console.log(`je suis la data `, data);
-    numero = data.personne.number || "";
-    nom = data.personne.nom || "";
-    status = data.personne.status || "";
-    professionLibelle = data.personne.profession
+    numero = data.personne?.number || "";
+    nom = data.personne?.nom || "";
+    status = data.personne?.status || "";
+    professionLibelle = data.personne?.profession
       ? data.personne.profession.libelle
       : "";
-    prenoms = data.personne.prenoms || "";
-    reason = data.personne.reason || "";
-    professionnel = data.personne.professionnel || "";
-    civilite = data.personne.civilite ? data.personne.civilite.libelle : "";
-    nationalite = data.personne.nationate
+    prenoms = data.personne?.prenoms || "";
+    reason = data.personne?.reason || "";
+    professionnel = data.personne?.professionnel || "";
+    civilite = data.personne?.civilite ? data.personne.civilite.libelle : "";
+    nationalite = data.personne?.nationate
       ? data.personne.nationate.libelle
       : "";
-    dateNaissance = data.personne.dateNaissance || "";
-    dateDiplome = data.personne.dateDiplome || "";
-    diplome = data.personne.diplome || "";
-    poleSanitaire = data.personne.poleSanitaire || "";
-    organisationNom = data.personne.organisationNom || "";
-    poleSanitairePro = data.personne.poleSanitairePro || "";
-    lieuExercicePro = data.personne.lieuExercicePro || "";
-    datePremierDiplome = data.personne.datePremierDiplome || "";
-    situationPro = data.personne.situationPro.libelle || "";
-    situation = data.personne.situation || "";
+    dateNaissance = data.personne?.dateNaissance  || "";
+    dateDiplome = data.personne?.dateDiplome || "";
+    diplome = data.personne?.diplome || "";
+    poleSanitaire = data.personne?.poleSanitaire || "";
+    organisationNom = data.personne?.organisationNom || "";
+    poleSanitairePro = data.personne?.poleSanitairePro || "";
+    lieuExercicePro = data.personne?.lieuExercicePro || "";
+    datePremierDiplome = data.personne?.datePremierDiplome || "";
+    situationPro = data.personne?.situationPro?.libelle || "";
+    situation = data.personne?.situation || "";
     typeUser = data?.typeUser || "";
     userEmail = data.email || "";
-    appartenirOrganisation = data.personne.appartenirOrganisation || "";
-    appartenirOrdre = data.personne.appartenirOrdre || "";
-    numeroInscription = data.personne.numeroInscription || "";
-    photo = data.personne.photo || "";
-    cni = data.personne.cni || "";
-    CVpath = data.personne.cv ? data.personne.cv.path : "";
-    CValt = data.personne.cv ? data.personne.cv.alt : "";
-    Photopath = data.personne.photo ? data.personne.photo.path : "";
+    appartenirOrganisation = data.personne?.appartenirOrganisation || "";
+    appartenirOrdre = data.personne?.appartenirOrdre || "";
+    numeroInscription = data.personne?.numeroInscription || "";
+    photo = data.personne?.photo || "";
+    cni = data.personne?.cni || "";
+    CVpath = data.personne?.cv ? data.personne.cv.path : "";
+    CValt = data.personne?.cv ? data.personne.cv.alt : "";
+    Photopath = data.personne?.photo ? data.personne.photo.path : "";
     Photoalt = photo ? data.personne.photo.alt : "";
     diplomeFilePath = data.personne.diplomeFile
       ? data.personne.diplomeFile.path
@@ -133,7 +134,7 @@
   }
   let valid_endUser = {
     raison: "",
-    status: status == "accepte" ? "validation" : "acceptation",
+    status: status == "accepte" ? "validation" : "",
   };
 
   let openShow: boolean = false;
@@ -233,14 +234,14 @@
       console.error("Error saving:", error);
     }
   }
-  function formatDateForInput(dateString: string) {
+  function formatDateLongFr(dateString: string) {
     if (!dateString) return "";
     try {
       const date = new Date(dateString);
-      return format(date, "yyyy-MM-dd"); // Formater en YYYY-MM-DD
+      return format(date, "EEEE dd MMMM yyyy", { locale: fr });
     } catch (e) {
       console.error("Erreur de formatage de date:", e);
-      return "";
+      return dateString;
     }
   }
 
@@ -314,7 +315,7 @@
               type="text"
               fieldName="dateNaissance"
               label="Date de naissance"
-              field={dateNaissance}
+              field={formatDateLongFr(dateNaissance)}
               disabled={true}
             />
           </div>
@@ -396,7 +397,7 @@
               type="text"
               fieldName="datePremierDiplome"
               label="Date d'obtention premier emploi"
-              field={datePremierDiplome}
+              field={formatDateLongFr(datePremierDiplome)}
               disabled={true}
             />
           </div>
@@ -444,7 +445,7 @@
               type="text"
               fieldName="dateDiplome"
               label="Date du diplôme"
-              field={dateDiplome}
+              field={formatDateLongFr(dateDiplome)}
               disabled={true}
             />
           </div>

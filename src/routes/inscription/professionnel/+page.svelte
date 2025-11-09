@@ -159,36 +159,32 @@
       // Validation Step 3: Informations professionnelles
       const requiredFields = [
         { field: "profession", label: "Profession" },
-        // {field: 'diplome', label: 'Diplôme'},
-        // {field: 'typeDiplome', label: 'Type de diplôme'},
-        // {field: 'dateDiplome', label: 'Date du diplôme'},
-        // {field: 'lieuObtentionDiplome', label: "Lieu d'obtention du diplôme"},
-        // {field: 'situationPro', label: 'Situation professionnelle'},
-      ];
-      if (intermed == 1) {
-        requiredFields.push(
-          { field: "emailPro", label: "Adresse email professionnel" },
-          { field: "dateDiplome", label: "Date d'obtention du diplôme" },
-          { field: "lieuDiplome", label: "Lieu d'obtention du diplôme" },
-          { field: "datePremierDiplome", label: "Date du premier emploi" },
-          { field: "diplome", label: "Dénomination du diplôme" },
-          { field: "situationPro", label: "Situation professionnelle" },
-          { field: "region", label: "Région sanitaire" },
-          { field: "district", label: "District sanitaire" },
-          { field: "ville", label: "Ville" },
-          { field: "commune", label: "Commune" },
-          { field: "quartier", label: "Quartier" },
+        { field: "diplome", label: "Diplôme" },
+        { field: "typeDiplome", label: "Type de diplôme" },
+        { field: "dateDiplome", label: "Date du diplôme" },
+        { field: "lieuObtentionDiplome", label: "Lieu d'obtention du diplôme" },
+        { field: "situationPro", label: "Situation professionnelle" },
+        { field: "emailPro", label: "Adresse email professionnel" },
+        { field: "dateDiplome", label: "Date d'obtention du diplôme" },
+        { field: "lieuDiplome", label: "Lieu d'obtention du diplôme" },
+        { field: "datePremierDiplome", label: "Date du premier emploi" },
+        { field: "diplome", label: "Dénomination du diplôme" },
+        { field: "situationPro", label: "Situation professionnelle" },
+        { field: "region", label: "Région sanitaire" },
+        { field: "district", label: "District sanitaire" },
+        { field: "ville", label: "Ville" },
+        { field: "commune", label: "Commune" },
+        { field: "quartier", label: "Quartier" },
 
-          {
-            field: "professionnel",
-            label: "Structure d'exercice professionnel",
-          },
-          { field: "lieuExercicePro", label: "Lieu d'exercice professionnel" },
-          { field: "typeDiplome", label: "Type de diplôme" },
-          { field: "statusPro", label: "Status professionnel" },
-          { field: "lieuObtentionDiplome", label: "Origine du diplôme" }
-        );
-      }
+        {
+          field: "professionnel",
+          label: "Structure d'exercice professionnel",
+        },
+        { field: "lieuExercicePro", label: "Lieu d'exercice professionnel" },
+        { field: "typeDiplome", label: "Type de diplôme" },
+        { field: "statusPro", label: "Status professionnel" },
+        { field: "lieuObtentionDiplome", label: "Origine du diplôme" },
+      ];
 
       requiredFields.forEach(({ field, label }) => {
         if (!formData[field]) {
@@ -457,16 +453,18 @@
           isPaiementProcessing = false;
           authenticating = false;
         });
-    }else{
-      await fetch(BASE_URL_API + "/professionnel/create",{
+    } else {
+      await fetch(BASE_URL_API + "/professionnel/create", {
         method: "POST",
         body: formDatas,
-      }).then((response) => response.json())
-      .then((result) => {
-        authenticating = false;
-        alert("Inscription réussie !");
-        window.location.href = "/connexion";
-      }).catch((error) => {
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          authenticating = false;
+          alert("Inscription réussie !");
+          window.location.href = "/connexion";
+        })
+        .catch((error) => {
           console.error("Erreur paiements :", error);
           isPaiementProcessing = false;
           authenticating = false;
