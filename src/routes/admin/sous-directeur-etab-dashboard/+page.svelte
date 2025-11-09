@@ -46,6 +46,7 @@
   const itemsPerPage = 10;
   let professionnels: any[] = [];
   let allEtab2: any[] = [];
+  let EtabLength2: any = 0;
   let professions: any[] = [];
   let selectedProfession: string = '';
   let selectedStatus: string = '';
@@ -131,15 +132,16 @@
         statsUrl = `/statistique/info-dashboard/by/typeuser/${userType}/${userId}`;
       }
 
-      const [statsRes, listeProfessionnels, profRes, allEtab] = await Promise.all([
+      const [statsRes, listeProfessionnels, profRes, allEtab, EtabLength] = await Promise.all([
         apiFetch(true, statsUrl).catch(() => null),
         apiFetch(true, `/professionnel/`).catch(() => ({ data: [] })),
         apiFetch(true, '/profession/').catch(() => ({ data: [] })),
         apiFetch(true, '/etablissement/').catch(() => ({ data: [] })),
+        apiFetch(true, '/statistique/stats-card').catch(() => ({ data: [] })),
       ]);
 
       allEtab2 = allEtab?.data || [];
-
+      EtabLength2 = EtabLength?.data.etablissement.total || 0;
       if (statsRes?.data) {
         stats = {
           ...stats,
@@ -244,7 +246,7 @@
       id: 'etablissement',
       title: 'Etablissement',
       subtitle: 'Statistique actuelle',
-      value: allEtab2.length,
+      value: EtabLength2,
       icon: 'building',
       color: 'blue',
       bgColor: 'bg-blue-50',
