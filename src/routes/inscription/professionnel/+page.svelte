@@ -238,7 +238,15 @@
         }
       });
     }
-
+    if (currentStep === 6) {
+      // Validation Step 6: Organisation et ordre professionnel
+      if (formData.appartenirOrdre === "oui") {
+        if (formData.organisationNom.length === 0) {
+          errors.organisationNom = "Le nom de l'organisation est requis";
+          isValid = false;
+        }
+      }
+    }
     return isValid;
   }
 
@@ -1897,6 +1905,25 @@
                     >Non</label
                   >
                 </div>
+                {#if formData.appartenirOrganisation === "oui"}
+                  <label class="form_label font-bold block mb-2" for="ordre">
+                  <big>Nom de l'organisation </big>
+                </label>
+
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    id={"appartenance_organisation"}
+                    class="cursor-pointer"
+                    bind:value={formData.organisationNom}
+                  />
+                  {#if errors.organisationNom}
+                    <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
+                      <p class="text-red-800 text-sm">{errors.organisationNom}</p>
+                    </div>
+                  {/if}
+                </div>
+                {/if}
               </div>
 
               <div class="form__group mb-4">
