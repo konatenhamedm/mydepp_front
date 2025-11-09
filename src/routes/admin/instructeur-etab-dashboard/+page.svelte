@@ -44,6 +44,7 @@
   let dossierFilter = "etablissement";
   let currentPage = 1;
   const itemsPerPage = 10;
+  let totalItems = 0;
   let professionnels: any[] = [];
   let allEtab2: any[] = [];
   let professions: any[] = [];
@@ -134,15 +135,16 @@
       }
 
       // Chargement parallèle optimisé
-      const [statsRes, listeProfessionnels, profRes, allEtab] = await Promise.all([
+      const [statsRes, listeProfessionnels, profRes, allEtab, total] = await Promise.all([
         apiFetch(true, statsUrl).catch(() => null),
         apiFetch(true, `/professionnel/`).catch(() => ({ data: [] })),
         apiFetch(true, '/profession/').catch(() => ({ data: [] })),
         apiFetch(true, '/etablissement/').catch(() => ({ data: [] })),
+        apiFetch(true, '/statistique/stats-card').catch(() => ({ data: [] })),
       ]);
 
       allEtab2 = allEtab?.data || [];
-
+      totalItems = total?.data?.etablissement?.total || 0;
       if (statsRes?.data) {
         stats = {
           ...stats,
@@ -317,7 +319,7 @@
       id: 'etablissement',
       title: 'Etablissement',
       subtitle: 'Statistique actuelle',
-      value: allEtab2.length,
+      value: totalItems,
       icon: 'building',
       color: 'purple',
       bgColor: 'bg-purple-50',

@@ -9,6 +9,7 @@
   import Notification from '$components/_includes/Notification.svelte';
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
+  import { all } from 'axios';
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
@@ -43,6 +44,7 @@
   let dataLoaded = false;
   let dossierFilter = "all";
   let currentPage = 1;
+  let allStats2: any[] = [];
   const itemsPerPage = 10;
   let professionnels: any[] = [];
   let allEtab2: any[] = [];
@@ -131,15 +133,17 @@
         statsUrl = `/statistique/info-dashboard/by/typeuser/${userType}/${userId}`;
       }
 
-      const [statsRes, listeProfessionnels, profRes, allEtab] = await Promise.all([
+      const [statsRes, listeProfessionnels, profRes, allEtab,allStats] = await Promise.all([
         apiFetch(true, statsUrl).catch(() => null),
         apiFetch(true, `/professionnel/`).catch(() => ({ data: [] })),
         apiFetch(true, '/profession/').catch(() => ({ data: [] })),
         apiFetch(true, '/etablissement/').catch(() => ({ data: [] })),
+        apiFetch(true, '/statistique/stats-card').catch(() => ({ data: [] })),
       ]);
 
       allEtab2 = allEtab?.data || [];
-
+      console.log("allStats:", allStats);
+      allStats2 = allStats?.data || [];
       if (statsRes?.data) {
         stats = {
           ...stats,
@@ -233,12 +237,13 @@
   }
 
   // Données pour les cartes - toutes les options activées
-  $: cardData = [
+  $: cardData = 
+  [
     {
       id: 'all',
       title: 'Tous les dossiers',
       subtitle: 'Statistique actuelle',
-      value: stats.atttente + stats.accepte + stats.rejete + stats.valide + stats.refuse + stats.renouvelle + stats.a_jour + allEtab2.length,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.total : 0,
       icon: 'folder',
       color: 'blue',
       bgColor: 'bg-blue-50',
@@ -249,7 +254,7 @@
       id: 'attente',
       title: 'En attente',
       subtitle: 'Statistique actuelle',
-      value: stats.atttente,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.attente : 0,
       icon: 'clock',
       color: 'yellow',
       bgColor: 'bg-yellow-50',
@@ -260,7 +265,7 @@
       id: 'accepted',
       title: 'Acceptés',
       subtitle: 'Statistique actuelle',
-      value: stats.accepte,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.accepte : 0,
       icon: 'check',
       color: 'green',
       bgColor: 'bg-green-50',
@@ -271,7 +276,7 @@
       id: 'rejected',
       title: 'Rejetés',
       subtitle: 'Statistique actuelle',
-      value: stats.rejete,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.rejete : 0,
       icon: 'x',
       color: 'red',
       bgColor: 'bg-red-50',
@@ -282,7 +287,7 @@
       id: 'validated',
       title: 'Validés',
       subtitle: 'Statistique actuelle',
-      value: stats.valide,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.valide : 0,
       icon: 'shield-check',
       color: 'green',
       bgColor: 'bg-green-50',
@@ -293,7 +298,7 @@
       id: 'a_jour',
       title: 'À jour',
       subtitle: 'Statistique actuelle',
-      value: stats.a_jour,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.a_jour : 0,
       icon: 'calendar',
       color: 'blue',
       bgColor: 'bg-blue-50',
