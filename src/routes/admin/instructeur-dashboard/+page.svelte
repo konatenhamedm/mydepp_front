@@ -313,17 +313,17 @@
       textColor: 'text-blue-600',
       borderColor: 'border-blue-200'
     },
-    {
-      id: 'etablissement',
-      title: 'Etablissement',
-      subtitle: 'Statistique actuelle',
-      value: allEtab2.length,
-      icon: 'building',
-      color: 'purple',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
-      borderColor: 'border-purple-200'
-    },
+    // {
+    //   id: 'etablissement',
+    //   title: 'Etablissement',
+    //   subtitle: 'Statistique actuelle',
+    //   value: allEtab2.length,
+    //   icon: 'building',
+    //   color: 'purple',
+    //   bgColor: 'bg-purple-50',
+    //   textColor: 'text-purple-600',
+    //   borderColor: 'border-purple-200'
+    // },
     {
       id: 'datetime',
       title: 'Date & Heure',
@@ -391,7 +391,7 @@
   {/if}
 
   <!-- Grille de cartes améliorée -->
-  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
     {#each cardData as card}
       {#if card.id === 'datetime'}
         <!-- Carte Date/Heure spéciale -->

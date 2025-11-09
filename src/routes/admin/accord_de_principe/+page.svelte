@@ -21,7 +21,7 @@
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
 
 
-  let user: any = CookieManager.get('auth');
+  let user: any = {};
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';

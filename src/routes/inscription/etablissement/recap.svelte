@@ -1,5 +1,9 @@
 <script>
   export let formData;
+  export let values;
+
+
+  console.log("Recap formData:", formData);  console.log("Recap values:", values);
 </script>
 
 <div class="space-y-6">
