@@ -1,5 +1,4 @@
 <script lang="ts">
-  
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
   import axios from "axios";
@@ -8,19 +7,22 @@
   import FormStep3 from "./formStep3.svelte";
   import Modal from "./Modal.svelte";
   import Recap from "./recap.svelte";
-let step = 1;
-let done = false;
-let lastStep = false;
-let showPassword = false;
-let isPaiementProcessing = false;
-let authenticating = false;
-let isPaiementDone = false;
-let message = "";
-let isModalOpen = false;
- let fileInputs = [];
+  import Svelecte from "svelecte";
+  import { BASE_URL_API } from "$lib/api";
+  import SpinnerBlue from "$components/_skeletons/SpinnerBlue.svelte";
+  let step = 1;
+  let done = false;
+  let lastStep = false;
+  let showPassword = false;
+  let isPaiementProcessing = false;
+  let authenticating = false;
+  let isPaiementDone = false;
+  let message = "";
+  let isModalOpen = false;
+  let fileInputs = [];
 
- let pdfUrl:any;
-   function openModal(reference: any) {
+  let pdfUrl: any;
+  function openModal(reference: any) {
     pdfUrl = reference; // ✅ Met à jour la variable réactive
     isModalOpen = true;
   }
@@ -30,86 +32,266 @@ let isModalOpen = false;
     localStorage.clear();
   }
 
+  async function checkEmail(email: any) {
+    if (!email) return false;
 
-const nextStep = () => {
- const errors2 = checkFormData(formData)
- if(step == 1){
-  if(errors2.email.length>0 || errors2.password.length >0 ||errors2.confirmPassword.length>0){
-    return
+    try {
+      const res = await fetch(
+        `${BASE_URL_API}/user/check/email/existe/${email}`
+      );
+      const data = await res.json();
+      console.log("checkEmail data", data);
+      return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
+    } catch (error) {
+      console.error(
+        "Erreur lors de la vérification de la transaction :",
+        error
+      );
+      return false;
+    }
   }
- }else if (step == 2){
-  // if
- }
-  step += 1;
-  if (step === 4) {
-    lastStep = true;
+  const validateEmail = (email: string): boolean => {
+    const re =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+  const validatePhone = (phone: string): boolean => {
+    const re = /^(07|01|05)[0-9]{8}$/;
+    return re.test(String(phone));
+  };
+
+  const validatePassword = (password: string): boolean => {
+    // Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+
+  const nextStep = async () => {
+    const errors2 = await checkFormData(formData);
+    if (step == 1) {
+      if (
+        errors2?.email.length > 0 ||
+        errors2?.password.length > 0 ||
+        errors2?.confirmPassword.length > 0
+      ) {
+        return;
+      }
+    } else if (step == 2) {
+      if (formData.typePersonne === "PHYSIQUE") {
+        if (
+          errors2.niveauIntervention.length > 0 ||
+          errors2.typePersonne.length > 0 ||
+          errors2.nom.length > 0 ||
+          errors2.prenoms.length > 0 ||
+          errors2.telephone.length > 0 ||
+          errors2.bp.length > 0 ||
+          errors2.emailAutre.length > 0 ||
+          errors2.adresse.length > 0 ||
+          errors2.nomRepresentant.length > 0 ||
+          errors2.denomination.length > 0
+        ) {
+          return;
+        }
+      } else {
+        if (
+          errors2.niveauIntervention.length > 0 ||
+          errors2.typePersonne.length > 0 ||
+          errors2.telephone.length > 0 ||
+          errors2.bp.length > 0 ||
+          errors2.emailAutre.length > 0 ||
+          errors2.adresse.length > 0 ||
+          errors2.nomRepresentant.length > 0 ||
+          errors2.denomination.length > 0
+        ) {
+          return;
+        }
+      }
+    }else{
+      if (errors2.documents.length > 0) {
+        return;
+      }
+    }
+    step += 1;
+    if (step === 4) {
+      lastStep = true;
+    }
+    console.log(formData);
+  };
+  const prevStep = () => {
+    if (step > 1) {
+      step -= 1;
+    }
+    lastStep = false;
+  };
+
+  let formData = {
+    password: "",
+    confirmPassword: "",
+    email: "",
+    niveauIntervention: "",
+    typePersonne: "",
+    nom: "",
+    prenoms: "",
+    telephone: "",
+    bp: "",
+    emailAutre: "",
+    adresse: "",
+    nomRepresentant: "",
+    denomination: "",
+    documents: [],
+  };
+  let errors = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+    niveauIntervention: "",
+    typePersonne: "",
+    nom: "",
+    prenoms: "",
+    telephone: "",
+    bp: "",
+    emailAutre: "",
+    adresse: "",
+    nomRepresentant: "",
+    denomination: "",
+    documents: "",
+  };
+
+  async function checkFormData(formData: any) {
+    if (step === 1) {
+      if (!formData.email) {
+        errors.email = "L'email est requis";
+      } else {
+        errors.email = "";
+      }
+      if (!formData.password) {
+        errors.password = "Le mot de passe est requis";
+      } else {
+        errors.password = "";
+      }
+      if (!formData.confirmPassword) {
+        errors.confirmPassword = "La confirmation du mot de passe est requise";
+      } else {
+        errors.confirmPassword = "";
+      }
+      if (formData.password !== formData.confirmPassword) {
+        errors.confirmPassword = "Les mots de passe ne correspondent pas";
+      } else {
+        errors.confirmPassword = "";
+      }
+      if (!validateEmail(formData.email)) {
+        errors.email = "L'email n'est pas valide";
+      } else {
+        errors.email = "";
+      }
+      if (await checkEmail(formData.email)) {
+        errors.email = "L'email existe déjà";
+      } else {
+        errors.email = "";
+      }
+      if (!validatePhone(formData.telephone)) {
+        errors.telephone = "Le téléphone n'est pas valide";
+      } else {
+        errors.telephone = "";
+      }
+      if (!validatePassword(formData.password)) {
+        errors.password = "Le mot de passe n'est pas valide";
+      } else {
+        errors.password = "";
+      }
+      if (!validatePassword(formData.confirmPassword)) {
+        errors.confirmPassword =
+          "La confirmation du mot de passe n'est pas valide";
+      } else {
+        errors.confirmPassword = "";
+      }
+    } else if (step === 2) {
+      if (!formData.typePersonne) {
+        errors.typePersonne = "Le type de personne est requis";
+      } else {
+        errors.typePersonne = "";
+      }
+      if (!formData.niveauIntervention) {
+        errors.niveauIntervention = "Le niveau d'intervention est requis";
+      } else {
+        errors.niveauIntervention = "";
+      }
+      if (formData.typePersonne === "PHYSIQUE") {
+        if (!formData.nom) {
+          errors.nom = "Le nom est requis";
+        } else {
+          errors.nom = "";
+        }
+        if (!formData.prenoms) {
+          errors.prenoms = "Les prénoms sont requis";
+        } else {
+          errors.prenoms = "";
+        }
+        if (!formData.telephone) {
+          errors.telephone = "Le téléphone est requis";
+        } else {
+          errors.telephone = "";
+        }
+        if (!formData.bp) {
+          errors.bp = "La boîte postale est requise";
+        } else {
+          errors.bp = "";
+        }
+        if (!formData.emailAutre) {
+          errors.emailAutre = "L'email secondaire est requis";
+        } else {
+          errors.emailAutre = "";
+        }
+        errors.adresse = ";";
+        errors.nomRepresentant = "";
+        errors.denomination = "";
+        formData.adresse = "";
+        formData.nomRepresentant = "";
+        formData.denomination = "";
+      } else {
+        if (!formData.adresse) {
+          errors.adresse = "L'adresse est requise";
+        } else {
+          errors.adresse = "";
+        }
+        if (!formData.nomRepresentant) {
+          errors.nomRepresentant = "Le nom du représentant est requis";
+        } else {
+          errors.nomRepresentant = "";
+        }
+        if (!formData.denomination) {
+          errors.denomination = "La dénomination est requise";
+        } else {
+          errors.denomination = "";
+        }
+        errors.nom = "";
+        errors.prenoms = "";
+        errors.telephone = "";
+        errors.bp = "";
+        errors.emailAutre = "";
+        formData.nom= "";
+formData.prenoms= "";
+formData.telephone= "";
+formData.bp= "";
+formData.emailAutre = "";
+      }
+    } else {
+      if (
+        !formData.documents ||
+        formData.documents.length === 0 ||
+        formData.documents.length < values.typeDocument.length
+      ) {
+        errors.documents = "Veuillez ajouter tous les documents requis svp";
+      } else {
+        errors.documents = "";
+      }
+    }
+
+    return errors;
   }
-  console.log(formData);
-};
-const prevStep = () => {
-  if (step > 1) {
-    step -= 1;
-  }
-  lastStep = false;
-  
-};
 
-let formData = {
-  password: "",
-  confirmPassword: "",
-  email: "",
-  niveauIntervention: "",
-  typePersonne: "",
-  nom: "",
-  prenoms: "",
-  telephone: "",
-  bp: "",
-  emailAutre: "",
-  adresse: "",
-  nomRepresentant: "",
-  denomination: "",
-  documents: [],
-};
-let errors = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-  niveauIntervention: "",
-  typePersonne: "",
-  nom: "",
-  prenoms: "",
-  telephone: "",
-  bp: "",
-  emailAutre: "",
-  adresse: "",
-  nomRepresentant: "",
-  denomination: "",
-  documents: ""
-};
-
-function checkFormData(formData:any) {
-  
-
-  if (!formData.email) errors.email = "L'email est requis";
-  if (!formData.password) errors.password = "Le mot de passe est requis";
-  if (!formData.confirmPassword) errors.confirmPassword = "La confirmation du mot de passe est requise";
-  if (formData.password !== formData.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas";
-  if (!formData.niveauIntervention) errors.niveauIntervention = "Le niveau d'intervention est requis";
-  if (!formData.typePersonne) errors.typePersonne = "Le type de personne est requis";
-  if (!formData.nom) errors.nom = "Le nom est requis";
-  if (!formData.prenoms) errors.prenoms = "Les prénoms sont requis";
-  if (!formData.telephone) errors.telephone = "Le téléphone est requis";
-  if (!formData.bp) errors.bp = "La boîte postale est requise";
-  if (!formData.emailAutre) errors.emailAutre = "L'email secondaire est requis";
-  if (!formData.adresse) errors.adresse = "L'adresse est requise";
-  if (!formData.nomRepresentant) errors.nomRepresentant = "Le nom du représentant est requis";
-  if (!formData.denomination) errors.denomination = "La dénomination est requise";
-  if (!formData.documents || formData.documents.length === 0) errors.documents = "Au moins un document doit être ajouté";
-
-  return errors;
-}
-
- let values = {
+  let values = {
     typePersonne: [],
     niveauIntervention: [],
     typeDocument: [],
@@ -123,57 +305,65 @@ function checkFormData(formData:any) {
       id: formData.typePersonne || "PHYSIQUE",
     },
   ];
-////on recupere le type de personne et les autres trucs a mettre dans le formulaire
- async function fetchDataFirst() {
+  ////on recupere le type de personne et les autres trucs a mettre dans le formulaire
+  async function fetchDataFirst() {
     try {
       let res = null;
       objects.forEach(async (element) => {
         if (!element.id) {
-          res = await axios.get(`https://backend.leadagro.net/api${element.url}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
-            console.error("Erreur lors de la récupération des données:", error);
-            values[element.name as keyof typeof values] = [];
-          });
-        } 
-
-       
+          res = await axios
+            .get(`https://backend.leadagro.net/api${element.url}`)
+            .then((response) => {
+              values[element.name as keyof typeof values] = response.data.data;
+            })
+            .catch((error) => {
+              console.error(
+                "Erreur lors de la récupération des données:",
+                error
+              );
+              values[element.name as keyof typeof values] = [];
+            });
+        }
       });
     } catch (error) {
       console.error("Erreur lors de la récupération des données:", error);
     }
   }
 
-   async function fetchDataSecond() {
+  async function fetchDataSecond() {
     console.log("fetchDataSecond called", formData.typePersonne);
     try {
       let res = null;
       objects.forEach(async (element) => {
         if (element.id) {
-            res = await axios.get(`https://backend.leadagro.net/api${element.url}/${formData.typePersonne}`).then((response) => {values[element.name as keyof typeof values] = response.data.data;}).catch((error) => {
-            console.error("Erreur lors de la récupération des données:", error);
-            values[element.name as keyof typeof values] = [];
-          });
-        } 
-
-       
+          res = await axios
+            .get(
+              `https://backend.leadagro.net/api${element.url}/${formData.typePersonne}`
+            )
+            .then((response) => {
+              values[element.name as keyof typeof values] = response.data.data;
+            })
+            .catch((error) => {
+              console.error(
+                "Erreur lors de la récupération des données:",
+                error
+              );
+              values[element.name as keyof typeof values] = [];
+            });
+        }
       });
     } catch (error) {
       console.error("Erreur lors de la récupération des données:", error);
     }
   }
 
-
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
-  function handleDocumentChange(
-    event,
-    libelle,
-    libelleGroupe,
-    index
-  ) {
+  function handleDocumentChange(event, libelle, libelleGroupe, index) {
     console.log("Document changed:", event, libelleGroupe);
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
-    
+
     if (!file) return;
 
     const reader = new FileReader();
@@ -181,7 +371,7 @@ function checkFormData(formData:any) {
       const base64 = reader.result as string;
 
       // On ajoute l'objet formaté dans formData.documents
-      formData.documents[index]= {
+      formData.documents[index] = {
         libelle: libelle,
         path: base64, // ou file.name si tu veux juste le nom
         libelleGroupe: libelleGroupe,
@@ -190,36 +380,32 @@ function checkFormData(formData:any) {
       console.log("Updated formData.documents:", formData.documents);
       console.log("Uploaded files:", uploadedFiles);
       // Sauvegarde dans localStorage si besoin
-      localStorage.setItem("formData", JSON.stringify(formData));
+      // localStorage.setItem("formData", JSON.stringify(formData));
     };
     reader.readAsDataURL(file);
   }
 
-$: step ==2 && fetchDataFirst();
-$: step ==3 && fetchDataSecond();
+  $: step == 2 && fetchDataFirst();
+  $: step == 3 && fetchDataSecond();
 
+  onMount(() => {
+    fetchDataFirst();
+    console.log(values);
+    let references = localStorage.getItem("reference");
+    if (references) {
+      console.log("references", references);
+      checkTransactionID(references);
+    }
+    // console.log("references", references);
+  });
 
-
-onMount(() => {
-  fetchDataFirst();
-  console.log(values);
-  let references = localStorage.getItem("reference");
-  if (references) {
-    console.log("references", references);
-    checkTransactionID(references);
-  }
-  // console.log("references", references);
-});
-
-
-function clickPaiement() {
+  function clickPaiement() {
     console.log("click payment");
     isPaiementProcessing = true;
-    
 
     initPaiement();
   }
- async function initPaiement() {
+  async function initPaiement() {
     authenticating = true;
     console.log("formdata", formData);
 
@@ -313,10 +499,13 @@ function clickPaiement() {
     console.log("formDatas", formDatas);
 
     try {
-      const response = await fetch(`https://backend.leadagro.net/api/paiement/paiement`, {
-        method: "POST",
-        body: formDatas,
-      });
+      const response = await fetch(
+        `https://backend.leadagro.net/api/paiement/paiement`,
+        {
+          method: "POST",
+          body: formDatas,
+        }
+      );
 
       const result = await response.json();
       console.log("Réponse du serveur:", result);
@@ -333,7 +522,7 @@ function clickPaiement() {
       authenticating = false;
     }
   }
- async function checkTransactionID(idtransaction: any) {
+  async function checkTransactionID(idtransaction: any) {
     if (!idtransaction) return false;
     console.log("idtransaction", idtransaction);
     try {
@@ -345,15 +534,14 @@ function clickPaiement() {
 
       console.log("data.data", data.data);
       if (data.data.state == true) {
-       openModal(idtransaction);
-        
+        openModal(idtransaction);
       } else {
         message = "Le paiement n'a pas été effectué. Veuillez réessayer.";
       }
       return data.data; // Assurez-vous que l'API renvoie un objet avec une clé `valid`
     } catch (error) {
       console.error(
-        'Erreur lors de la vérification de la transaction :',
+        "Erreur lors de la vérification de la transaction :",
         error
       );
       return false;
@@ -363,108 +551,111 @@ function clickPaiement() {
 
 <main>
   <HeaderNew />
-   <section
-          class="relative  text-white bg-blue-600"
-          style="  padding-top:100px;padding-bottom:50px;
+  <section
+    class="relative text-white bg-blue-600"
+    style="  padding-top:100px;padding-bottom:50px;
 "
-        >
-          <div class="absolute inset-0 bg-black/20"></div>
-          <div
-            class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-          >
-            <h1 class="text-4xl md:text-5xl font-bold mb-6"> Inscription Établissement
-</h1>
-            <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Inscrivez votre établissement de santé
-            </p>
-          </div>
-        </section>
-    <div
-      class="flex items-center justify-center px-4 sm:px-6 lg:px-8 "
-      style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
-    >
-      <div class="max-w-7xl w-full">
-        <!-- <div class="text-center mb-8">
+  >
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">
+        Inscription Établissement
+      </h1>
+      <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+        Inscrivez votre établissement de santé
+      </p>
+    </div>
+  </section>
+  <div
+    class="flex items-center justify-center px-4 sm:px-6 lg:px-8"
+    style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);"
+  >
+    <div class="max-w-7xl w-full">
+      <!-- <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">
             Inscription Établissement
           </h1>
           <p class="text-gray-600">Inscrivez votre établissement de santé</p>
         </div> -->
-           
-        <section class="py-16">
+
+      <section class="py-16">
         <div class="flex justify-between mb-8 text-sm">
           {#if step >= 1}
             <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
-            >
-              1
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
+              >
+                1
+              </div>
+              <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
-          </div>
           {:else}
             <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2  text-white border-gray-300"
-            >
-              1
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 text-white border-gray-300"
+              >
+                1
+              </div>
+              <div class="w-16 h-0.5 mx-2 bg-gray-300"></div>
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-gray-300"></div>
-          </div>
           {/if}
-        
+
           {#if step >= 2}
-           <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
-            >
-              2
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
+              >
+                2
+              </div>
+              <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-blue-600"></div>
-          </div>
           {:else}
-           <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-white text-gray-400 border-gray-300"
-            >
-              2
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-white text-gray-400 border-gray-300"
+              >
+                2
+              </div>
+              <div class="w-16 h-0.5 mx-2 bg-gray-300"></div>
             </div>
-            <div class="w-16 h-0.5 mx-2 bg-gray-300"></div>
-          </div>
           {/if}
-         
+
           {#if step == 3}
-           <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
-            >
-              3
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-blue-600 text-white border-blue-600"
+              >
+                3
+              </div>
             </div>
-          </div>
           {:else}
-           <div class="flex items-center">
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-white text-gray-400 border-gray-300"
-            >
-              3
+            <div class="flex items-center">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 bg-white text-gray-400 border-gray-300"
+              >
+                3
+              </div>
             </div>
-          </div>
           {/if}
-         
         </div>
         <div class="flex justify-between mb-8 text-sm">
           {#if step >= 1}
-            <span class="text-blue-600 font-medium">Information de Connexion</span>
+            <span class="text-blue-600 font-medium"
+              >Information de Connexion</span
+            >
           {:else}
             <span class="text-gray-500">Information generale</span>
           {/if}
           {#if step >= 2}
-            <span class="text-blue-600 font-medium">Information Établissement</span>
+            <span class="text-blue-600 font-medium"
+              >Information Établissement</span
+            >
           {:else}
             <span class="text-gray-500">Information Établissement</span>
           {/if}
           {#if step == 3}
-            <span class="text-blue-600 font-medium">Document de Validation</span>
+            <span class="text-blue-600 font-medium">Document de Validation</span
+            >
           {:else}
             <span class="text-gray-500">Document de Validation</span>
           {/if}
@@ -472,206 +663,439 @@ function clickPaiement() {
         <div class="bg-white rounded-lg shadow-sm border p-8">
           <form>
             {#if step === 1}
-            <div>
-              <h2 class="text-xl font-semibold text-gray-900 mb-6">
-                Informations de connexion
-              </h2>
-              <div class="space-y-6">
-                <div>
-                  <label
-                    for="email" 
-                    class="block text-sm font-medium text-gray-700 mb-2"
-                    >E-mail *</label
-                  ><input
-                    type="email"
-                    id="email"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                    placeholder="votre.email@exemple.com"
-                    required={true}
-                    name="email"
-                    bind:value={formData.email}
-                  />
-                </div>
-                <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">
+                  Informations de connexion
+                </h2>
+                <div class="space-y-6">
                   <div>
                     <label
-                      for="password"
+                      for="email"
                       class="block text-sm font-medium text-gray-700 mb-2"
-                      >Mot de passe *</label
-                    >
-                    <div class="relative">
-                      <input
-                        type="{showPassword ? 'text' : 'password'}"
-                        id="password"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                        placeholder="Votre mot de passe"
-                        required={true}
-                        
-                        name="password"
-                        bind:value={formData.password}
-                      /><button
-                        onclick={()=>{showPassword = !showPassword}}
-                        type="button"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        <i
-                          class="ri-eye-line text-gray-400 hover:text-gray-600"
-                        ></i>
-                      </button>
-                    </div>
+                      >E-mail *</label
+                    ><input
+                      type="email"
+                      id="email"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      placeholder="votre.email@exemple.com"
+                      required={true}
+                      name="email"
+                      bind:value={formData.email}
+                    />
+                    {#if errors.email}
+                      <p class="text-red-500 text-sm mt-1">{errors.email}</p>
+                    {/if}
                   </div>
-                  <div>
-                    <label
-                      for="confirmPassword"
-                      class="block text-sm font-medium text-gray-700 mb-2"
-                      >Confirmer le mot de passe *</label
-                    >
-                    <div class="relative">
-                      <input
-                        type="{showPassword ? 'text' : 'password'}"
-                        id="confirmPassword"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                        placeholder="Confirmez votre mot de passe"
-                        required={true}
-                        name="confirmPassword"
-                        bind:value={formData.confirmPassword}
-                      /><button
-                      onclick={()=>{showPassword = !showPassword}}
-                        type="button"
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        for="password"
+                        class="block text-sm font-medium text-gray-700 mb-2"
+                        >Mot de passe *</label
                       >
-                        <i
-                          class="ri-eye-line text-gray-400 hover:text-gray-600"
-                        ></i>
-                      </button>
+                      <div class="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          id="password"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                          placeholder="Votre mot de passe"
+                          required={true}
+                          name="password"
+                          bind:value={formData.password}
+                        /><button
+                          onclick={() => {
+                            showPassword = !showPassword;
+                          }}
+                          type="button"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                          <i
+                            class="ri-eye-line text-gray-400 hover:text-gray-600"
+                          ></i>
+                        </button>
+                        {#if errors.password}
+                          <p class="text-red-500 text-sm mt-1">
+                            {errors.password}
+                          </p>
+                        {/if}
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        for="confirmPassword"
+                        class="block text-sm font-medium text-gray-700 mb-2"
+                        >Confirmer le mot de passe *</label
+                      >
+                      <div class="relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          id="confirmPassword"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                          placeholder="Confirmez votre mot de passe"
+                          required={true}
+                          name="confirmPassword"
+                          bind:value={formData.confirmPassword}
+                        /><button
+                          onclick={() => {
+                            showPassword = !showPassword;
+                          }}
+                          type="button"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                        >
+                          <i
+                            class="ri-eye-line text-gray-400 hover:text-gray-600"
+                          ></i>
+                        </button>
+                        {#if errors.confirmPassword}
+                          <p class="text-red-500 text-sm mt-1">
+                            {errors.confirmPassword}
+                          </p>
+                        {/if}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
             {:else if step === 2}
-
-          <FormStep2 typePersonne={values.typePersonne} niveauIntervention={values.niveauIntervention} formdata={formData} />
-
-            {:else if step === 3}
-            {#if values.typeDocument.length > 0}
-             <div>
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-4">
-        Documents de l'établissement (étape 3/3)
-      </h1>
-      <p class="text-gray-600">
-        Charger tous les documents requis pour finaliser votre dossier
-      </p>
-    </div>
-    <div>
-      <form id="document-upload">
-        {#each values.typeDocument as document}
-          <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-              {document.libelle}
-            </h3>
-            <div class="grid grid-cols-1 gap-6">
-              {#each document.typeDocuments as requiredFile, i}
-                <div class="border border-gray-200 rounded-lg p-4">
-                  <div class="flex items-start gap-4">
-                    <div class="w-32 h-32 flex-shrink-0">
-                      <div
-                        class="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
-                      >
-                    
-
-                        {#if uploadedFiles && uploadedFiles[requiredFile.libelle + document.id]}
-                          {#if formData.documents
-                            .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
-                            ?.path.startsWith("data:image")}
-                            <img
-                              src={formData.documents.find(
-                                (d) =>
-                                  d.libelle === requiredFile.libelle &&
-                                  d.libelleGroupe === document.id
-                              )?.path}
-                              alt="miniature"
-                             
-                            />
-                          {:else}
-                            <span class="doc-filename">
-                              {uploadedFiles[
-                                requiredFile.libelle + document.id
-                              ]}
-                            </span>
-                          {/if}
-                        {:else}
-                          <div class="text-center">
-                            <i class="ri-image-line text-gray-400 text-2xl"></i>
-                            <p class="text-xs text-gray-400 mt-1">
-                              Aperçu VIde
-                            </p>
-                          </div>
-                        {/if}
-                      </div>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center gap-2 mb-2">
-                        <label class="text-sm font-medium text-gray-700"
-                          >{requiredFile.libelle}</label
-                        ><span class="text-red-500">*</span>
-                      </div>
-                      <div
-                        onclick={() => {fileInputs[requiredFile.libelle+i].click()}}
-
-                        class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer border-gray-300 hover:border-gray-400"
-                      >
-                        <div
-                          class="w-8 h-8 flex items-center justify-center mx-auto mb-2"
-                        >
-                          <i class="ri-upload-cloud-line text-gray-400 text-2xl"
-                          ></i>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-1">
-                          Cliquez pour sélectionner ou glissez-déposez
-                        </p>
-                        <p class="text-xs text-gray-400">
-                          PDF, DOC, DOCX, JPG, PNG (max. 10MB)
-                        </p>
-                      </div>
-                      <input
-                        type="file"
-                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        class="hidden"
-                            bind:this={fileInputs[requiredFile.libelle+i]}
-                        name={requiredFile.libelle}
-                         onchange={(e) =>
-          {  handleDocumentChange(
-              e,
-              requiredFile.libelle,
-              document.id,
-              i
-            ), console.log("Document changé:",  requiredFile.libelle, document.id)}}                      />
-                      <p class="text-xs text-gray-500 mt-1">
-                        Parcourir... Aucun fichier sélectionné.
-                      </p>
-                    </div>
+              <!-- <FormStep2 typePersonne={values.typePersonne} niveauIntervention={values.niveauIntervention} formdata={formData} /> -->
+              <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Niveau d'Intervention *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.niveauIntervention}
+                      bind:value={formData.niveauIntervention}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="id"
+                      placeholder="Sélectionnez le niveau d'intervention"
+                    />
+                  </div>
+                  {#if errors.niveauIntervention}
+                    <p class="text-red-500 text-sm mt-1">
+                      {errors.niveauIntervention}
+                    </p>
+                  {/if}
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Entité juridique *</label
+                  >
+                  <div class="relative">
+                    <Svelecte
+                      multiple={false}
+                      options={values.typePersonne}
+                      bind:value={formData.typePersonne}
+                      class="w-full h-full"
+                      labelField="libelle"
+                      valueField="libelle"
+                      placeholder="Sélectionnez le niveau d'intervention"
+                    />
+                  </div>
+                  {#if errors.typePersonne}
+                    <p class="text-red-500 text-sm mt-1">
+                      {errors.typePersonne}
+                    </p>
+                  {/if}
+                </div>
+              </div>
+              {#if formData.typePersonne == "PHYSIQUE"}
+                <div class="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Nom *</label
+                    ><input
+                      type="text"
+                      bind:value={formData.nom}
+                      placeholder="Nom"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="nom"
+                    />
+                    {#if errors.nom}
+                      <p class="text-red-500 text-sm mt-1">{errors.nom}</p>
+                    {/if}
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Prénoms *</label
+                    ><input
+                      type="text"
+                      placeholder="Prénoms"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="prenoms"
+                      bind:value={formData.prenoms}
+                    />
+                    {#if errors.prenoms}
+                      <p class="text-red-500 text-sm mt-1">{errors.prenoms}</p>
+                    {/if}
                   </div>
                 </div>
-              {/each}
-            </div>
-          </div>
-        {/each}
-      </form>
-    </div>
-  </div>
-            {:else}
-              <p class="text-red-500"></p>
+                <div class="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Téléphone *</label
+                    ><input
+                      type="tel"
+                      placeholder="Téléphone"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="telephone"
+                      bind:value={formData.telephone}
+                    />
+                    {#if errors.telephone}
+                      <p class="text-red-500 text-sm mt-1">
+                        {errors.telephone}
+                      </p>
+                    {/if}
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Boîte Postale *</label
+                    ><input
+                      type="text"
+                      placeholder="Boîte Postale"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="boitePostale"
+                      bind:value={formData.bp}
+                    />
+                    {#if errors.bp}
+                      <p class="text-red-500 text-sm mt-1">{errors.bp}</p>
+                    {/if}
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Autre E-mail *</label
+                  ><input
+                    type="email"
+                    placeholder="Autre E-mail"
+                    class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                    name="email"
+                    bind:value={formData.emailAutre}
+                  />
+                  {#if errors.emailAutre}
+                    <p class="text-red-500 text-sm mt-1">{errors.emailAutre}</p>
+                  {/if}
+                </div>
+              {:else if formData.typePersonne == "MORALE"}
+                <div class="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Adresse *</label
+                    ><input
+                      type="text"
+                      placeholder="Adresse"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="adresse"
+                      bind:value={formData.adresse}
+                    />
+                    {#if errors.adresse}
+                      <p class="text-red-500 text-sm mt-1">{errors.adresse}</p>
+                    {/if}
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-semibold text-gray-700 mb-3"
+                      >Nom Representant *</label
+                    ><input
+                      type="text"
+                      placeholder="Nom Representant"
+                      class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                      name="nomRepresentant"
+                      bind:value={formData.nomRepresentant}
+                    />
+                    {#if errors.nomRepresentant}
+                      <p class="text-red-500 text-sm mt-1">
+                        {errors.nomRepresentant}
+                      </p>
+                    {/if}
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-3"
+                    >Denomination *</label
+                  ><input
+                    type="text"
+                    placeholder="Denomination"
+                    class="w-full px-4 py-3 border-b-2 border-blue-300 bg-gray-50 focus:bg-white focus:border-blue-500 focus:outline-none transition-all duration-200"
+                    name="denomination"
+                    bind:value={formData.denomination}
+                  />
+                  {#if errors.denomination}
+                    <p class="text-red-500 text-sm mt-1">
+                      {errors.denomination}
+                    </p>
+                  {/if}
+                </div>
+              {/if}
+            {:else if step === 3}
+              {#if values.typeDocument.length > 0}
+                <div>
+                  <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                      Documents de l'établissement (étape 3/3)
+                    </h1>
+                    <p class="text-gray-600">
+                      Charger tous les documents requis pour finaliser votre
+                      dossier
+                    </p>
+                  </div>
+                  <div>
+                   
+                    <form id="document-upload">
+                      {#each values.typeDocument as document}
+                        <div class="mb-8">
+                          <h3
+                            class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2"
+                          >
+                            {document.libelle}
+                          </h3>
+                          <div class="grid grid-cols-1 gap-6">
+                            {#each document.typeDocuments as requiredFile, i}
+                              <div
+                                class="border border-gray-200 rounded-lg p-4"
+                              >
+                                <div class="flex items-start gap-4">
+                                  <div class="w-32 h-32 flex-shrink-0">
+                                    <div
+                                      class="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
+                                    >
+                                      {#if uploadedFiles && uploadedFiles[requiredFile.libelle.trim() + document.id]}
+                                        {#if formData.documents
+                                          .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
+                                          ?.path.startsWith("data:image")}
+                                          <img
+                                            src={formData.documents.find(
+                                              (d) =>
+                                                d.libelle ===
+                                                  requiredFile.libelle &&
+                                                d.libelleGroupe === document.id
+                                            )?.path}
+                                            alt="miniature"
+                                          />
+                                        {:else}
+                                          <span class="doc-filename">
+                                            {uploadedFiles[
+                                              requiredFile.libelle.trim() + document.id
+                                            ]}
+                                          </span>
+                                        {/if}
+                                      {:else}
+                                        <div class="text-center">
+                                          <i
+                                            class="ri-image-line text-gray-400 text-2xl"
+                                          ></i>
+                                          <p class="text-xs text-gray-400 mt-1">
+                                            Aperçu VIde
+                                          </p>
+                                        </div>
+                                      {/if}
+                                    </div>
+                                  </div>
+                                  <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-2">
+                                      <label
+                                        class="text-sm font-medium text-gray-700"
+                                        >{requiredFile.libelle}</label
+                                      ><span class="text-red-500">*</span>
+                                    </div>
+                                    <div
+                                      onclick={() => {
+                                        fileInputs[
+                                          requiredFile.libelle.trim() + i
+                                        ].click();
+                                      }}
+                                      class="border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer border-gray-300 hover:border-gray-400"
+                                    >
+                                      <div
+                                        class="w-8 h-8 flex items-center justify-center mx-auto mb-2"
+                                      >
+                                        <i
+                                          class="ri-upload-cloud-line text-gray-400 text-2xl"
+                                        ></i>
+                                      </div>
+                                      <p class="text-sm text-gray-600 mb-1">
+                                        Cliquez pour sélectionner ou
+                                        glissez-déposez
+                                      </p>
+                                      <p class="text-xs text-gray-400">
+                                        PDF, DOC, DOCX, JPG, PNG (max. 10MB)
+                                      </p>
+                                    </div>
+                                    <input
+                                      type="file"
+                                      required={true}
+                                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                      class="hidden"
+                                      bind:this={
+                                        fileInputs[requiredFile.libelle.trim() + i]
+                                      }
+                                      name={requiredFile.libelle}
+                                      onchange={(e) => {
+                                        (handleDocumentChange(
+                                          e,
+                                          requiredFile.libelle,
+                                          document.id,
+                                          i
+                                        ),
+                                          console.log(
+                                            "Document changé:",
+                                            requiredFile.libelle,
+                                            document.id
+                                          ));
+                                      }}
+                                    />
+                                    <p class="text-xs text-gray-500 mt-1">
+                                      Parcourir... Aucun fichier sélectionné.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            {/each}
+                          </div>
+                        </div>
+                      {/each}
+                    </form>
+                     {#if errors.documents}
+                      <p class="text-red-500 text-lg mb-4 text-center justify-center">
+                        {errors.documents}
+                      </p>
+                    {/if}
+                  </div>
+                </div>
+              {:else}
+                <p class="text-red-500"></p>
               {/if}
             {:else if step === 4}
-            <Recap formData={formData} />
-            <p class="text-gray-600 mt-4 text-center">Merci de cliquer sur le bouton "Terminer" pour finaliser votre inscription.</p>
+              <Recap {formData} values={values} />
+              <p class="text-gray-600 mt-4 text-center">
+                Merci de cliquer sur le bouton "Terminer" pour finaliser votre
+                inscription.
+              </p>
+              {#if isPaiementProcessing}
+                <div class="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                  <p>
+                    Votre paiement est en cours de traitement. Veuillez ne pas
+                    rafraîchir la page ou revenir en arrière.
+                  </p>
+                </div>
+                <SpinnerBlue />
+              {/if}
             {/if}
             
+              
             <div class="flex justify-between mt-8 pt-6 border-t">
               <button
-                onclick={()=>{prevStep()}}
+                onclick={() => {
+                  prevStep();
+                }}
                 hidden={step === 1}
                 type="button"
                 disabled={step === 1}
@@ -681,36 +1105,42 @@ function clickPaiement() {
               >
               {#if lastStep}
                 <button
-                onclick={()=>{clickPaiement()}}
-                type="button"
-                
-                class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                Terminer
-              </button>
-             
+                  onclick={() => {
+                    clickPaiement();
+                  }}
+                  type="button"
+                  disabled={step ==1}
+                  class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                 {#if step!=1}
+                  Terminer
+                 {/if}
+                </button>
               {:else}
-             <button
-                onclick={()=>{nextStep()}}
-                type="button"
-                disabled={done || lastStep}
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                Suivant
-              </button>
+                <button
+                  onclick={() => {
+                    nextStep();
+                  }}
+                  type="button"
+                  disabled={done || lastStep}
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  Suivant
+                </button>
               {/if}
             </div>
           </form>
         </div>
-       
-      </div>
+      </section>
     </div>
- 
+  </div>
+
   <FooterNew />
 </main>
 {#if isModalOpen == true}
-  <Modal isOpen={isModalOpen} pdfUrl={pdfUrl} onClose={closeModal} />
+  <Modal isOpen={isModalOpen} {pdfUrl} onClose={closeModal} />
 {/if}
+
 <style>
   @import url("https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css");
   *,
