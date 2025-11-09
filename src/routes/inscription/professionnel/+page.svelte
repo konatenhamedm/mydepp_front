@@ -651,6 +651,7 @@
       )
       .then((response: any) => {
         specialiteFetched = response.data.data;
+        formData.profession = "";
         console.log("Specialite fetched:", specialiteFetched);
       })
       .catch((error) => {
