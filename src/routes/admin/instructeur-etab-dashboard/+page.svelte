@@ -40,7 +40,7 @@
   // Données réactives
   let main_data: StatsDashboard | null = null;
   let loading = false;
-  let dataLoaded = false;
+  let dataLoaded = false; // Nouveau flag pour suivre le chargement initial
   let dossierFilter = "etablissement";
   let currentPage = 1;
   const itemsPerPage = 10;
@@ -83,12 +83,13 @@
   // Fonctions optimisées
   onMount(() => {
     user = getAuthCookie();
-    
     if (user) {
       userType = user.type;
       userId = user.id;
     }
-
+    
+    console.log("nzlkhlkz", userId);
+    // Chargement initial des données
     fetchInitialData();
 
     const timer = setInterval(() => {
@@ -122,7 +123,8 @@
   }
 
   async function fetchInitialData() {
-    if (dataLoaded && allEtab2.length > 0) return;
+    // Ne recharger que si les données ne sont pas déjà chargées
+    if (dataLoaded && professionnels.length > 0) return;
     
     loading = true;
     try {
@@ -131,6 +133,7 @@
         statsUrl = `/statistique/info-dashboard/by/typeuser/${userType}/${userId}`;
       }
 
+      // Chargement parallèle optimisé
       const [statsRes, listeProfessionnels, profRes, allEtab] = await Promise.all([
         apiFetch(true, statsUrl).catch(() => null),
         apiFetch(true, `/professionnel/`).catch(() => ({ data: [] })),
@@ -156,7 +159,7 @@
       }
 
       updateFilteredData();
-      dataLoaded = true;
+      dataLoaded = true; // Marquer les données comme chargées
       
     } catch (error) {
       console.error('Erreur de chargement:', error);
@@ -165,8 +168,9 @@
     }
   }
 
+  // Fonction de filtrage optimisée
   function updateFilteredData() {
-    if (!dataLoaded) return;
+    if (!dataLoaded) return; // Ne pas filtrer si les données ne sont pas chargées
     
     let tempData = [];
 
@@ -207,6 +211,7 @@
 
     filteredProfessionnels = tempData;
     
+    // Réinitialiser la pagination seulement si nécessaire
     if (currentPage !== 1) {
       currentPage = 1;
     }
@@ -222,10 +227,12 @@
     updateFilteredData();
   }
 
+  // Fonction corrigée pour le clic sur les cartes
   function handleCardClick(type: string) {
-    console.log('Clic sur la carte:', type);
+    console.log('Clic sur la carte:', type); // Debug
     dossierFilter = type;
     
+    // Réinitialiser les filtres quand on change de type
     if (type === 'etablissement') {
       selectedProfession = '';
       selectedStatus = '';
@@ -238,18 +245,84 @@
     currentPage = event.detail;
   }
 
-  // Données pour les cartes - version simplifiée avec seulement établissement
+  // Données pour les cartes - rendues réactives
   $: cardData = [
+    // {
+    //   id: 'all',
+    //   title: 'Tous les dossiers',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.atttente + stats.accepte + stats.rejete + stats.valide + stats.refuse + stats.renouvelle + stats.a_jour + allEtab2.length,
+    //   icon: 'folder',
+    //   color: 'blue',
+    //   bgColor: 'bg-blue-50',
+    //   textColor: 'text-blue-600',
+    //   borderColor: 'border-blue-200'
+    // },
+    // {
+    //   id: 'attente',
+    //   title: 'En attente',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.atttente,
+    //   icon: 'clock',
+    //   color: 'yellow',
+    //   bgColor: 'bg-yellow-50',
+    //   textColor: 'text-yellow-600',
+    //   borderColor: 'border-yellow-200'
+    // },
+    // {
+    //   id: 'accepted',
+    //   title: 'Acceptés',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.accepte,
+    //   icon: 'check',
+    //   color: 'green',
+    //   bgColor: 'bg-green-50',
+    //   textColor: 'text-green-600',
+    //   borderColor: 'border-green-200'
+    // },
+    // {
+    //   id: 'rejected',
+    //   title: 'Rejetés',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.rejete,
+    //   icon: 'x',
+    //   color: 'red',
+    //   bgColor: 'bg-red-50',
+    //   textColor: 'text-red-600',
+    //   borderColor: 'border-red-200'
+    // },
+    // {
+    //   id: 'validated',
+    //   title: 'Validés',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.valide,
+    //   icon: 'shield-check',
+    //   color: 'green',
+    //   bgColor: 'bg-green-50',
+    //   textColor: 'text-green-600',
+    //   borderColor: 'border-green-200'
+    // },
+    // {
+    //   id: 'a_jour',
+    //   title: 'À jour',
+    //   subtitle: 'Statistique actuelle',
+    //   value: stats.a_jour,
+    //   icon: 'calendar',
+    //   color: 'blue',
+    //   bgColor: 'bg-blue-50',
+    //   textColor: 'text-blue-600',
+    //   borderColor: 'border-blue-200'
+    // },
     {
       id: 'etablissement',
       title: 'Etablissement',
       subtitle: 'Statistique actuelle',
       value: allEtab2.length,
       icon: 'building',
-      color: 'blue',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
-      borderColor: 'border-blue-200'
+      color: 'purple',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-600',
+      borderColor: 'border-purple-200'
     },
     {
       id: 'datetime',
@@ -267,13 +340,18 @@
 
   const getIconSvg = (icon: string) => {
     const icons: any = {
-      building: `M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4`,
-      clock: `M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z`
+      folder: `M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z`,
+      clock: `M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z`,
+      check: `M5 13l4 4L19 7`,
+      x: `M6 18L18 6M6 6l12 12`,
+      'shield-check': `M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z`,
+      calendar: `M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z`,
+      building: `M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4`
     };
     return icons[icon] || '';
   };
 
-  // Calculs réactifs pour la pagination
+  // Calculs réactifs pour la pagination - optimisés
   $: totalItems = filteredProfessionnels.length;
   $: totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   
@@ -292,13 +370,13 @@
   // Détermine si le filtre de profession doit être affiché
   $: showProfessionFilter = dossierFilter !== 'etablissement';
 
-  // Réactivité pour mettre à jour les données filtrées
+  // Réactivité pour mettre à jour les données filtrées quand les données sources changent
   $: if (dataLoaded) {
     updateFilteredData();
   }
 </script>
 
-<div class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
+<div class="sm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
   <!-- Indicateur de chargement global -->
   {#if loading && !dataLoaded}
     <div class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
@@ -312,36 +390,36 @@
     </div>
   {/if}
 
-  <!-- Grille de cartes simplifiée -->
-  <div class="grid grid-cols-2 md:grid-cols-2 gap-6 mb-8">
+  <!-- Grille de cartes améliorée -->
+  <div class="grid grid-cols-2 md:grid-cols-2  gap-4 mb-8">
     {#each cardData as card}
       {#if card.id === 'datetime'}
         <!-- Carte Date/Heure spéciale -->
-        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-sm font-semibold opacity-90">{card.title}</div>
-            <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg p-4 text-white transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-xs font-semibold opacity-90">{card.title}</div>
+            <svg class="w-4 h-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={getIconSvg(card.icon)} />
             </svg>
           </div>
           <div class="text-xs opacity-80 mb-2">{card.subtitle}</div>
-          <div class="text-xl font-bold">{card.value}</div>
+          <div class="text-lg font-bold">{card.value}</div>
         </div>
       {:else}
-        <!-- Carte établissement -->
+        <!-- Cartes cliquables - version corrigée -->
         <button
           on:click={() => handleCardClick(card.id)}
-          class="text-left bg-white rounded-2xl shadow-lg p-6 border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl {card.bgColor} {card.borderColor} {dossierFilter === card.id ? 'ring-2 ring-offset-2 ring-blue-500' : ''}"
+          class="text-left bg-white rounded-xl shadow-lg p-4 border-2 transition-all duration-300 hover:scale-105 hover:shadow-xl {card.bgColor} {card.borderColor} {dossierFilter === card.id ? 'ring-2 ring-offset-2 ' + (card.color === 'green' ? 'ring-green-500' : card.color === 'yellow' ? 'ring-yellow-500' : card.color === 'red' ? 'ring-red-500' : card.color === 'purple' ? 'ring-purple-500' : 'ring-blue-500') : ''}"
           type="button"
         >
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-sm font-semibold text-gray-700">{card.title}</div>
-            <svg class={`w-5 h-5 ${card.textColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-xs font-semibold text-gray-700 truncate">{card.title}</div>
+            <svg class={`w-4 h-4 ${card.textColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={getIconSvg(card.icon)} />
             </svg>
           </div>
           <div class="text-xs text-gray-500 mb-2">{card.subtitle}</div>
-          <div class={`text-2xl font-bold ${card.textColor}`}>{card.value}</div>
+          <div class={`text-lg font-bold ${card.textColor}`}>{card.value}</div>
           {#if dossierFilter === card.id}
             <div class="mt-2 w-full bg-gray-200 rounded-full h-1">
               <div class="bg-blue-600 h-1 rounded-full w-3/4"></div>
@@ -403,7 +481,14 @@
           <Pdf
             title={dossierFilter === 'etablissement'
               ? 'Liste des établissements'
-              : 'Liste des dossiers'
+              : dossierFilter === 'all'
+              ? 'Liste de tous les dossiers'
+              : `Liste des ${dossierFilter === 'accepted' ? 'dossiers acceptés' : 
+                 dossierFilter === 'rejected' ? 'dossiers rejetés' : 
+                 dossierFilter === 'attente' ? 'dossiers en attente' :
+                 dossierFilter === 'validated' ? 'dossiers validés' :
+                 dossierFilter === 'a_jour' ? 'dossiers à jour' : 
+                 'dossiers'}`
             }
             headers={dossierFilter === 'etablissement'
               ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
@@ -416,7 +501,14 @@
           <CsvExporter
             title={dossierFilter === 'etablissement'
               ? 'Liste des établissements'
-              : 'Liste des dossiers'
+              : dossierFilter === 'all'
+              ? 'Liste de tous les dossiers'
+              : `Liste des ${dossierFilter === 'accepted' ? 'dossiers acceptés' : 
+                 dossierFilter === 'rejected' ? 'dossiers rejetés' : 
+                 dossierFilter === 'attente' ? 'dossiers en attente' :
+                 dossierFilter === 'validated' ? 'dossiers validés' :
+                 dossierFilter === 'a_jour' ? 'dossiers à jour' : 
+                 'dossiers'}`
             }
             headers={dossierFilter === 'etablissement'
               ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
@@ -462,7 +554,7 @@
       {:else}
         <div class="overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
-            <HeaderTable afficheAction={false}
+            <HeaderTable  afficheAction={false}
               item={dossierFilter === 'etablissement'
                 ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
                 : ['N°', 'Nom & Prénoms', 'Téléphone/Adresse', 'Email', 'Profession / Entité Juridique', 'Statut']} 
@@ -480,7 +572,7 @@
                       {item.personne?.telephone ? item.personne.telephone : item.personne.adresse ? item.personne.adresse : item.personne.number}
                     </td>
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
-                      {item.created_at ? new Date(item.personne.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+                      {item.created_at ? new Date(item.created_at).toLocaleDateString('fr-FR') : 'N/A'}
                     </td>
                   {:else}
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
@@ -496,7 +588,7 @@
                       {item.personne?.email ?? item.email}
                     </td>
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
-                     {item.personne?.profession ? item.personne?.profession?.libelle : item.personne?.typePersonne ? item.personne?.typePersonne?.libelle : 'N/A'}
+                      {item.personne?.profession ? item.personne?.profession?.libelle : item.personne?.typePersonne ? item.personne?.typePersonne?.libelle : 'N/A'}
                     </td>
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
                       {item.personne?.status ?? 'N/A'}
@@ -536,6 +628,7 @@
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
+  /* Amélioration de la performance des animations */
   button {
     transform: translateZ(0);
     backface-visibility: hidden;

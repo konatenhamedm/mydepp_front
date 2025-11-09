@@ -313,17 +313,17 @@
       textColor: 'text-blue-600',
       borderColor: 'border-blue-200'
     },
-    {
-      id: 'etablissement',
-      title: 'Etablissement',
-      subtitle: 'Statistique actuelle',
-      value: allEtab2.length,
-      icon: 'building',
-      color: 'purple',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
-      borderColor: 'border-purple-200'
-    },
+    // {
+    //   id: 'etablissement',
+    //   title: 'Etablissement',
+    //   subtitle: 'Statistique actuelle',
+    //   value: allEtab2.length,
+    //   icon: 'building',
+    //   color: 'purple',
+    //   bgColor: 'bg-purple-50',
+    //   textColor: 'text-purple-600',
+    //   borderColor: 'border-purple-200'
+    // },
     {
       id: 'datetime',
       title: 'Date & Heure',

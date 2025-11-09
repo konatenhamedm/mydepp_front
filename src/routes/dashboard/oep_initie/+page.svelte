@@ -46,19 +46,27 @@ export let data;
   }
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
- function handleDocumentChange(event: Event, libelle: string, libelleGroupe: any) {
+function handleDocumentChange(event: Event, libelle: string, libelleGroupe: any) {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (!file) return;
 
-  formData.documents.push({
-    libelle,
-    path: file, // on garde le File brut
-    libelleGroupe,
-  });
-
-  uploadedFiles[libelle + libelleGroupe] = file.name;
-  localStorage.setItem("formDataOep", JSON.stringify(formData));
+  // Lire le fichier en base64 pour l'affichage
+  const reader = new FileReader();
+  reader.onload = () => {
+    formData.documents.push({
+      libelle,
+      path: reader.result, // base64 pour image/pdf
+      libelleGroupe,
+    });
+    uploadedFiles[libelle + libelleGroupe] = file.name;
+    localStorage.setItem("formDataOep", JSON.stringify(formData));
+  };
+  if (file.type.startsWith("image/")) {
+    reader.readAsDataURL(file);
+  } else if (file.type === "application/pdf") {
+    reader.readAsDataURL(file);
+  }
 }
 
  
@@ -438,7 +446,7 @@ console.log("formDatas avant fichiers", formDatas);
                             <span class="oep-file-preview">
                               {#if formData.documents
                                 .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
-                                ?.path.startsWith("data:image")}
+                                ?.path?.startsWith("data:image")}
                                 <img
                                   src={formData.documents.find(
                                     (d) =>
@@ -447,7 +455,13 @@ console.log("formDatas avant fichiers", formDatas);
                                   )?.path}
                                   alt="miniature"
                                   class="oep-file-img"
+                                  style="max-width:80px; max-height:80px; border-radius:8px; border:1px solid #eee;"
                                 />
+                              {:else if formData.documents.find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)?.path?.startsWith("data:application/pdf")}
+                                <span style="display:flex; align-items:center; gap:4px;">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="#2563eb"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 1.5V9h5.5L13 3.5zM6 4h6v5a1 1 0 0 0 1 1h5v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4zm2 10v2h8v-2H8z"/></svg>
+                                  <span class="oep-file-name">PDF</span>
+                                </span>
                               {:else}
                                 <span class="oep-file-name">
                                   {uploadedFiles[requiredFile.libelle + document.id]}

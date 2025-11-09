@@ -63,8 +63,14 @@ let user : any;
       goto("/admin/instructeur-dashboard");
     } else if ( user.type === "SOUS-DIRECTEUR-PROF"  ) {
       goto("/admin/sous-directeur-prof-dashboard");
-    }else if (user.type === "COMPTABLE") {
+    }
+    else if ( user.type === "SOUS-DIRECTEUR-ETAB"  ) {
+      goto("/admin/sous-directeur-etab-dashboard");
+    }
+    else if (user.type === "COMPTABLE") {
       goto("/admin/comptable-dashboard");
+    } else if (user.type === "INSTRUCTEUR-SECOND-ETAB" || user.type === "INSTRUCTEUR-ETAB" ) {
+      goto("/admin/instructeur-etab-dashboard");
     } else {
       goto("/unauthorized");
     }
