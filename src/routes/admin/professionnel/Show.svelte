@@ -600,9 +600,10 @@
           {/if}
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mt-6 mb-2">
+        <div class="mt-6 mb-2 grid grid-cols-2 gap-6 ">
+        <div class="grid grid-cols-2 gap-6  ">
           <div class="space-y-6">
-            <div class="flex items-center justify-between space-x-2">
+            <div class="flex items-center justify-between space-y-2">
               <fieldset>
                 <legend style="color: black;"
                   >Appartenez-vous à une organisation?</legend
@@ -641,7 +642,7 @@
           {/if}
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mt-6 mb-2">
+        <div class="grid grid-cols-2 gap-6 ">
           <div class="space-y-6">
             <div class="flex items-center justify-between space-x-2">
               <fieldset>
@@ -679,7 +680,7 @@
                 </div> 
               {/if} -->
         </div>
-
+</div>
         <br />
 
         <!-- {#if status === "attente"}
