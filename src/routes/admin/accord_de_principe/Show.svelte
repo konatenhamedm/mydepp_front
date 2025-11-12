@@ -42,7 +42,7 @@
   }
   let valid_endUser = {
     raison: "",
-    status: status == "accepte" ? "validation" : "acceptation",
+    status: status == "accepte" ? "validation" : "",
   };
 
   onMount(() => {

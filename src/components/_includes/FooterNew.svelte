@@ -7,15 +7,15 @@
                 <h3 class="text-xl font-bold mb-6">CONTACTS</h3>
                 <div class="space-y-3">
                   <div>
-                    <strong>STANDARD DEPPS :</strong
+                    <strong class="text-sm">STANDARD DEPPS :</strong
                     ><a
                       href="tel:2720332150"
-                      class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
+                      class="text-blue-400  hover:text-blue-300 ml-2 cursor-pointer"
                       >27 20 33 21 50</a
                     >
                   </div>
                   <div>
-                    <strong>SECRÉTARIAT DEPPS :</strong
+                    <strong class="text-sm">SECRÉTARIAT DEPPS :</strong
                     ><a
                       href="tel:0787589025"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
@@ -28,7 +28,7 @@
                     >
                   </div>
                   <div>
-                    <strong>SOUS DIRECTION DES PROFESSIONS :</strong
+                    <strong class="text-sm">SOUS DIRECTION DES PROFESSIONS :</strong
                     ><a
                       href="tel:0768153221"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
@@ -36,7 +36,7 @@
                     >
                   </div>
                   <div>
-                    <strong>SOUS DIRECTION DU GUICHET :</strong
+                    <strong class="text-sm">SOUS DIRECTION DU GUICHET :</strong
                     ><a
                       href="tel:0171737138"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
@@ -44,7 +44,7 @@
                     >
                   </div>
                   <div>
-                    <strong>ALERTE INFOS :</strong
+                    <strong class="text-sm">ALERTE INFOS :</strong
                     ><a
                       href="tel:0575455757"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
@@ -52,7 +52,7 @@
                     >
                   </div>
                   <div>
-                    <strong>E-DEPPS :</strong
+                    <strong class="text-sm">E-DEPPS :</strong
                     ><a
                       href="tel:0566056060"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"
@@ -60,7 +60,7 @@
                     >
                   </div>
                   <div>
-                    <strong>MAIL :</strong
+                    <strong class="text-sm">MAIL :</strong
                     ><a
                       href="mailto:secretariatdeps2@gmail.com"
                       class="text-blue-400 hover:text-blue-300 ml-2 cursor-pointer"

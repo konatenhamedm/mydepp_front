@@ -27,7 +27,9 @@
   let transactionData; // Variable pour stocker les données de la transaction
   function generatePDF() {
     try{
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+        format: "letter"
+    });
 
     // Centrer le logo
     const imgWidth = 30;
@@ -137,7 +139,7 @@
         {#if isLoading}
           <p>Chargement en cours...</p>
         {:else if pdfUrlAffiche}
-          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="650px" type="application/pdf"></iframe>
+          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="500px" type="application/pdf"></iframe>
         {/if}
       </div>
     </div>
@@ -147,6 +149,7 @@
 <style>
   .modal {
     position: fixed;
+    z-index: 200000;
     top: 0;
     left: 0;
     right: 0;
@@ -155,6 +158,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-x: scroll;
   }
   .modal-content {
     background-color: white;

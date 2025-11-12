@@ -299,10 +299,12 @@ $: filteredData = main_data
     .filter((item) => item.personne.status === activeTab)
     .filter((item) => {
       // Si on est dans l'onglet "accepte", filtrer par imputation
-      if (activeTab === "accepte" && item.personne.imputation !== user.id) {
-        return false;
-      }
-      
+      // if (activeTab === "accepte" && item.personne.imputation !== user.id) {
+      //   return false;
+      // }
+      //   if (activeTab === "accepte" ) {
+      //   return false;
+      // }
       // Filtre de recherche
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
@@ -478,13 +480,13 @@ $: filteredData = main_data
                   Imputation
                 </th>
                 <!-- Actions -->
-                {#if activeTab == "accepte"}
+                <!-- {#if activeTab == "accepte"} -->
                   <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border border-gray-200"
                   >
                     Action
                   </th>
-                {/if}
+                <!-- {/if} -->
               </tr>
             </thead>
 
@@ -584,7 +586,7 @@ $: filteredData = main_data
                     </td>
 
                     <!-- Actions -->
-                    {#if activeTab == "accepte"}
+                    <!-- {#if activeTab == "accepte"} -->
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
 
@@ -602,7 +604,7 @@ $: filteredData = main_data
                            
                         </div>
                       </td>
-                    {/if}
+                    <!-- {/if} -->
                   </tr>
                 {/each}
               {/if}
