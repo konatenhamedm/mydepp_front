@@ -117,15 +117,15 @@
     switch(tab) {
       case 'attente':
         // Onglet attente : seulement l'action "view"
-        return allActions.filter(action => action.action === 'view');
+  return allActions.filter(action => action.action === 'view' || action.action === 'imputation');
       
-      case 'accepte':
-        // Onglet accepté : seulement l'action "imputation"
-        return allActions.filter(action => action.action === 'imputation');
+        // case 'accepte':
+        //   // Onglet accepté : seulement l'action "imputation"
+        //   return allActions.filter(action => action.action === 'imputation');
 
       default:
         // Tous les autres onglets : seulement l'action "view"
-        return allActions.filter(action => action.action === 'details');
+        return allActions.filter(action => action.action === 'view');
     }
   }
 

@@ -52,7 +52,7 @@
   const validatePassword = (password: string): boolean => {
     // Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
     const re =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     return re.test(password);
   };
   async function checkEmail(email: any) {
@@ -99,7 +99,7 @@
         isValid = false;
       } else if (!validatePassword(formData.password)) {
         errors.password =
-          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre ";
         isValid = false;
       }
 
@@ -114,7 +114,7 @@
         isValid = false;
       } else if (!validatePassword(formData.confirmPassword)) {
         errors.confirmPassword =
-          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial";
+          "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre ";
         isValid = false;
       }
       return isValid;
