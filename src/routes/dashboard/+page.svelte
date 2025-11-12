@@ -332,10 +332,20 @@
 
       <!-- Photo de profil (tout le bloc cliquable) -->
       <div class="mt-6 md:mt-0 flex-shrink-0 relative">
+         <div>
+        <text class="font-medium text-gray-700 mt-2 text-center block">
+          {user?.nom}
+        </text>
+        <div class="text-sm text-gray-500 text-center">
+           {user?.username}
+      </div>
+      </div>
+      <div class="">
         <label for="photo-upload" class="cursor-pointer group relative block">
           <div
             class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white"
           >
+          
             {#if photoProfile}
               <!-- Photo de profil -->
               <img
@@ -371,8 +381,10 @@
           >
             <i class="ri-building-2-line text-lg"></i>
           </div>
-        </label>
 
+          
+        </label>
+        </div>
         <!-- Input file caché -->
         <input
           id="photo-upload"
@@ -381,7 +393,7 @@
           class="hidden"
           on:change={handlePhotoChange}
         />
-
+        
         <!-- Icône de warning si expiré -->
         {#if expire}
           <div
@@ -390,6 +402,7 @@
             <i class="ri-alert-line text-xl"></i>
           </div>
         {/if}
+        
       </div>
     </div>
     {#if user.status == "acp_dossier_valide_directrice"}

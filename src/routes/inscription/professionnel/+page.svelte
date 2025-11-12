@@ -65,6 +65,7 @@
       const data = await res.json();
       return data.data; // Assurez-vous que l'API renvoie un objet avec une clé valid
     } catch (error) {
+      errorMessageAccountCreation = "Erreur lors de la vérification de l'email.";
       console.error(
         "Erreur lors de la vérification de la transaction :",
         error
@@ -371,11 +372,13 @@
             values[element.name as keyof typeof values] = response.data.data;
           })
           .catch((error) => {
+            errorMessageAccountCreation = "Erreur lors de la récupération des données.";
             console.error("Erreur lors de la récupération des données:", error);
             values[element.name as keyof typeof values] = [];
           });
       });
     } catch (error) {
+      errorMessageAccountCreation = "Erreur lors de la récupération des données.";
       console.error("Erreur lors de la récupération des données:", error);
     }
   }
@@ -457,6 +460,7 @@
           }
         })
         .catch((error) => {
+          errorMessageAccountCreation = "Erreur lors de l'initialisation du paiement.";
           console.error("Erreur paiements :", error);
           isPaiementProcessing = false;
           authenticating = false;
@@ -469,10 +473,11 @@
         .then((response) => response.json())
         .then((result) => {
           authenticating = false;
-          alert("Inscription réussie !");
-          window.location.href = "/connexion";
+       
+          window.location.href = "/success";
         })
         .catch((error) => {
+          errorMessageAccountCreation = "Erreur lors de la création du compte. Veuillez réessayer.\n Si le problème persiste, contactez le support.";
           console.error("Erreur paiements :", error);
           isPaiementProcessing = false;
           authenticating = false;
@@ -609,6 +614,7 @@
       });
   }
   let accountCreationLoader = false;
+  let errorMessageAccountCreation = "";
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
       let formulaire = new FormData();
@@ -626,11 +632,13 @@
           );
           accountCreationLoader = false;
           alert("Votre inscription a été validée avec succès !");
-          windows.location.href = "/connexion";
+          window.location.href = "/success";
           // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
         })
         .catch((error) => {
           accountCreationLoader = false;
+          errorMessageAccountCreation =
+            "Erreur lors de la création du compte. Veuillez réessayer.\n Si le problème persiste, contactez le support.";
           console.error(
             "Erreur lors de la validation avec le numéro d'inscription :",
             error
@@ -661,7 +669,7 @@
         );
       });
   }
-
+let paiementStatus: boolean = false;
   async function checkPaiementStatus(professionCode: any): Promise<boolean> {
     if (!professionCode) return false;
 
@@ -670,7 +678,7 @@
         BASE_URL_API + `/profession/get/status/paiement/${professionCode}`
       );
       const data = await res.json();
-      // paiementStatus = data.data;
+      paiementStatus = data.data;
       console.log("Paiement status:", data.data);
       return data.data; // Assurez-vous que l'API renvoie un objet avec une clé `valid`
     } catch (error) {
@@ -1741,11 +1749,11 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.cni}
                       <div class="flex-shrink-0">
-                        <img
+                          <img
                           
                           src={imagePreview.cni}
-                          alt="Aperçu CNI"
-                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          alt="Aperçu cni"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       </div>
                     {/if}
@@ -1784,11 +1792,11 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.diplomeFile}
                       <div class="flex-shrink-0">
-                        <img
+                         <img
                           
                           src={imagePreview.diplomeFile}
                           alt="Aperçu diplôme"
-                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       </div>
                     {/if}
@@ -1829,17 +1837,14 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.casier}
                       <div class="flex-shrink-0">
-                        {console.log(
-                          "imagePreview.casier",
-                          imagePreview.casier.startsWith("data:image")
-                        )}
+                       
                         {#if imagePreview.casier.startsWith("data:image")}
-                          <img
-                            
-                            src={imagePreview.casier}
-                            alt="Aperçu casier"
-                            class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
-                          />
+                           <img
+                          
+                          src={imagePreview.casier}
+                          alt="Aperçu casier "
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
                         {:else}
                           <!-- <span style="display:flex;align-items:center;justify-content:center;height:50px;width:50px;background:#f3f4f6;border-radius:8px;border:1px solid #eee;">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="#2563eb"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm7 1.5V9h5.5L13 3.5zM6 4h6v5a1 1 0 0 0 1 1h5v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4zm2 10v2h8v-2H8z"/></svg>
@@ -1886,11 +1891,11 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.certificat}
                       <div class="flex-shrink-0">
-                        <img
+                         <img
                           
                           src={imagePreview.certificat}
                           alt="Aperçu certificat"
-                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       </div>
                     {/if}
@@ -1926,9 +1931,10 @@
                     {#if imagePreview?.cv}
                       {#if imagePreview.cv.startsWith("data:image")}
                         <img
+                          
                           src={imagePreview.cv}
-                          alt="Aperçu CV"
-                          class="w-64 h-40 object-cover rounded-lg border-2 border-gray-300"
+                          alt="Aperçu cv"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       {:else}
                         <svg
@@ -2081,7 +2087,7 @@
               />
               {#if isPaiementProcessing}
                 <p class="text-purple-600 mb-4">
-                  Traitement du paiement, veuillez patienter...
+                  {paiementStatus? "Traitement du paiement, veuillez patienter...": "Validation de l'inscription, veuillez patienter..."}
                 </p>
                 <SpinnerBlue />
               {:else if authenticating}
@@ -2112,7 +2118,13 @@
               <SpinnerBlue />
             </div>
           {/if}
-
+          {#if errorMessageAccountCreation}
+            <div
+              class="mt-6 p-4 bg-red-100 border border-red-300 rounded-lg"
+            >
+              <p class="text-red-800">{errorMessageAccountCreation}</p>
+            </div>
+          {/if}
           <div class="flex justify-between mt-8 pt-6">
             <button
               onclick={() => {
@@ -2126,6 +2138,7 @@
             >
               {step > 1 ? "Précédent" : ""}
             </button>
+
             {#if lastStep}
               {#if isValidNumeroInscription == false}
                 <button
@@ -2135,7 +2148,7 @@
                   type="button"
                   class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 >
-                  Passer au paiement
+                 {paiementStatus? " Passer au paiement": "Terminer l'inscription"}
                 </button>
               {:else}
                 <button

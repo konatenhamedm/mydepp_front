@@ -73,11 +73,16 @@
 
     const handleSubmit = async  (event) => {
     if (userData.typeUser === "ETABLISSEMENT") {
-     await fetch(
+      // Convert etablissementData to FormData
+      const formData = new FormData();
+      Object.entries(etablissementData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      await fetch(
         BASE_URL_API + "/etablissement/update/" + user?.personneId,
         {
           method: "POST",
-          body: JSON.stringify(etablissementData),
+          body: formData,
         }
       )
         .then((response) => response.json())
@@ -85,11 +90,16 @@
           console.log("Etablissement profile updated:", result);
         });
     } else {
+      // Convert professionnelData to FormData
+      const formData = new FormData();
+      Object.entries(professionnelData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
       await fetch(
         BASE_URL_API + "/professionnel/update/" + user?.personneId,
         {
           method: "POST",
-          body: JSON.stringify(professionnelData)
+          body: formData,
         }
       )
         .then((response) => response.json())
