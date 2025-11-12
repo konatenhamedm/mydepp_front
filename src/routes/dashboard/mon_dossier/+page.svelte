@@ -411,7 +411,7 @@
                     type="text"
                     disabled
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
-                    value={userData?.personne?.profession.libelle}
+                    value={userData?.personne?.profession?.libelle}
                   />
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
