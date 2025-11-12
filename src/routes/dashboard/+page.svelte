@@ -331,8 +331,8 @@
       </div>
 
       <!-- Photo de profil (tout le bloc cliquable) -->
-      <div class="mt-6 md:mt-0 flex-shrink-0 relative">
-         <div>
+      <div class="grid grid-cols-2 mt-6 md:mt-0  gap-6 items-center">
+         <div class="">
         <text class="font-medium text-gray-700 mt-2 text-center block">
           {user?.nom}
         </text>
@@ -340,7 +340,7 @@
            {user?.username}
       </div>
       </div>
-      <div class="">
+      <div >
         <label for="photo-upload" class="cursor-pointer group relative block">
           <div
             class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white"
