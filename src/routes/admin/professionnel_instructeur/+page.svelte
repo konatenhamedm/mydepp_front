@@ -480,13 +480,13 @@ $: filteredData = main_data
                   Imputation
                 </th>
                 <!-- Actions -->
-                {#if activeTab != "attente"}
+                <!-- {#if activeTab != "attente" } -->
                   <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border border-gray-200"
                   >
                     Action
                   </th>
-                {/if}
+                <!-- {/if} -->
               </tr>
             </thead>
 
@@ -586,10 +586,10 @@ $: filteredData = main_data
                     </td>
 
                     <!-- Actions -->
-                    {#if activeTab != "attente"}
+                    {#if activeTab != "attente" || user.id == item.personne.imputation}
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
-
+                          {console.log("item", item, user)}
                           
                             <button
                               on:click={() => {
