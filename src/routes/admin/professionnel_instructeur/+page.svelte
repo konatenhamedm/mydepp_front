@@ -284,9 +284,9 @@ $: statusCounts = main_data.reduce((acc, item) => {
     
     // Pour l'onglet "accepte", ne compter que les professionnels imputés à l'utilisateur connecté
     if (status === "accepte") {
-      if (item.personne.imputation === user.id) {
+      // if (item.personne.imputation === user.id) {
         acc[status] = (acc[status] || 0) + 1;
-      }
+      // }
     } else {
       // Pour les autres onglets, compter normalement
       acc[status] = (acc[status] || 0) + 1;
@@ -480,13 +480,13 @@ $: filteredData = main_data
                   Imputation
                 </th>
                 <!-- Actions -->
-                <!-- {#if activeTab == "accepte"} -->
+                {#if activeTab != "attente"}
                   <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border border-gray-200"
                   >
                     Action
                   </th>
-                <!-- {/if} -->
+                {/if}
               </tr>
             </thead>
 
@@ -586,7 +586,7 @@ $: filteredData = main_data
                     </td>
 
                     <!-- Actions -->
-                    <!-- {#if activeTab == "accepte"} -->
+                    {#if activeTab != "attente"}
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
 
@@ -604,7 +604,7 @@ $: filteredData = main_data
                            
                         </div>
                       </td>
-                    <!-- {/if} -->
+                    {/if}
                   </tr>
                 {/each}
               {/if}

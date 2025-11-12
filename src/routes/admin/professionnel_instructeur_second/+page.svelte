@@ -282,11 +282,11 @@
 $: statusCounts = main_data.reduce((acc, item) => {
     const status = item.personne.status;
     
-    // Pour l'onglet "accepte", ne compter que les professionnels imputés à l'utilisateur connecté
-    if (status === "accepte") {
-      // if (item.personne.imputation === user.id) {
+    // Pour l'onglet "attente", ne compter que les professionnels imputés à l'utilisateur connecté
+    if (status === "attente") {
+      if (item.personne.imputation === user.id) {
         acc[status] = (acc[status] || 0) + 1;
-      // }
+      }
     } else {
       // Pour les autres onglets, compter normalement
       acc[status] = (acc[status] || 0) + 1;
@@ -299,10 +299,12 @@ $: filteredData = main_data
     .filter((item) => item.personne.status === activeTab)
     .filter((item) => {
       // Si on est dans l'onglet "accepte", filtrer par imputation
-      // if (activeTab === "accepte") {
+      // if (activeTab === "attente") {
       //   return false;
       // }
-      
+      if (activeTab === "attente") {
+        return item.personne.imputation === user.id;
+      }
       // Filtre de recherche
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
@@ -478,7 +480,7 @@ $: filteredData = main_data
                   Imputation
                 </th>
                 <!-- Actions -->
-                {#if activeTab == "accepte"}
+                {#if activeTab == "attente"}
                   <th
                     class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border border-gray-200"
                   >
@@ -584,7 +586,7 @@ $: filteredData = main_data
                     </td>
 
                     <!-- Actions -->
-                    {#if activeTab == "accepte"}
+                    {#if activeTab == "attente"}
                       <td class="px-4 text-[12px] py-3 border border-gray-200">
                         <div class="flex items-center gap-2 justify-end">
 

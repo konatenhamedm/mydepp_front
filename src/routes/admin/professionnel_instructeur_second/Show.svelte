@@ -69,58 +69,58 @@
 
   function init(form: HTMLFormElement) {
     console.log(`je suis la data `, data);
-    numero = data.personne.number || "";
-    nom = data.personne.nom || "";
-    status = data.personne.status || "";
-    professionLibelle = data.personne.profession
+    numero = data?.personne?.number || "";
+    nom = data?.personne?.nom || "";
+    status = data?.personne?.status || "";
+    professionLibelle = data?.personne?.profession
       ? data.personne.profession.libelle
       : "";
-    prenoms = data.personne.prenoms || "";
-    reason = data.personne.reason || "";
-    professionnel = data.personne.professionnel || "";
-    civilite = data.personne.civilite ? data.personne.civilite.libelle : "";
-    nationalite = data.personne.nationate
+    prenoms = data?.personne?.prenoms || "";
+    reason = data?.personne?.reason || "";
+    professionnel = data?.personne?.professionnel || "";
+    civilite = data?.personne?.civilite ? data.personne.civilite.libelle : "";
+    nationalite = data?.personne?.nationate
       ? data.personne.nationate.libelle
       : "";
-    dateNaissance = data.personne.dateNaissance || "";
-    dateDiplome = data.personne.dateDiplome || "";
-    diplome = data.personne.diplome || "";
-    poleSanitaire = data.personne.poleSanitaire || "";
-    organisationNom = data.personne.organisationNom || "";
-    poleSanitairePro = data.personne.poleSanitairePro || "";
-    lieuExercicePro = data.personne.lieuExercicePro || "";
-    datePremierDiplome = data.personne.datePremierDiplome || "";
-    situationPro = data.personne.situationPro.libelle || "";
-    situation = data.personne.situation || "";
+    dateNaissance = data?.personne?.dateNaissance || "";
+    dateDiplome = data?.personne?.dateDiplome || "";
+    diplome = data?.personne?.diplome || "";
+    poleSanitaire = data?.personne?.poleSanitaire || "";
+    organisationNom = data?.personne?.organisationNom || "";
+    poleSanitairePro = data?.personne?.poleSanitairePro || "";
+    lieuExercicePro = data?.personne?.lieuExercicePro || "";
+    datePremierDiplome = data?.personne?.datePremierDiplome || "";
+    situationPro = data?.personne?.situationPro.libelle || "";
+    situation = data?.personne?.situation || "";
     typeUser = data?.typeUser || "";
-    userEmail = data.email || "";
-    appartenirOrganisation = data.personne.appartenirOrganisation || "";
-    appartenirOrdre = data.personne.appartenirOrdre || "";
-    numeroInscription = data.personne.numeroInscription || "";
-    photo = data.personne.photo || "";
-    cni = data.personne.cni || "";
-    CVpath = data.personne.cv ? data.personne.cv.path : "";
-    CValt = data.personne.cv ? data.personne.cv.alt : "";
-    Photopath = data.personne.photo ? data.personne.photo.path : "";
+    userEmail = data?.email || "";
+    appartenirOrganisation = data?.personne?.appartenirOrganisation || "";
+    appartenirOrdre = data?.personne?.appartenirOrdre || "";
+    numeroInscription = data?.personne?.numeroInscription || "";
+    photo = data?.personne?.photo || "";
+    cni = data?.personne?.cni || "";
+    CVpath = data?.personne?.cv ? data.personne.cv.path : "";
+    CValt = data?.personne?.cv ? data.personne.cv.alt : "";
+    Photopath = data?.personne?.photo ? data.personne.photo.path : "";
     Photoalt = photo ? data.personne.photo.alt : "";
-    diplomeFilePath = data.personne.diplomeFile
+    diplomeFilePath = data?.personne?.diplomeFile
       ? data.personne.diplomeFile.path
       : "";
-    diplomeFileAlt = data.personne.diplomeFile
+    diplomeFileAlt = data?.personne?.diplomeFile
       ? data.personne.diplomeFile.alt
       : "";
-    cniPath = data.personne.cni ? data.personne.cni.path : "";
-    cniAlt = data.personne.cni ? data.personne.cni.alt : "";
-    casierPath = data.personne.casier ? data.personne.casier.path : "";
-    casierAlt = data.personne.casier ? data.personne.casier.alt : "";
-    certificatPath = data.personne.certificat
+    cniPath = data?.personne?.cni ? data.personne.cni.path : "";
+    cniAlt = data?.personne?.cni ? data.personne.cni.alt : "";
+    casierPath = data?.personne?.casier ? data.personne.casier.path : "";
+    casierAlt = data?.personne?.casier ? data.personne.casier.alt : "";
+    certificatPath = data?.personne?.certificat
       ? data.personne.certificat.path
       : "";
-    certificatAlt = data.personne.certificat
+    certificatAlt = data?.personne?.certificat
       ? data.personne.certificat.alt
       : "";
-    lieuDiplome = data.personne.lieuDiplome || "";
-    persionneId = data.personne.id;
+    lieuDiplome = data?.personne?.lieuDiplome || "";
+    persionneId = data?.personne?.id;
     // Récupérer la profession
     /*profession =  data.personne.professionLibelle || ""; await getProfessionLibelle(data.personne.profession);
     if (profession) {
