@@ -651,7 +651,7 @@ type="text"
 
 	<!-- Card Footer -->
 	<div class="flex justify-end border-t border-gray-200 pt-4">
-		 {#if status === "attente"}
+		 <!-- {#if status === "attente"}
         <div class="col-span-2">
           {#if isLoad}
             <Button
@@ -718,7 +718,7 @@ type="text"
       {#if status != "accepte" &&  status != "attente"}
       <div class="col-span-2">
       </div>
-      {/if}
+      {/if} -->
       <div class="flex justify-end item-end">
         <Button
           color="alternative"

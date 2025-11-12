@@ -7,6 +7,8 @@
 
   let isLoad = false;
   let notificationCount = 0;
+  let documentCount = 0;
+  let forumCount = 0;
   let nbPayment = 0;
   let nbDocumentValide = 0;
   let nbWaitingDocument = 0;
@@ -100,6 +102,37 @@
       } else {
         console.error("Erreur de récupération:", response.statusText);
       }
+
+
+       const response2 = await fetch(
+        BASE_URL_API + `/adminDocument/`
+      );
+      if (response2.ok) {
+        const result = await response2.json();
+        if (result.code === 200 && result.data) {
+          
+          documentCount = result.data.length;
+        } else {
+          console.error("Erreur dans la réponse de l'API:", result.message);
+        }
+      } else {
+        console.error("Erreur de récupération:", response2.statusText);
+      }
+
+        const response3 = await fetch(
+        BASE_URL_API + `/forum/`
+      );
+      if (response3.ok) {
+        const result = await response3.json();
+        if (result.code === 200 && result.data) {
+          
+          forumCount = result.data.length;
+        } else {
+          console.error("Erreur dans la réponse de l'API:", result.message);
+        }
+      } else {
+        console.error("Erreur de récupération:", response3.statusText);
+      }
     } catch (error) {
       console.error("Erreur API:", error);
     }
@@ -170,7 +203,7 @@
       title: "Alertes",
       icon: "ri-notification-line",
       color: "from-orange-100 to-orange-50",
-      badge: `${notifications.length}`,
+      badge: `notification`,
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/alerts",
       description: "Notifications importantes",
@@ -198,7 +231,7 @@
       title: "Documenthèque",
       icon: "ri-file-pdf-line",
       color: "from-red-100 to-red-50",
-      badge: "0",
+      badge: "document",
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/documentheque",
       description: "Accéder aux documents",
@@ -208,7 +241,7 @@
       title: "Forum",
       icon: "ri-group-line",
       color: "from-purple-100 to-purple-50",
-      badge: "0",
+      badge: "forum",
       badgeColor: "bg-red-500 text-white",
       link: "/dashboard/forum",
       description: "Échanger avec la communauté",
@@ -448,7 +481,7 @@
                     <span
                       class="text-xs px-3 py-1 rounded-full font-medium bg-gray-200 text-gray-500"
                     >
-                      {card.badge}
+                      {card.badge === "notification" ? notificationCount : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
                     </span>
                   {/if}
                   <i class="ri-lock-line text-gray-400 text-xl"></i>
@@ -488,7 +521,7 @@
                   <span
                     class="text-xs px-3 py-1 rounded-full font-medium {card.badgeColor}"
                   >
-                    {card.badge}
+                     {card.badge === "notification" ? notificationCount : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
                   </span>
                 {/if}
               </div>

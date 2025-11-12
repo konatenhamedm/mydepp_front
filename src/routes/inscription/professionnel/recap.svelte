@@ -63,7 +63,7 @@
     <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; padding-left:2.75rem;">
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Civilité</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.civilite)}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.civilite) ? allValuesAsTables[0][parseInt(formdata.civilite)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Nom</p>

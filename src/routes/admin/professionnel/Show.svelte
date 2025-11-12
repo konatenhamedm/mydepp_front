@@ -8,7 +8,7 @@
   import { createEventDispatcher, onMount } from "svelte";
   import DocShow from "./DocShow.svelte";
   import { format } from "date-fns";
-  import { fr } from "date-fns/locale";
+  import { fr, is } from "date-fns/locale";
   import RecuPaiement from "./RecuPaiement.svelte";
   import FicheInscription from "./FicheInscription.svelte";
   import Modale from "$components/Modales/Modale.svelte";
@@ -172,6 +172,7 @@
     console.log("Email", data.personne);
 
     isLoad = true;
+    if(valid_endUser.status && valid_endUser.status != "" && (valid_endUser.status=="rejet" || valid_endUser.status == "rejete"  || valid_endUser.status=="refuse")&& valid_endUser.raison != "" ){
     try {
       const res = await apiFetch(
         true,
@@ -196,8 +197,51 @@
       }
     } catch (error) {
       console.error("Error saving:", error);
+      notificationMessage = "Une erreur est survenue lors du traitement.";
+        notificationType = "error";
+        showNotification = true;
+        open = false;
+        isLoad = false;
+        dispatch("changeStatus");
+    }} else if(valid_endUser.status && valid_endUser.status != "" && valid_endUser.status!="rejet" && valid_endUser.status!="rejete"  && valid_endUser.status!="refuse"){
+      try {
+      const res = await apiFetch(
+        true,
+        "/professionnel/active/" + data.personne?.id,
+        "PUT",
+        {
+          status: valid_endUser.status,
+          raison: valid_endUser.raison,
+          userUpdate: userUpdateId,
+          email: userEmail,
+        },
+      );
+
+      if (res.code == 200) {
+        isLoad = false;
+        open = false;
+        notificationMessage = "Traitement effectué  avec succès!";
+        notificationType = "success";
+        showNotification = true;
+        open = false;
+        dispatch("changeStatus");
+      }
+    } catch (error) {
+      console.error("Error saving:", error);
+      notificationMessage = "Une erreur est survenue lors du traitement.";
+        notificationType = "error";
+        showNotification = true;
+        open = false;
+        isLoad = false;
+        dispatch("changeStatus");
     }
-  }
+    } else {
+      notificationMessage = "Veuillez remplir tous les champs obligatoires.";
+        notificationType = "error";
+        showNotification = true;
+        alert("Veuillez remplir tous les champs obligatoires.");
+        isLoad = false;
+  }}
   async function SaveFunctionSingleMethode(etat: string) {
     console.log("EmailTTT", userEmail);
     console.log("Email", valid_endUser.status);
@@ -638,7 +682,7 @@
 
         <br />
 
-        {#if status === "attente"}
+        <!-- {#if status === "attente"}
           <fieldset class="border border-gray-300 rounded-md p-4">
             <legend class="text-lg font-semibold text-blue-500">Décision</legend>
             <div class="space-y-4">
@@ -725,13 +769,13 @@
               </div>
             </div>
           </fieldset>
-        {/if}
+        {/if} -->
       </form>
 	  </div>
 <!--   <div  class="w-full"> -->
 <div class="flex w-full justify-end border-t border-gray-200 pt-4">
   <div class="w-full grid grid-cols-3">
-    {#if status === "attente"}
+    <!-- {#if status === "attente"}
       <div class="col-span-2">
         {#if isLoad}
           <Button
@@ -797,7 +841,8 @@
 
     {#if status != "accepte" && status != "attente"}
       <div class="col-span-2"></div>
-    {/if}
+    {/if} -->
+    <div class="col-span-2"></div>
     <div class="flex justify-end item-end">
       <Button
         color="alternative"
