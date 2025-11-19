@@ -1,118 +1,48 @@
 <script>
-  import { CookieManager } from "$lib/auth";
-  import { onMount } from "svelte";
+  import FooterNew from "$components/_includes/FooterNew.svelte";
+  import HeaderNew from "$components/_includes/HeaderNew.svelte";
 
 
-  let isAuth = false;
-  let showDropdown = false;
-
-  const checkLogin = () => {
-    const token = CookieManager.get("auth");
-    console.log("Token dans HeaderNew:", token);
-    isAuth = !!token;
-  };
-  const logout = () => {
-    CookieManager.remove("auth");
-    isAuth = false;
-    window.location.href = "/";
-  };
-
-  onMount(() => {
-    checkLogin();
-    console.log("isAuth dans HeaderNew:", isAuth);
-  })
 
 </script>
 
-<header class="bg-white shadow-lg fixed w-full top-0 z-50 items-center" style="height: 80px;">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <div class="flex items-center">
-            <a
-              class=""
-              href="/"
-              ><img
-                src="/images/new_Image/logo-depps.png"
-                alt="MYDEPPS Logo"
-
-                style="height: 110px; width: auto;"
-            /></a>
-          </div>
-          <div class="hidden md:block">
-            <div class="ml-10 flex items-baseline space-x-8">
-              <a
-                class="text-gray-900 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
-                href="/"
-                >Accueil</a
-              ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
-                href="/about"
-                >À propos</a
-              ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
-                href="/services"
-                >E-DEPPS</a
-              ><a
-                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-lg font-medium transition-colors cursor-pointer"
-                href="/contact"
-                >Contact</a
-              >
-              {#if isAuth}
-              <a
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                href="/dashboard"
-                >Tableau de bord</a
-              ><button 
-                onclick={logout}
-                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
-              >
-                Deconnexion
-              </button>
-              {:else}
-               <a
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
-                href="/inscription"
-                >Inscription</a
-              ><a
-                class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
-                href="/connexion"
-                >Connexion</a
-              >
-              {/if}
+<main>
+    <HeaderNew/>
+<div
+        class="max-h-screen pt-10 bg-[url('/bg5.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center"
+        >
+        <!-- style="background-image: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 100%);" -->
+        <div class="py-12 px-4 sm:px-6 lg:px-8 ">
+          <div class="max-w-4xl mx-auto bg-white bg-opacity-90 rounded-2xl p-8 shadow-lg">
+            <div class="text-center mb-12">
+                 <i class="ri-check-double-line text-green-600 text-6xl"></i> 
+              <h1 class="text-4xl font-bold text-black mb-4">
+                INSCRIPTION PROFESSIONNEL REUSSITE
+              </h1>
+              <p class="text-lg text-gray-600">
+                <!-- Choisissez votre type d'inscription -->
+              </p>
             </div>
-          </div>
-          <div class="md:hidden relative">
-            <button
-              class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 cursor-pointer"
-              onclick={() => showDropdown = !showDropdown}
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl "
             >
-              <div class="w-6 h-6 flex items-center justify-center">
-                <i class="ri-menu-line text-xl"></i>
-              </div>
-            </button>
-            {#if showDropdown}
-              <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 border">
-                <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Accueil</a>
-                <a href="/about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">À propos</a>
-                <a href="/services" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">E-DEPPS</a>
-                <a href="/contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Contact</a>
-                {#if isAuth}
-                  <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Tableau de bord</a>
-                  <button onclick={logout} class="block w-full text-left px-4 py-2 text-blue-600 hover:bg-blue-50">Déconnexion</button>
-                {:else}
-                  <a href="/inscription" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Inscription</a>
-                  <a href="/connexion" class="block px-4 py-2 text-blue-600 hover:bg-blue-50">Connexion</a>
-                {/if}
-              </div>
-            {/if}
+              <button onclick={()=>{window.location.href="/"}} class=" text-white px-4 py-3 rounded-lg transition" style="background-color: #848884;font-weight: bold;">
+                        Retour vers l'accueil
+              </button>
+               <button onclick={()=>{window.location.href="/connexion"}}  class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition" style="font-weight: bold;">
+                 Connexion
+              </button>
+            </div>
+          
+           
           </div>
         </div>
-      </nav>
-    </header>
+      </div>
+      <FooterNew/>
+</main>
 
-
-<style> 
-@import url("https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css");
+<style>
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css");
 *,
 :after,
 :before {
@@ -247,7 +177,28 @@ html {
   font-variation-settings: normal;
   -webkit-tap-highlight-color: transparent;
 }
-
+body {
+  margin: 0;
+  line-height: inherit;
+}
+hr {
+  height: 0;
+  color: inherit;
+  border-top-width: 1px;
+}
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
 a {
   color: inherit;
   text-decoration: inherit;
@@ -1540,6 +1491,5 @@ video {
   font-family: Inter, Inter Fallback;
   font-style: normal;
 }
-
 
 </style>
