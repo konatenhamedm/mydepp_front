@@ -7,6 +7,7 @@
 
   let isLoad = false;
   let notificationCount = 0;
+  let cardNotif = 0;
   let documentCount = 0;
   let forumCount = 0;
   let nbPayment = 0;
@@ -95,7 +96,11 @@
         const result = await response.json();
         if (result.code === 200 && result.data) {
           notifications = result.data;
-          notificationCount = result.data.length;
+          const notificationsLu = notifications.filter(
+            (notif:any) => notif.isRead === false
+          );
+          cardNotif = notificationsLu.length;
+          notificationCount = notifications.length;
         } else {
           console.error("Erreur dans la réponse de l'API:", result.message);
         }
@@ -155,6 +160,7 @@
       console.error("Erreur API:", error);
     }
   }
+  let firstPaymentDate:any ;
   async function fetchPaymentStats() {
     try {
       await fetch(
@@ -162,7 +168,7 @@
       )
         .then((response) => response.json())
         .then((result) => {
-          
+          firstPaymentDate = result.data[0]?.createdAt || null;
           nbPayment = result.data.length;
           
           console.log("payment stats", result.data);
@@ -178,6 +184,7 @@
 
     if (user?.avatar) {
       photoProfile = BASE_URL_API_UPLOAD + user.avatar;
+     
     }
 
     console.log("user", user);
@@ -186,6 +193,7 @@
     await fetchDataInfo();
     await fetchPaymentStats();
     isLoad = false;
+
   });
 
   const cards = [
@@ -248,6 +256,12 @@
       isProtected: false,
     },
   ];
+
+
+function formatDate(dateString:any) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
 </script>
 
 <main
@@ -281,7 +295,7 @@
             ><i class="ri-map-pin-line"></i> Côte d'Ivoire</span
           >
           <span class="flex items-center gap-2"
-            ><i class="ri-calendar-line"></i> Inscrit depuis 10/01/2024</span
+            ><i class="ri-calendar-line"></i> Inscrit depuis le {formatDate(firstPaymentDate)}</span
           >
         </div>
 
@@ -352,7 +366,9 @@
                 src={photoProfile}
                 alt="Photo de profil"
                 class="w-full h-full object-cover"
+                
               />
+              
             {:else}
               <!-- Placeholder avec dégradé -->
               <div
@@ -364,7 +380,7 @@
 
             <!-- Overlay au survol -->
             <div
-              class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center"
+              class="absolute inset-0 bg-none bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center"
             >
               <div
                 class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1"
@@ -494,7 +510,7 @@
                     <span
                       class="text-xs px-3 py-1 rounded-full font-medium bg-gray-200 text-gray-500"
                     >
-                      {card.badge === "notification" ? notificationCount : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
+                      {card.badge === "notification" ? cardNotif : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
                     </span>
                   {/if}
                   <i class="ri-lock-line text-gray-400 text-xl"></i>
@@ -534,7 +550,7 @@
                   <span
                     class="text-xs px-3 py-1 rounded-full font-medium {card.badgeColor}"
                   >
-                     {card.badge === "notification" ? notificationCount : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
+                     {card.badge === "notification" ? cardNotif : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
                   </span>
                 {/if}
               </div>
