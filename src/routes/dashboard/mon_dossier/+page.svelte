@@ -9,7 +9,7 @@
   import axios from "axios";
 //de
   let user = getAuthCookie();
-
+  let isSubmitting: boolean = false;
   let values = {
     civilite: [],
     statusPro: [],
@@ -72,6 +72,7 @@
 
 
     const handleSubmit = async  (event) => {
+      isSubmitting = true;
     if (userData.typeUser === "ETABLISSEMENT") {
       // Convert etablissementData to FormData
       const formData = new FormData();
@@ -88,7 +89,13 @@
         .then((response) => response.json())
         .then((result) => {
           console.log("Etablissement profile updated:", result);
-        });
+          alert("Profil mis à jour avec succès !");
+          isSubmitting = false;
+        }).catch((error) => {
+          console.error("Erreur lors de la mise à jour du profil:", error);
+          alert("Une erreur est survenue lors de la mise à jour du profil.");
+          isSubmitting = false;
+        })  ;
     } else {
       // Convert professionnelData to FormData
       const formData = new FormData();
@@ -105,7 +112,13 @@
         .then((response) => response.json())
         .then((result) => {
           console.log("Professionnel profile updated:", result);
-        });
+          alert("Profil mis à jour avec succès !");
+          isSubmitting = false;
+        }).catch((error) => {
+          console.error("Erreur lors de la mise à jour du profil:", error);
+          alert("Une erreur est survenue lors de la mise à jour du profil.");
+          isSubmitting = false;
+        })  ;
     }
   };
 
@@ -498,13 +511,13 @@
                         required={true}
                         name="situationPro"
                         
-                        bind:value={professionnelData.situationPro.id}
+                        bind:value={professionnelData.situationPro.id }
                       >
                         <option value=""  >
                           Sélectionnez votre situation professionnelle
                         </option>
                         {#each values.situationProfessionnelle as situation}
-                         <option value={situation.id} selected={situation.libelle == professionnelData.situationPro.libelle}>{situation.libelle}</option>
+                         <option value={situation.id} selected={situation.libelle == professionnelData?.situationPro?.libelle}>{situation.libelle}</option>
                         {/each}
                       </select>
                     </div>
@@ -525,7 +538,7 @@
                         Sélectionnez votre région sanitaire
                       </option>
                       {#each values.region as region}
-                        <option selected={parseInt(region.id) ==  parseInt(professionnelData.region.id)} value={region.id}>{region.libelle}</option>
+                        <option selected={parseInt(region.id) ==  parseInt(professionnelData?.region?.id)} value={region.id}>{region.libelle}</option>
                       {/each}
                     </select>
                   </div>
@@ -774,6 +787,7 @@
                           </p>
                           <a
                             class="text-lg"
+                            target="_blank"
                             style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                             href={document.path
                               ? BASE_URL_API_UPLOAD + document.path
@@ -794,6 +808,7 @@
                       <div>
                         <p class="font-medium text-gray-900">CNI</p>
                         <a
+                        target="_blank"
                           class="text-lg"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.cni.url
@@ -812,6 +827,7 @@
                         <p class="font-medium text-gray-900">PHOTO</p>
                         <a
                           class="text-lg"
+                          target="_blank"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.photo.url
                             ? BASE_URL_API_UPLOAD + professionnelData.photo.url
@@ -830,6 +846,7 @@
                         <p class="font-medium text-gray-900">CASIER</p>
                         <a
                           class="text-lg"
+                          target="_blank"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.casier.url
                             ? BASE_URL_API_UPLOAD + professionnelData.casier.url
@@ -847,6 +864,7 @@
                         <p class="font-medium text-gray-900">CERTIFICAT</p>
                         <a
                           class="text-lg"
+                          target="_blank"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.certificat
                             ? BASE_URL_API_UPLOAD +
@@ -865,6 +883,7 @@
                         <p class="font-medium text-gray-900">DIPLOME</p>
                         <a
                           class="text-lg"
+                          target="_blank"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.diplomeFile
                             ? BASE_URL_API_UPLOAD +
@@ -883,6 +902,7 @@
                         <p class="font-medium text-gray-900">CV</p>
                         <a
                           class="text-lg"
+                          target="_blank"
                           style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                           href={professionnelData.cv
                             ? BASE_URL_API_UPLOAD + professionnelData.cv.url
@@ -908,6 +928,7 @@
                 </a>
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-[1.02]"
                   style="background-color: #2563eb;"
                 >

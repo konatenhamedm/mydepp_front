@@ -13,10 +13,11 @@
 
   let receiptData = {
     logo: 'https://mydepps.pages.dev/_files/logo-depps.png', // URL du logo
-    title: 'Reçu de Paiement - Renouvellement',
+    title: 'Reçu de Paiement - Nouvelle Demande',
     date: '04 novembre 2024 à 16:39:59',
     name: 'Kra Rita',
     paymentMethod: 'OMCIV2',
+    profession: "",
     phone: '0564924282',
     receiptNumber: '1730738267',
     amount: '10000 XOF',
@@ -53,7 +54,7 @@
 
     const fields = [
       { label: "Date d'édition:", value: transactionData.createdAt },
-      // { label: "Nom complet:", value: data.name },
+      { label: "Nom complet:", value: transactionData.user.personne.nom + " " + transactionData.user.personne.prenoms },
       { label: "Mode de paiement:", value: transactionData.channel },
       { label: "Email:", value: transactionData.user.email },
       { label: "Réference paiement:", value: `N° ${transactionData.reference}` },

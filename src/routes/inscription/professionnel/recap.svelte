@@ -122,7 +122,7 @@
         <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.dateDiplome)}</p>
       </div>
       <div>
-        <p style="font-size:0.875rem; color:#4b5563;">Lieu d'obtention</p>
+        <p style="font-size:0.875rem; color:#4b5563;">Lieu d'obtention du diplôme</p>
         <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.lieuObtentionDiplome) ? allValuesAsTables[5][parseInt(formdata.lieuObtentionDiplome)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
