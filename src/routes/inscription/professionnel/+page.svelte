@@ -271,7 +271,7 @@
       lastStep = true;
     }
 
-    
+    // step = 3;
   };
 
   const prevStep = () => {
@@ -424,7 +424,7 @@
     const selectedFilesFromStorage = null;
 
     if (selectedFilesFromStorage) {
-      // Ajouter chaque fichier au FormData
+      // Ajouter chaque fichier au FormData en binaire
       Object.keys(selectedFilesFromStorage).forEach((fieldName) => {
         const fileData = selectedFilesFromStorage[fieldName];
         if (fileData && fileData.data) {
@@ -582,7 +582,7 @@
     if (checkAction == 1) return;
     axios
       .get(
-        `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}`
+        `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}/${formData.nom}/${formData.prenoms}`
       )
       .then((response) => {
         console.log("Response existence numero d'inscription:", response.data);
@@ -630,6 +630,7 @@
           code: numeroTempInscription,
           email: formData.email,
           password: formData.password,
+     
         })
         .then((response) => {
           console.log(
@@ -699,6 +700,13 @@
   const openCalendar = (event: any) => {
     event.target.showPicker();
   };
+
+
+  const handleRegionChange = async(event:any) =>{
+    const getFosrt = JSON.stringify(event.districts)
+    
+    values.district = JSON.parse(getFosrt);
+  }
 </script>
 
 <main>
@@ -1045,7 +1053,7 @@
                     controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="libelle"
                     valueField="id"
-                    placeholder="Sélectionnez votre région sanitaire"
+                    placeholder="Sélectionnez votre nationalité"
                   />
                 </div>
                 {#if errors.nationalite}
@@ -1446,6 +1454,8 @@
                       multiple={false}
                       options={values.region}
                       bind:value={formData.region}
+                      onChange={(event: any) =>
+                        handleRegionChange(event)}
                       controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"

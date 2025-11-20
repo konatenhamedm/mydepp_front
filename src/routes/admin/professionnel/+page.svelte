@@ -102,6 +102,7 @@
     {key: 'refuse', label: 'Refusé'},
     {key: 'renouvellement', label: 'Renouvellement'},
     {key: 'a_jour', label: 'À jour'},
+    { key: "refuse_mise_a_jour", label: "Attente de Mise à jour" },
   ];
 
   // Fonctions
