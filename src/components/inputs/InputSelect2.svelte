@@ -36,9 +36,9 @@
 		<option value="">Veuillez sélectionner {label}</option>
 		{#each datas as data}
 			{#if isSelected}
-				<option value={data.id}>{data.email}</option>
+				<option value={data.id}>{data.personne.nom} {" "+data.personne.prenoms}</option>
 			{:else}
-				<option value={data.libelle}>{data.email}</option>
+				<option value={data.libelle}>{data.personne.com } {" "+data.personne.prenoms}</option>
 			{/if}
 		{/each}
 	</select>

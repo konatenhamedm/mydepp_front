@@ -172,7 +172,7 @@
     console.log("Email", data.personne);
 
     isLoad = true;
-    if(valid_endUser.status && valid_endUser.status != "" && (valid_endUser.status=="rejet" || valid_endUser.status == "rejete"  || valid_endUser.status=="refuse")&& valid_endUser.raison != "" ){
+    if(valid_endUser.status && valid_endUser.status != "" && (valid_endUser.status=="rejet" || valid_endUser.status == "rejete"  || valid_endUser.status=="refuse" || valid_endUser.status=="refuse_mise_a_jour")&& valid_endUser.raison != "" ){
     try {
       const res = await apiFetch(
         true,
@@ -746,7 +746,19 @@
                   >Refuser</label
                 >
               </div>
-              {#if valid_endUser.status === "refuse"}
+               <div class="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="unverified2"
+                  name="profil"
+                  value="refuse_mise_a_jour"
+                  bind:group={valid_endUser.status}
+                />
+                <label for="unverified2" class="text-black text-3xl mt-2"
+                  >Demander Mise à jour</label
+                >
+              </div>
+              {#if valid_endUser.status === "refuse" || valid_endUser.status === "refuse_mise_a_jour"}
                 <textarea
                   bind:value={valid_endUser.raison}
                   placeholder="Observation"
