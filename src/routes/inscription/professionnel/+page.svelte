@@ -271,7 +271,11 @@
       lastStep = true;
     }
 
-    // step = 3;
+    // step = 4;
+  };
+
+   const displayValueToUppercase = (value: string) => {
+    return value.toUpperCase();
   };
 
   const prevStep = () => {
@@ -556,7 +560,10 @@
         };
         reader.readAsDataURL(file);
       }
-
+      // gestion quand c'est pas une image
+      else {
+        imagePreview[fieldName] = file.name; // Afficher le nom du fichier
+      }
       // Effacer l'erreur pour ce champ
       if (errors[fieldName]) {
         delete errors[fieldName];
@@ -1009,6 +1016,7 @@
                     required={true}
                     name="nom"
                     bind:value={formData.nom}
+                    oninput={() => {formData.nom = formData.nom.toUpperCase();}}
                   />
                 </div>
                 {#if errors.nom}
@@ -1030,6 +1038,7 @@
                     required={true}
                     name="prenoms"
                     bind:value={formData.prenoms}
+                    oninput={() => {formData.prenoms = formData.prenoms.toUpperCase();}}
                   />
                 </div>
                 {#if errors.prenoms}
@@ -1098,6 +1107,7 @@
                     required={true}
                     name="emailAutre"
                     bind:value={formData.emailAutre}
+                    
                   />
                 </div>
                 {#if errors.emailAutre}
@@ -1189,6 +1199,7 @@
                   required={true}
                   name="numeroInscription"
                   bind:value={formData.numeroInscription}
+                  
                 />
               </div>
               {#if errors.numeroInscription}
@@ -1313,6 +1324,7 @@
                       required={true}
                       name="emailPro"
                       bind:value={formData.emailPro}
+                      
                     />
                   </div>
                   {#if errors.emailPro}
@@ -1361,6 +1373,7 @@
                       required={true}
                       name="lieuDiplome"
                       bind:value={formData.lieuDiplome}
+                      oninput={() => {formData.lieuDiplome = formData.lieuDiplome.toUpperCase();}}
                     />
                   </div>
                   {#if errors.lieuDiplome}
@@ -1411,6 +1424,7 @@
                       required={true}
                       name="diplome"
                       bind:value={formData.diplome}
+                      oninput={() => {formData.diplome = formData.diplome.toUpperCase();}}
                     />
                   </div>
                   {#if errors.diplome}
@@ -1550,6 +1564,7 @@
                       required={true}
                       name="quartier"
                       bind:value={formData.quartier}
+                      oninput={() => {formData.quartier = formData.quartier.toUpperCase();}}
                     />
                   </div>
                   {#if errors.quartier}
@@ -1574,6 +1589,7 @@
                       required={true}
                       name="Ilot,lot"
                       bind:value={formData.poleSanitaire}
+                      oninput={() => {formData.poleSanitaire = formData.poleSanitaire.toUpperCase();}}
                     />
                   </div>
                 </div>
@@ -1592,6 +1608,7 @@
                       required={true}
                       name="professionnel"
                       bind:value={formData.professionnel}
+                      oninput={() => {formData.professionnel = formData.professionnel.toUpperCase();}}
                     />
                   </div>
                   {#if errors.professionnel}
@@ -1618,6 +1635,7 @@
                       required={true}
                       name="lieuExercicePro"
                       bind:value={formData.lieuExercicePro}
+                      oninput={() => {formData.lieuExercicePro = formData.lieuExercicePro.toUpperCase();}}
                     />
                   </div>
                   {#if errors.lieuExercicePro}
@@ -1764,7 +1782,7 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.cni}
                       <div class="flex-shrink-0">
-                        <p>{imagePreview.cni}</p>
+                 
                         {#if imagePreview.cni.startsWith("data:image") || imagePreview.cni.endsWith(".jpg") || imagePreview.cni.endsWith(".png")}
                           <img
                             src={imagePreview.cni}
@@ -1779,14 +1797,7 @@
                           />
                         {/if}
                       </div>
-                       {:else }
-                       <div class="flex-shrink-0">
-                          <img
-                            src="/PDF.png"
-                            alt="Aperçu cni"
-                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                          />
-                          </div>
+                      
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1823,7 +1834,7 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.diplomeFile}
                       <div class="flex-shrink-0">
-                        {#if imagePreview.diplomeFile.startsWith("data:image") || imagePreview.diplomeFile.endsWith(".jpg") || imagePreview.diplomeFile.endsWith(".png")}
+                        {#if imagePreview.diplomeFile.startsWith("data:image")}
                           <img
                             src={imagePreview.diplomeFile}
                             alt="Aperçu diplôme"
@@ -1837,12 +1848,12 @@
                         />
                         {/if}
                       </div>
-                      {:else }
+                      <!-- {:else }
                        <img
                          src="/PDF.png"
                          alt="Aperçu diplôme"
                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                       />
+                       /> -->
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1895,12 +1906,7 @@
                         />
                         {/if}
                       </div>
-                      {:else }
-                       <img
-                         src="/PDF.png"
-                         alt="Aperçu diplôme"
-                         class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                       />
+                      
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1949,12 +1955,7 @@
                           class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       {/if}
-                      {:else }
-                        <img
-                          src="/PDF.png"
-                          alt="Aperçu diplôme"
-                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                        /> 
+                    
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1999,12 +2000,7 @@
                           class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       {/if}
-                       {:else }
-                        <img
-                          src="/PDF.png"
-                          alt="Aperçu diplôme"
-                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                        />
+                     
                     {/if}
                     <div class="flex-1">
                       <div
@@ -2086,6 +2082,9 @@
                       id={"appartenance_organisation"}
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       bind:value={formData.organisationNom}
+                      oninput={() => {formData.organisationNom = formData.organisationNom.toUpperCase();}}
+                      placeholder="Nom de l'organisation"
+                      
                     />
                     {#if errors.organisationNom}
                       <div
