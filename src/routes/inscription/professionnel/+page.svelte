@@ -23,6 +23,7 @@
   let isPaiementProcessing = false;
   let authenticating = false;
   let isPaiementDone = false;
+  let isNextStepLoading = false;
   let message = "";
   let isModalOpen = false;
   let intermed = 0;
@@ -225,53 +226,64 @@
     }
 
     if (currentStep === 5) {
-      // Validation Step 5: Documents
-    if (!formData.appartenirOrganisation ){
-      errors.appartenirOrganisation = "Ce champ est requis";
-      isValid = false;
-    }
-    if (!formData.appartenirOrdre){
-      errors.appartenirOrdre = "Ce champ est requis";
-      isValid = false;
-    }
-
-    }
-    if (currentStep === 6) {
-      // Validation Step 6: Organisation et ordre professionnel
+      // Validation Step 5: Organisation et ordre
+      if (!formData.appartenirOrganisation) {
+        errors.appartenirOrganisation = "Ce champ est requis";
+        isValid = false;
+      }
+      if (!formData.appartenirOrdre) {
+        errors.appartenirOrdre = "Ce champ est requis";
+        isValid = false;
+      }
+      
+      // Validation conditionnelle pour l'organisation
+      if (formData.appartenirOrganisation === "oui" && !formData.organisationNom.trim()) {
+        errors.organisationNom = "Le nom de l'organisation est requis";
+        isValid = false;
+      }
+      
+      // Validation conditionnelle pour l'ordre
       if (formData.appartenirOrdre === "oui") {
-        if (formData.organisationNom.length === 0) {
-          errors.organisationNom = "Le nom de l'organisation est requis";
+        if (!formData.numeroInscription.trim()) {
+          errors.numeroInscription = "Le numéro d'inscription est requis";
+          isValid = false;
+        }
+        if (!formData.ordre) {
+          errors.ordre = "L'ordre est requis";
           isValid = false;
         }
       }
     }
+
     return isValid;
   }
 
   const nextStep = async () => {
-  
-    // Valider l'étape actuelle avant de passer à la suivante
+    isNextStepLoading = true;
     
-
+    // Valider l'étape actuelle avant de passer à la suivante
     const validate = await validateStep(step);
     console.log("Validation du step ", step, ":", validate);
-    if (!validate && isValidNumeroInscription == false) {
+    
+    if (!validate) {
       message = "Veuillez remplir tous les champs obligatoires correctement";
+      isNextStepLoading = false;
       return;
     }
 
     message = ""; // Effacer le message d'erreur
-    // alert("next step");
+    
     if (isValidNumeroInscription) {
-      step == 6;
+      step = 6;
       lastStep = true;
+    } else {
+      step += 1;
+      if (step == 6) {
+        lastStep = true;
+      }
     }
-    step += 1;
-    if (step == 6) {
-      lastStep = true;
-    }
-
-    // step = 4;
+    
+    isNextStepLoading = false;
   };
 
    const displayValueToUppercase = (value: string) => {
@@ -336,11 +348,11 @@
     cv: "",
 
     // organization informations
-
     appartenirOrganisation: "",
     organisationNom: "",
     appartenirOrdre: "",
     numeroInscription: "",
+    ordre: "",
   };
 
   let values = {
@@ -354,6 +366,7 @@
     ville: [],
     district: [],
     commune: [],
+    ordre: [],
   };
   let objects = [
     { name: "civilite", url: "/civilite/" },
@@ -366,6 +379,7 @@
     { name: "ville", url: "/ville" },
     { name: "district", url: "/district" },
     { name: "commune", url: "/commune" },
+    { name: "ordre", url: "/ordre/" },
   ];
   ////on recupere le type de personne et les autres trucs a mettre dans le formulaire
   async function fetchDataFirst() {
@@ -2040,7 +2054,7 @@
                   <input
                     type="radio"
                     id={"appartenance_oui"}
-                    name="rd_profession"
+                    name="rd_appartenance_organisation"
                     class="cursor-pointer"
                     value={"oui"}
                     checked={formData.appartenirOrganisation === "oui"}
@@ -2054,7 +2068,7 @@
                   <input
                     type="radio"
                     id={"appartenance_non"}
-                    name="rd_profession"
+                    name="rd_appartenance_organisation"
                     class="cursor-pointer"
                     value={"non"}
                     checked={formData.appartenirOrganisation === "non"}
@@ -2135,7 +2149,48 @@
                     </p>
                   </div>
                 {/if}
-              
+                
+                {#if formData.appartenirOrdre === "oui"}
+                  <div class="mt-4 grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="form_label font-bold block mb-2" for="ordre">
+                        <big>Sélectionnez l'ordre</big>
+                      </label>
+                      <Svelecte
+                        multiple={false}
+                        options={values.ordre}
+                        bind:value={formData.ordre}
+                        controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        labelField="libelle"
+                        valueField="id"
+                        placeholder="Sélectionnez votre ordre"
+                      />
+                      {#if errors.ordre}
+                        <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p class="text-red-800 text-sm">{errors.ordre}</p>
+                        </div>
+                      {/if}
+                    </div>
+                    
+                    <div>
+                      <label class="form_label font-bold block mb-2" for="numeroInscription">
+                        <big>Numéro d'inscription</big>
+                      </label>
+                      <input
+                        type="text"
+                        id="numeroInscription"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        bind:value={formData.numeroInscription}
+                        placeholder="Numéro d'inscription à l'ordre"
+                      />
+                      {#if errors.numeroInscription}
+                        <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p class="text-red-800 text-sm">{errors.numeroInscription}</p>
+                        </div>
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
               </div>
             </div>
           {:else if step == 6}
@@ -2210,8 +2265,12 @@
                     clickPaiement();
                   }}
                   type="button"
-                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  disabled={isPaiementProcessing || authenticating}
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
                 >
+                  {#if isPaiementProcessing || authenticating}
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {/if}
                   {paiementStatus
                     ? " Passer au paiement"
                     : "Terminer l'inscription"}
@@ -2222,8 +2281,12 @@
                     validateAccountWithNumInsc();
                   }}
                   type="button"
-                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  disabled={accountCreationLoader}
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
                 >
+                  {#if accountCreationLoader}
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {/if}
                   Valider les informations
                 </button>
               {/if}
@@ -2233,9 +2296,12 @@
                   nextStep();
                 }}
                 type="button"
-                disabled={lastStep}
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right"
+                disabled={lastStep || isNextStepLoading}
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right flex items-center gap-2"
               >
+                {#if isNextStepLoading}
+                  <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {/if}
                 Suivant
               </button>
             {/if}

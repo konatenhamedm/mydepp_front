@@ -33,6 +33,12 @@
       "icon": "uil uil-setting",
       "path": "/admin/civilite",
       "exact": false
+    },
+    {
+      "title": "Ordre",
+      "icon": "uil uil-setting",
+      "path": "/admin/ordre",
+      "exact": false
     }
     ,
     {
