@@ -228,6 +228,10 @@
         {/if}
         {#if formdata.appartenirOrdre === "oui"}
           <div>
+            <p style="font-size:0.875rem; color:#4b5563;">Ordre professionnel</p>
+            <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.ordre) ? allValuesAsTables[10][parseInt(formdata.ordre)-1].libelle : "Non renseigné"}</p>
+          </div>
+          <div>
             <p style="font-size:0.875rem; color:#4b5563;">Numéro d'inscription à l'ordre</p>
             <p style="font-weight:500; color:#1f2937;">{displayValue(formdata.numeroInscription)}</p>
           </div>

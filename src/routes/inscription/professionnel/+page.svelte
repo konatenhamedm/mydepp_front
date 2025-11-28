@@ -226,6 +226,7 @@
     }
 
     if (currentStep === 5) {
+      console.log("Début validation étape 5");
       // Validation Step 5: Organisation et ordre
       if (!formData.appartenirOrganisation) {
         errors.appartenirOrganisation = "Ce champ est requis";
@@ -236,15 +237,17 @@
         isValid = false;
       }
       
+      console.log("Validation organisation:", formData.appartenirOrganisation);
       // Validation conditionnelle pour l'organisation
-      if (formData.appartenirOrganisation === "oui" && !formData.organisationNom.trim()) {
+      if (formData.appartenirOrganisation === "oui" && !formData.organisationNom?.trim()) {
         errors.organisationNom = "Le nom de l'organisation est requis";
         isValid = false;
       }
       
+      console.log("Validation ordre:", formData.appartenirOrdre, formData.ordre, formData.numeroInscription);
       // Validation conditionnelle pour l'ordre
       if (formData.appartenirOrdre === "oui") {
-        if (!formData.numeroInscription.trim()) {
+        if (!formData.numeroInscription?.trim()) {
           errors.numeroInscription = "Le numéro d'inscription est requis";
           isValid = false;
         }
@@ -253,6 +256,7 @@
           isValid = false;
         }
       }
+      console.log("Fin validation étape 5, isValid:", isValid);
     }
 
     return isValid;
@@ -260,30 +264,49 @@
 
   const nextStep = async () => {
     isNextStepLoading = true;
+    console.log("Début nextStep, step actuel:", step);
     
-    // Valider l'étape actuelle avant de passer à la suivante
-    const validate = await validateStep(step);
-    console.log("Validation du step ", step, ":", validate);
-    
-    if (!validate) {
-      message = "Veuillez remplir tous les champs obligatoires correctement";
-      isNextStepLoading = false;
-      return;
-    }
-
-    message = ""; // Effacer le message d'erreur
-    
-    if (isValidNumeroInscription) {
-      step = 6;
-      lastStep = true;
-    } else {
-      step += 1;
-      if (step == 6) {
-        lastStep = true;
+    try {
+      // Timeout de sécurité pour éviter les blocages
+      const validatePromise = validateStep(step);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout validation')), 10000)
+      );
+      
+      const validate = await Promise.race([validatePromise, timeoutPromise]);
+      console.log("Validation du step ", step, ":", validate);
+      
+      if (!validate) {
+        message = "Veuillez remplir tous les champs obligatoires correctement";
+        return;
       }
+
+      message = ""; // Effacer le message d'erreur
+      
+      if (isValidNumeroInscription) {
+        step = 6;
+        lastStep = true;
+      } else {
+        step += 1;
+        if (step == 6) {
+          lastStep = true;
+        }
+      }
+      
+      console.log("Nouveau step:", step, "lastStep:", lastStep);
+    } catch (error) {
+      console.error("Erreur dans nextStep:", error);
+      message = "Une erreur est survenue lors de la validation";
+      // En cas d'erreur, on passe quand même à l'étape suivante
+      if (step < 6) {
+        step += 1;
+        if (step == 6) {
+          lastStep = true;
+        }
+      }
+    } finally {
+      isNextStepLoading = false;
     }
-    
-    isNextStepLoading = false;
   };
 
    const displayValueToUppercase = (value: string) => {
@@ -1048,7 +1071,7 @@
                     type="text"
                     id="prenoms"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Confirmez votre mot de passe"
+                    placeholder="Entrez le prénoms"
                     required={true}
                     name="prenoms"
                     bind:value={formData.prenoms}
