@@ -21,6 +21,7 @@
     ville: [],
     district: [],
     commune: [],
+    ordre: [],
   };
   let objects = [
     { name: "civilite", url: "/civilite/" },
@@ -33,6 +34,7 @@
     { name: "ville", url: "/ville" },
     { name: "district", url: "/district" },
     { name: "commune", url: "/commune" },
+    { name: "ordre", url: "/ordre" },
   ];
 
   async function fetchDataFirst() {
@@ -63,6 +65,11 @@
     prenoms: "",
     number: "",
     emailPro: "",
+    appartenirOrdre: "",
+    ordre: "",
+    numeroInscription: "",
+    appartenirOrganisation: "",
+    organisationNom: "",
   };
   let etablissementData: any = {
     adresse: "",
@@ -122,6 +129,21 @@
       formData.append("poleSanitaire", professionnelData.poleSanitaire);
       formData.append("professionnel", professionnelData.professionnel);
       formData.append("lieuExercicePro", professionnelData.lieuExercicePro);
+      formData.append("appartenirOrdre", professionnelData.appartenirOrdre);
+      if (professionnelData.appartenirOrdre === "oui") {
+        formData.append("ordre", professionnelData.ordre?.id || professionnelData.ordre);
+        formData.append("numeroInscription", professionnelData.numeroInscription);
+      }else{
+        formData.append("ordre", "");
+        formData.append("numeroInscription", "");
+      }
+      formData.append("appartenirOrganisation", professionnelData.appartenirOrganisation);
+      if (professionnelData.appartenirOrganisation === "oui") {
+        formData.append("organisationNom", professionnelData.organisationNom);
+      }else{
+        formData.append("organisationNom", "");
+
+      }
 
       isSubmitting = false;
       await fetch(BASE_URL_API + "/professionnel/update/" + user?.personneId, {
@@ -869,6 +891,47 @@
                     <span class="ml-2">Non</span>
                   </div>
                 </div>
+                
+                {#if professionnelData.appartenirOrdre === "oui"}
+                  <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Ordre professionnel</label
+                      >
+                      <input
+                        type="text"
+                        disabled
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                        value={professionnelData.ordre?.libelle || "Non renseigné"}
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Numéro d'inscription</label
+                      >
+                      <input
+                        type="text"
+                        disabled
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                        value={professionnelData.numeroInscription || "Non renseigné"}
+                      />
+                    </div>
+                  </div>
+                {/if}
+                
+                {#if professionnelData.appartenirOrganisation === "oui"}
+                  <div class="mt-4">
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Nom de l'organisation</label
+                    >
+                    <input
+                      type="text"
+                      disabled
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData.organisationNom || "Non renseigné"}
+                    />
+                  </div>
+                {/if}
               {:else if activeTab === "documents"}
                 {#if Documents.length > 0}
                   <ul class="space-y-4">

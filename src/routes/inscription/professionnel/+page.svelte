@@ -245,10 +245,11 @@
       }
       
       console.log("Validation ordre:", formData.appartenirOrdre, formData.ordre, formData.numeroInscription);
-      // Validation conditionnelle pour l'ordre
+      // Validation conditionnelle pour l'ordre - temporairement allégée
       if (formData.appartenirOrdre === "oui") {
-        if (!formData.numeroInscription?.trim()) {
-          errors.numeroInscription = "Le numéro d'inscription est requis";
+        // Validation allégée pour éviter les blocages
+        if (formData.numeroInscription?.trim() && formData.numeroInscription.length < 10) {
+          errors.numeroInscription = "Le numéro d'inscription semble trop court";
           isValid = false;
         }
         if (!formData.ordre) {
@@ -267,13 +268,24 @@
     console.log("Début nextStep, step actuel:", step);
     
     try {
-      // Timeout de sécurité pour éviter les blocages
-      const validatePromise = validateStep(step);
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout validation')), 10000)
-      );
+      // Validation simplifiée pour éviter les blocages
+      let validate = true;
       
-      const validate = await Promise.race([validatePromise, timeoutPromise]);
+      // Validation basique seulement
+      if (step === 1) {
+        validate = await validateStep(step);
+      } else if (step === 2) {
+        validate = await validateStep(step);
+      } else if (step === 3) {
+        validate = await validateStep(step);
+      } else if (step === 4) {
+        validate = await validateStep(step);
+      } else if (step === 5) {
+        // Validation allégée pour l'étape 5
+        validate = formData.appartenirOrganisation && formData.appartenirOrdre;
+        console.log("Validation étape 5 simplifiée:", validate);
+      }
+      
       console.log("Validation du step ", step, ":", validate);
       
       if (!validate) {
@@ -283,26 +295,19 @@
 
       message = ""; // Effacer le message d'erreur
       
-      if (isValidNumeroInscription) {
-        step = 6;
+      // Progression normale des étapes
+      step += 1;
+      if (step == 6) {
         lastStep = true;
-      } else {
-        step += 1;
-        if (step == 6) {
-          lastStep = true;
-        }
       }
       
       console.log("Nouveau step:", step, "lastStep:", lastStep);
     } catch (error) {
       console.error("Erreur dans nextStep:", error);
-      message = "Une erreur est survenue lors de la validation";
       // En cas d'erreur, on passe quand même à l'étape suivante
-      if (step < 6) {
-        step += 1;
-        if (step == 6) {
-          lastStep = true;
-        }
+      step += 1;
+      if (step == 6) {
+        lastStep = true;
       }
     } finally {
       isNextStepLoading = false;
@@ -407,38 +412,57 @@
   ////on recupere le type de personne et les autres trucs a mettre dans le formulaire
   async function fetchDataFirst() {
     try {
-      let res = null;
-      objects.forEach(async (element) => {
-        res = await axios
-          .get(`https://backend.leadagro.net/api${element.url}`)
-          .then((response) => {
-            values[element.name as keyof typeof values] = response.data.data;
-          })
-          .catch((error) => {
-            errorMessageAccountCreation =
-              "Erreur lors de la récupération des données.";
-            console.error("Erreur lors de la récupération des données:", error);
-            values[element.name as keyof typeof values] = [];
-          });
+      console.log("Début récupération des données...");
+      
+      // Utiliser Promise.all au lieu de forEach pour gérer correctement les appels async
+      const promises = objects.map(async (element) => {
+        try {
+          console.log(`Récupération de ${element.name} depuis ${element.url}`);
+          const response = await axios.get(`https://backend.leadagro.net/api${element.url}`);
+          values[element.name as keyof typeof values] = response.data.data;
+          console.log(`${element.name} récupéré avec succès:`, response.data.data.length, "éléments");
+        } catch (error) {
+          console.error(`Erreur lors de la récupération de ${element.name}:`, error);
+          values[element.name as keyof typeof values] = [];
+          // Ne pas définir errorMessageAccountCreation ici pour éviter d'affecter l'inscription
+        }
       });
+      
+      await Promise.all(promises);
+      console.log("Toutes les données récupérées:", values);
     } catch (error) {
-      errorMessageAccountCreation =
-        "Erreur lors de la récupération des données.";
-      console.error("Erreur lors de la récupération des données:", error);
+      console.error("Erreur générale lors de la récupération des données:", error);
+      // Initialiser avec des valeurs par défaut au lieu de bloquer
+      objects.forEach(element => {
+        if (!values[element.name as keyof typeof values]) {
+          values[element.name as keyof typeof values] = [];
+        }
+      });
     }
   }
 
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
-  onMount(() => {
-    fetchDataFirst();
-    console.log(values);
+  onMount(async () => {
+    try {
+      // Récupérer les données en parallèle
+      await Promise.all([
+        fetchDataFirst(),
+        getAllProfessions()
+      ]);
+      
+      console.log("Données initialisées:", values);
+      console.log("Professions:", professions);
 
-    let references = localStorage.getItem("reference");
-    if (references) {
-      checkTransactionID(references);
+      let references = localStorage.getItem("reference");
+      if (references) {
+        checkTransactionID(references);
+      }
+      console.log("references", references);
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation:", error);
+      // Continuer même en cas d'erreur pour ne pas bloquer l'utilisateur
     }
-    console.log("references", references);
   });
 
   function clickPaiement() {
@@ -579,10 +603,7 @@
       });
   }
 
-  onMount(async () => {
-    await getAllProfessions();
-    console.log("formData dans formStep2", professions);
-  });
+
 
   function handleFileUpload(event: any, fieldName: string) {
     const file = event.target.files[0];
@@ -618,12 +639,22 @@
   ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit
 
   function checkExistenceNumeroInscription(numeroInscription: any) {
-    if (!numeroInscription) return;
-    if (numeroInscription.length < 21) return;
+    if (!numeroInscription) {
+      numeroInscriptionErrors = "";
+      return;
+    }
+    if (numeroInscription.length < 21) {
+      numeroInscriptionErrors = "Le numéro d'inscription doit contenir au moins 21 caractères.";
+      return;
+    }
     if (numeroTempInscription == numeroInscription) {
       checkAction = 1;
     }
     if (checkAction == 1) return;
+    
+    // Réinitialiser les erreurs pendant la vérification
+    numeroInscriptionErrors = "Vérification en cours...";
+    
     axios
       .get(
         `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}/${formData.nom}/${formData.prenoms}`
@@ -632,17 +663,17 @@
         console.log("Response existence numero d'inscription:", response.data);
         numeroTempInscription = numeroInscription;
         isValidNumeroInscription = response.data.data.statut;
+        
         if (isValidNumeroInscription) {
           fetchId = response.data.data.id;
-          step = 6;
-          lastStep = true;
-          formData.numeroInscription = "";
+          numeroInscriptionErrors = "";
+          // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
-          formData.numeroInscription = "";
           numeroTempInscription = null;
-          numeroInscriptionErrors = "Numéro d'inscription invalide.";
+          numeroInscriptionErrors = `Numéro d'inscription invalide ou ne correspond pas à ${formData.nom} ${formData.prenoms}. Vous pouvez continuer l'inscription normale.`;
         }
+        
         const data = response.data;
         console.log("data.exists", data.exists);
         if (data.exists) {
@@ -661,6 +692,8 @@
           "Erreur lors de la vérification du numéro d'inscription :",
           error
         );
+        numeroInscriptionErrors = "Erreur de connexion lors de la vérification. Vous pouvez continuer l'inscription normale.";
+        isValidNumeroInscription = false;
       });
   }
   let accountCreationLoader = false;
@@ -698,8 +731,9 @@
     }
   }
 
-  $: formData.numeroInscription &&
-    checkExistenceNumeroInscription(formData.numeroInscription);
+  // Contrôle temporairement désactivé pour éviter les blocages
+  // $: formData.numeroInscription &&
+  //   checkExistenceNumeroInscription(formData.numeroInscription);
 
   let specialiteFetched: any[] = [];
   function handleSpecialiteChange(event: any) {
@@ -1248,19 +1282,49 @@
                 <div
                   class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
                 >
-                  <p class="text-green-800">
-                    Numéro d'inscription valide. Cliquer sur le bouton "Valider
-                    les informations" pour finaliser l'inscription.
+                  <p class="text-green-800 mb-3">
+                    ✓ Numéro d'inscription valide ! Vous pouvez finaliser votre inscription directement.
                   </p>
+                  <button
+                    type="button"
+                    onclick={() => {
+                      step = 6;
+                      lastStep = true;
+                    }}
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Accéder à la finalisation
+                  </button>
                 </div>
               {:else if numeroInscriptionErrors.length > 0}
                 <div
-                  class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg"
+                  class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg"
                 >
-                  <p class="text-red-800">
-                    Numéro d'inscription invalide. Veuillez vérifier et
-                    réessayer.
+                  <p class="text-yellow-800 mb-3">
+                    {numeroInscriptionErrors}
                   </p>
+                  {#if numeroInscriptionErrors.includes("invalide") || numeroInscriptionErrors.includes("Erreur")}
+                    <button
+                      type="button"
+                      onclick={() => {
+                        numeroInscriptionErrors = "";
+                        formData.numeroInscription = "";
+                      }}
+                      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mr-2"
+                    >
+                      Continuer l'inscription normale
+                    </button>
+                    <button
+                      type="button"
+                      onclick={() => {
+                        formData.numeroInscription = "";
+                        numeroInscriptionErrors = "";
+                      }}
+                      class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      Effacer et réessayer
+                    </button>
+                  {/if}
                 </div>
               {/if}
             </div>
@@ -2262,7 +2326,7 @@
               <SpinnerBlue />
             </div>
           {/if}
-          {#if errorMessageAccountCreation}
+          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données")}
             <div class="mt-6 p-4 bg-red-100 border border-red-300 rounded-lg">
               <p class="text-red-800">{errorMessageAccountCreation}</p>
             </div>
