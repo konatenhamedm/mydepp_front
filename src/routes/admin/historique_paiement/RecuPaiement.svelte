@@ -76,13 +76,8 @@
 
     const fields = [
       {label: "Date d'édition:", value: formatDate(data.createdAt)},
-      {
-        label: 'Nom complet:',
-        value:
-          data.typeUser == 'PROFESSIONNEL'
-            ? `${data.user?.nom} ${data.user?.prenoms}`
-            : data.user?.nomEntreprise,
-      },
+      {label: 'Nom:', value: data.typeUser == 'PROFESSIONNEL' ? data.user?.nom : data.user?.nomEntreprise},
+      {label: 'Prénom(s):', value: data.typeUser == 'PROFESSIONNEL' ? data.user?.prenoms : ''},
       {label: 'Mode de paiement:', value: data.channel},
       {
         label: 'Numéro de téléphone:',

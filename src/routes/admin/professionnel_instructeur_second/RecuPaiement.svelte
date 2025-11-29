@@ -35,6 +35,7 @@
         title: "Reçu de Paiement - Renouvellement",
         date: "04 novembre 2024 à 16:39:59",
         name: "Kra Rita",
+        prenoms: "",
         paymentMethod: "OMCIV2",
         residence: "XX",
         phone: "0564924282",
@@ -69,7 +70,8 @@
 
         const fields = [
             { label: "Date d'édition:", value: receiptData.date },
-            { label: "Nom complet:", value: receiptData.name },
+            { label: "Nom:", value: receiptData.name },
+            { label: "Prénom(s):", value: receiptData.prenoms },
             { label: "Mode de paiement:", value: receiptData.paymentMethod },
             /*  { label: "Lieu de résidence:", value: receiptData.residence }, */
             { label: "Numéro de téléphone:", value: receiptData.phone },
@@ -121,12 +123,13 @@
                         receiptData.profession =
                             response.data.user.personne?.profession?.libelle;
                         receiptData.receiptNumber = response.data.reference;
-                        receiptData.name =
-                            response.data.user.typeUser == "PROFESSIONNEL"
-                                ? response.data.user.personne.nom +
-                                  " " +
-                                  response.data.user.personne.prenoms
-                                : response.data.user.personne.nomEntreprise;
+                        if (response.data.user.typeUser == "PROFESSIONNEL") {
+                            receiptData.name = response.data.user.personne.nom;
+                            receiptData.prenoms = response.data.user.personne.prenoms;
+                        } else {
+                            receiptData.name = response.data.user.personne.nomEntreprise;
+                            receiptData.prenoms = "";
+                        }
                         receiptData.phone =
                             response.data.user.typeUser == "PROFESSIONNEL"
                                 ? response.data.user.personne.number

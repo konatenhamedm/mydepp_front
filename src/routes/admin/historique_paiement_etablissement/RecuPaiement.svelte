@@ -64,12 +64,8 @@
 
     const fields = [
       { label: "Date d'édition:", value: formatDate(data.createdAt) },
-      {
-        label: "Nom complet:",
-        value: data.typePersonne == "PHYSIQUE"
-          ? `${data.user?.nom} ${data.user?.prenoms}`
-          : data.user?.denomination
-      },
+      {label: "Nom:", value: data.typePersonne == "PHYSIQUE" ? data.user?.nom : data.user?.denomination},
+      {label: "Prénom(s):", value: data.typePersonne == "PHYSIQUE" ? data.user?.prenoms : ""},
       { label: "Mode de paiement:", value: data.channel },
       {
         label: "Numéro de téléphone:",
