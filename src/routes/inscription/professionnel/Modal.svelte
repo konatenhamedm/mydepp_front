@@ -61,7 +61,7 @@
       { label: "Email:", value: transactionData.user.email },
       { label: "Réference paiement:", value: `N° ${transactionData.reference}` },
       { label: "Paiement:", value: `${transactionData.montant}` },
-      { label: "Profession:", value: `${transactionData.user.personne.profession.libelle}` },
+      // { label: "Profession:", value: `${transactionData.user.personne.profession.libelle}` },
     ];
 
     let yPos = startY;

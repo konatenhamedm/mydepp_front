@@ -7,6 +7,7 @@
   import { BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
   import SelectInput from "../../site/SelectInput.svelte";
   import axios from "axios";
+  import Svelecte from "svelecte";
   //de
   let user = getAuthCookie();
   let isSubmitting: boolean = false;
@@ -81,7 +82,7 @@
     isSubmitting = true;
     if (userData.typeUser === "ETABLISSEMENT") {
       // Convert etablissementData to FormData
-      console.log("Etablissement data to submit:", etablissementData);
+      // console.log("Etablissement data to submit:", etablissementData);
       const formData = new FormData();
       Object.entries(etablissementData).forEach(([key, value]) => {
         formData.append(key, value);
@@ -93,7 +94,7 @@
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Etablissement profile updated:", result);
+          // console.log("Etablissement profile updated:", result);
           alert("Profil mis à jour avec succès !");
           isSubmitting = false;
         })
@@ -105,7 +106,7 @@
     } else {
       // Convert professionnelData to FormData
       const formData = new FormData();
-      console.log("Professionnel data to submit:", professionnelData);
+      // console.log("Professionnel data to submit:", professionnelData);
       // Object.entries(professionnelData).forEach(([key, value]) => {
       //   formData.append(key, value);
       // });
@@ -152,7 +153,7 @@
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Professionnel profile updated:", result);
+          // console.log("Professionnel profile updated:", result);
           alert("Profil mis à jour avec succès !");
           isSubmitting = false;
         })
@@ -178,7 +179,7 @@
         if (user?.type === "ETABLISSEMENT") {
           etablissementData = userData?.personne;
         } else {
-          console.log("Professionnel data:", userData?.personne);
+          // console.log("Professionnel data:", userData?.personne);
           professionnelData = userData?.personne;
         }
         nbDocumentSoumis = userData?.personne?.documents?.length || 6;
@@ -189,7 +190,7 @@
   onMount(async () => {
     user = await getAuthCookie();
     fetchDataFirst();
-    console.log("User dans mon dossier:", user);
+    // console.log("User dans mon dossier:", user);
     await getUserInfo();
     document.title = "Mon dossier - MyDepp";
     isLoading = false;
@@ -245,14 +246,14 @@
   async function handleSaveImage() {
     // Logique pour sauvegarder l'image sur le serveur
     isSubmitting = true;
-    console.log("Sauvegarder l'image pour le champ:", formData);
+    // console.log("Sauvegarder l'image pour le champ:", formData);
     await fetch(BASE_URL_API + "/professionnel/update-all-documents/"+user?.id, {
       method: "POST",
       body: formData
     })
       .then((response) => response.json())
       .then((result) => {
-        console.log("Image sauvegardée avec succès:", result);
+        // console.log("Image sauvegardée avec succès:", result);
         alert("Image sauvegardée avec succès !");
         isSubmitting = false;
         localStorage.clear();
@@ -537,7 +538,8 @@
 
                 <!-- </form> -->
               {:else if activeTab === "infoPro" && userData.typeUser === "PROFESSIONNEL"}
-                <div>
+              <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+              <div>
                   <label class="block text-lg font-medium text-gray-700 mb-2"
                     >Profession</label
                   >
@@ -548,8 +550,47 @@
                     value={userData?.personne?.profession?.libelle}
                   />
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                   <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Numéro d'inscription au registre
+                    </label>
+                    <input
+                    disabled
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData?.numeroInscription}
+                    />
+                  </div>
+                   <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Ordre selectionné *</label
+                    >
+                    <div class="relative">
+                       <Svelecte
+                        multiple={false}
+                        options={values.ordre}
+                        bind:value={professionnelData.ordre.id}
+                        controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        labelField="libelle"
+                        valueField="id"
+                        placeholder="Sélectionnez votre ordre"
+                      />
+                    </div>
+                       
+                  </div>
+                  <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Nom de L'ordre *</label
+                    >
+                    <input
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData.organisationNom}
+                    />
+                  </div>
+                  </div> 
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+                  <!-- <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Numéro d'inscription au registre
                     </label>
@@ -558,7 +599,7 @@
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
                       value={professionnelData?.code}
                     />
-                  </div>
+                  </div> -->
                   <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Adresse email professionnel *</label
@@ -831,6 +872,10 @@
                       </select>
                     </div>
                   </div>
+
+                
+
+                 
                 </div>
               {:else if activeTab === "Organisation" && userData.typeUser === "PROFESSIONNEL"}
                 <div>
