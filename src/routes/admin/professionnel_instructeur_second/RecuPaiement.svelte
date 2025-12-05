@@ -34,8 +34,8 @@
         logo: "https://mydepps.pages.dev/_files/logo-depps.png", // URL du logo
         title: "Reçu de Paiement - Renouvellement",
         date: "04 novembre 2024 à 16:39:59",
-        name: "Kra Rita",
-        prenoms: "",
+        name: "Kra",
+        prenoms: "Rita",
         paymentMethod: "OMCIV2",
         residence: "XX",
         phone: "0564924282",
@@ -123,6 +123,7 @@
                         receiptData.profession =
                             response.data.user.personne?.profession?.libelle;
                         receiptData.receiptNumber = response.data.reference;
+                        // Séparer nom et prénoms pour un meilleur affichage
                         if (response.data.user.typeUser == "PROFESSIONNEL") {
                             receiptData.name = response.data.user.personne.nom;
                             receiptData.prenoms = response.data.user.personne.prenoms;

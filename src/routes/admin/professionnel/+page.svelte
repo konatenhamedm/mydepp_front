@@ -135,6 +135,7 @@
     try {
       const res = await apiFetch(true, '/professionnel/');
       if (res) {
+        console.log('Données reçues:', res);
         main_data = res.data as professionnel[];
         totalItems = res.data.length ?? 0;
         perPage = get(pageSize);
