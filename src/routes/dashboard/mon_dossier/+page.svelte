@@ -7,7 +7,8 @@
   import { BASE_URL_API, BASE_URL_API_UPLOAD } from "$lib/api";
   import SelectInput from "../../site/SelectInput.svelte";
   import axios from "axios";
-//de
+  import Svelecte from "svelecte";
+  //de
   let user = getAuthCookie();
   let isSubmitting: boolean = false;
   let values = {
@@ -21,6 +22,7 @@
     ville: [],
     district: [],
     commune: [],
+    ordre: [],
   };
   let objects = [
     { name: "civilite", url: "/civilite/" },
@@ -33,6 +35,7 @@
     { name: "ville", url: "/ville" },
     { name: "district", url: "/district" },
     { name: "commune", url: "/commune" },
+    { name: "ordre", url: "/ordre" },
   ];
 
   async function fetchDataFirst() {
@@ -63,6 +66,11 @@
     prenoms: "",
     number: "",
     emailPro: "",
+    appartenirOrdre: "",
+    ordre: "",
+    numeroInscription: "",
+    appartenirOrganisation: "",
+    organisationNom: "",
   };
   let etablissementData: any = {
     adresse: "",
@@ -70,55 +78,90 @@
     denomination: "",
   };
 
-
-    const handleSubmit = async  (event) => {
-      isSubmitting = true;
+  const handleSubmit = async (event) => {
+    isSubmitting = true;
     if (userData.typeUser === "ETABLISSEMENT") {
       // Convert etablissementData to FormData
+      // console.log("Etablissement data to submit:", etablissementData);
       const formData = new FormData();
       Object.entries(etablissementData).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      await fetch(
-        BASE_URL_API + "/etablissement/update/" + user?.personneId,
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
+      isSubmitting = false;
+      await fetch(BASE_URL_API + "/etablissement/update/" + user?.personneId, {
+        method: "POST",
+        body: formData,
+      })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Etablissement profile updated:", result);
+          // console.log("Etablissement profile updated:", result);
           alert("Profil mis à jour avec succès !");
           isSubmitting = false;
-        }).catch((error) => {
+        })
+        .catch((error) => {
           console.error("Erreur lors de la mise à jour du profil:", error);
           alert("Une erreur est survenue lors de la mise à jour du profil.");
           isSubmitting = false;
-        })  ;
+        });
     } else {
       // Convert professionnelData to FormData
       const formData = new FormData();
-      Object.entries(professionnelData).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      await fetch(
-        BASE_URL_API + "/professionnel/update/" + user?.personneId,
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
+      // console.log("Professionnel data to submit:", professionnelData);
+      // Object.entries(professionnelData).forEach(([key, value]) => {
+      //   formData.append(key, value);
+      // });
+      formData.append("nom", professionnelData.nom);
+      formData.append("prenoms", professionnelData.prenoms);
+      formData.append("number", professionnelData.number);
+      formData.append("emailPro", professionnelData.emailPro);
+      formData.append("dateDiplome", professionnelData.dateDiplome);
+      formData.append("lieuDiplome", professionnelData.lieuDiplome);
+      formData.append(
+        "datePremierDiplome",
+        professionnelData.datePremierDiplome
+      );
+      formData.append("diplome", professionnelData.diplome);
+      formData.append("situationPro", professionnelData.situationPro.id);
+      formData.append("region", professionnelData.region.id);
+      formData.append("district", professionnelData.district.id);
+      formData.append("ville", professionnelData.ville.id);
+      formData.append("commune", professionnelData.commune.id);
+      formData.append("quartier", professionnelData.quartier);
+      formData.append("poleSanitaire", professionnelData.poleSanitaire);
+      formData.append("professionnel", professionnelData.professionnel);
+      formData.append("lieuExercicePro", professionnelData.lieuExercicePro);
+      formData.append("appartenirOrdre", professionnelData.appartenirOrdre);
+      if (professionnelData.appartenirOrdre === "oui") {
+        formData.append("ordre", professionnelData.ordre?.id || professionnelData.ordre);
+        formData.append("numeroInscription", professionnelData.numeroInscription);
+      }else{
+        formData.append("ordre", "");
+        formData.append("numeroInscription", "");
+      }
+      formData.append("appartenirOrganisation", professionnelData.appartenirOrganisation);
+      if (professionnelData.appartenirOrganisation === "oui") {
+        formData.append("organisationNom", professionnelData.organisationNom);
+      }else{
+        formData.append("organisationNom", "");
+
+      }
+
+      isSubmitting = false;
+      await fetch(BASE_URL_API + "/professionnel/update/" + user?.personneId, {
+        method: "POST",
+        body: formData,
+      })
         .then((response) => response.json())
         .then((result) => {
-          console.log("Professionnel profile updated:", result);
+          // console.log("Professionnel profile updated:", result);
           alert("Profil mis à jour avec succès !");
           isSubmitting = false;
-        }).catch((error) => {
+        })
+        .catch((error) => {
           console.error("Erreur lors de la mise à jour du profil:", error);
           alert("Une erreur est survenue lors de la mise à jour du profil.");
           isSubmitting = false;
-        })  ;
+        });
     }
   };
 
@@ -136,23 +179,92 @@
         if (user?.type === "ETABLISSEMENT") {
           etablissementData = userData?.personne;
         } else {
-          console.log("Professionnel data:", userData?.personne);
+          // console.log("Professionnel data:", userData?.personne);
           professionnelData = userData?.personne;
         }
         nbDocumentSoumis = userData?.personne?.documents?.length || 6;
         Documents = userData?.personne?.documents || [];
       });
   }
-//hh
+  //hh
   onMount(async () => {
     user = await getAuthCookie();
     fetchDataFirst();
-    console.log("User dans mon dossier:", user);
+    // console.log("User dans mon dossier:", user);
     await getUserInfo();
     document.title = "Mon dossier - MyDepp";
     isLoading = false;
   });
   let activeTab = "profil";
+
+  let formData= new FormData();
+  let imagePreview: any = {};
+  let errors: any = {};
+
+  function handleFileUpload(event: any, fieldName: string) {
+    const file = event.target.files[0];
+    if (file) {
+      // Créer une prévisualisation pour les images
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreview[fieldName] = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      }else{
+        imagePreview[fieldName] = null;
+      }
+      formData.append(fieldName, file);
+      // const fileData = file
+      // if (fileData) {
+      //   const byteCharacters = atob(fileData.data.split(",")[1]);
+      //   const byteArrays = [];
+
+      //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      //     const slice = byteCharacters.slice(offset, offset + 512);
+      //     const byteNumbers = new Array(slice.length);
+      //     for (let i = 0; i < slice.length; i++) {
+      //       byteNumbers[i] = slice.charCodeAt(i);
+      //     }
+      //     byteArrays.push(new Uint8Array(byteNumbers));
+      //   }
+
+      //   const blob = new Blob(byteArrays, {
+      //     type: "application/octet-stream",
+      //   });
+      //   // formData.append(fieldName, blob, fileData.name);
+      //   formData[fieldName] = blob;
+      // }
+
+      // Effacer l'erreur pour ce champ
+      if (errors[fieldName]) {
+        delete errors[fieldName];
+      }
+    }
+  }
+
+  async function handleSaveImage() {
+    // Logique pour sauvegarder l'image sur le serveur
+    isSubmitting = true;
+    // console.log("Sauvegarder l'image pour le champ:", formData);
+    await fetch(BASE_URL_API + "/professionnel/update-all-documents/"+user?.id, {
+      method: "POST",
+      body: formData
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        // console.log("Image sauvegardée avec succès:", result);
+        alert("Image sauvegardée avec succès !");
+        isSubmitting = false;
+        localStorage.clear();
+        window.location.href="/connexion";
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la sauvegarde de l'image:", error);
+        alert("Une erreur est survenue lors de la sauvegarde de l'image.");
+        isSubmitting = false;
+      });
+  }
 </script>
 
 <main
@@ -214,7 +326,7 @@
               class:!text-blue-600={activeTab === "profil"}
               class:border-transparent={activeTab !== "profil"}
               class:text-gray-500={activeTab !== "profil"}
-              on:click={() => (activeTab = "profil")}
+              onclick={() => (activeTab = "profil")}
             >
               <i class="ri-user-line mr-2"></i> Informations du profil
             </button>
@@ -225,7 +337,7 @@
                 class:!text-blue-600={activeTab === "infoPro"}
                 class:border-transparent={activeTab !== "infoPro"}
                 class:text-gray-500={activeTab !== "infoPro"}
-                on:click={() => (activeTab = "infoPro")}
+                onclick={() => (activeTab = "infoPro")}
               >
                 <i class="ri-user-line mr-2"></i> Informations professionnelles
               </button>
@@ -236,7 +348,7 @@
                 class:!text-blue-600={activeTab === "Organisation"}
                 class:border-transparent={activeTab !== "Organisation"}
                 class:text-gray-500={activeTab !== "Organisation"}
-                on:click={() => (activeTab = "Organisation")}
+                onclick={() => (activeTab = "Organisation")}
               >
                 <i class="ri-user-line mr-2"></i> Organisation
               </button>
@@ -248,7 +360,7 @@
               class:!text-blue-600={activeTab === "documents"}
               class:border-transparent={activeTab !== "documents"}
               class:text-gray-500={activeTab !== "documents"}
-              on:click={() => (activeTab = "documents")}
+              onclick={() => (activeTab = "documents")}
             >
               <i class="ri-file-list-line mr-2"></i> Documents soumis
               <span
@@ -260,7 +372,7 @@
 
           <!-- Contenu dynamique -->
           <div class="p-8" transition:fade>
-            <form class="space-y-6" on:submit|preventDefault={handleSubmit}>
+            <form class="space-y-6" onsubmit={handleSubmit}>
               {#if activeTab === "profil"}
                 <!-- <form class="space-y-6" on:submit|preventDefault={handleSubmit}> -->
                 {#if userData.typeUser === "ETABLISSEMENT"}
@@ -426,7 +538,8 @@
 
                 <!-- </form> -->
               {:else if activeTab === "infoPro" && userData.typeUser === "PROFESSIONNEL"}
-                <div>
+              <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+              <div>
                   <label class="block text-lg font-medium text-gray-700 mb-2"
                     >Profession</label
                   >
@@ -437,8 +550,47 @@
                     value={userData?.personne?.profession?.libelle}
                   />
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
                   <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Numéro d'inscription au registre
+                    </label>
+                    <input
+                    disabled
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData?.numeroInscription}
+                    />
+                  </div>
+                   <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Ordre selectionné *</label
+                    >
+                    <div class="relative">
+                       <Svelecte
+                        multiple={false}
+                        options={values.ordre}
+                        bind:value={professionnelData.ordre.id}
+                        controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        labelField="libelle"
+                        valueField="id"
+                        placeholder="Sélectionnez votre ordre"
+                      />
+                    </div>
+                       
+                  </div>
+                  <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Nom de L'ordre *</label
+                    >
+                    <input
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData.organisationNom}
+                    />
+                  </div>
+                  </div> 
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
+                  <!-- <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Numéro d'inscription au registre
                     </label>
@@ -447,7 +599,7 @@
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
                       value={professionnelData?.code}
                     />
-                  </div>
+                  </div> -->
                   <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
                       >Adresse email professionnel *</label
@@ -510,38 +662,46 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
                         required={true}
                         name="situationPro"
-                        
-                        bind:value={professionnelData.situationPro.id }
+                        bind:value={professionnelData.situationPro.id}
                       >
-                        <option value=""  >
+                        <option value="">
                           Sélectionnez votre situation professionnelle
                         </option>
                         {#each values.situationProfessionnelle as situation}
-                         <option value={situation.id} selected={situation.libelle == professionnelData?.situationPro?.libelle}>{situation.libelle}</option>
+                          <option
+                            value={situation.id}
+                            selected={parseInt(situation.id) ==
+                              parseInt(professionnelData?.situationPro)}
+                            >{situation.libelle}</option
+                          >
                         {/each}
                       </select>
                     </div>
                   </div>
                   <div>
-                  <label class="block text-lg font-medium text-gray-700 mb-2"
-                    >Région sanitaire *</label
-                  >
-                  <div class="relative">
-                    <select
-                      id="region"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
-                      required={true}
-                      name="region"
-                      bind:value={professionnelData.region.id}
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Région sanitaire *</label
                     >
-                      <option value="" disabled >
-                        Sélectionnez votre région sanitaire
-                      </option>
-                      {#each values.region as region}
-                        <option selected={parseInt(region.id) ==  parseInt(professionnelData?.region?.id)} value={region.id}>{region.libelle}</option>
-                      {/each}
-                    </select>
-                  </div>
+                    <div class="relative">
+                      <select
+                        id="region"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-8 bg-gray-50 focus:bg-white focus:outline-none duration-200"
+                        required={true}
+                        name="region"
+                        bind:value={professionnelData.region.id}
+                      >
+                        <option value="" disabled>
+                          Sélectionnez votre région sanitaire
+                        </option>
+                        {#each values.region as region}
+                          <option
+                            selected={parseInt(region.id) ==
+                              parseInt(professionnelData?.region?.id)}
+                            value={region.id}>{region.libelle}</option
+                          >
+                        {/each}
+                      </select>
+                    </div>
                   </div>
                   <div>
                     <label class="block text-lg font-medium text-gray-700 mb-2"
@@ -712,6 +872,10 @@
                       </select>
                     </div>
                   </div>
+
+                
+
+                 
                 </div>
               {:else if activeTab === "Organisation" && userData.typeUser === "PROFESSIONNEL"}
                 <div>
@@ -772,153 +936,563 @@
                     <span class="ml-2">Non</span>
                   </div>
                 </div>
-              {:else if activeTab === "documents"}
-              {#if Documents.length > 0 }
-                <ul class="space-y-4">
-                  {#each Documents as document}
-                    <li
-                      class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                
+                {#if professionnelData.appartenirOrdre === "oui"}
+                  <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Ordre professionnel</label
+                      >
+                      <input
+                        type="text"
+                        disabled
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                        value={professionnelData.ordre?.libelle || "Non renseigné"}
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700 mb-2"
+                        >Numéro d'inscription</label
+                      >
+                      <input
+                        type="text"
+                        disabled
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                        value={professionnelData.numeroInscription || "Non renseigné"}
+                      />
+                    </div>
+                  </div>
+                {/if}
+                
+                {#if professionnelData.appartenirOrganisation === "oui"}
+                  <div class="mt-4">
+                    <label class="block text-lg font-medium text-gray-700 mb-2"
+                      >Nom de l'organisation</label
                     >
-                      <div class="flex items-center gap-4">
-                        <i class="ri-file-line text-3xl text-blue-500"></i>
-                        <div>
-                          <p class="font-medium text-gray-900">
-                            {document.libelle}
-                          </p>
-                          <a
-                            class="text-lg"
-                            target="_blank"
-                            style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                            href={document.path
-                              ? BASE_URL_API_UPLOAD + document.path
-                              : "#"}>Voir Document</a
+                    <input
+                      type="text"
+                      disabled
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
+                      value={professionnelData.organisationNom || "Non renseigné"}
+                    />
+                  </div>
+                {/if}
+              {:else if activeTab === "documents"}
+                {#if Documents.length > 0}
+                  <ul class="space-y-4">
+                    {#each Documents as document}
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">
+                              {document.libelle}
+                            </p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={document.path
+                                ? BASE_URL_API_UPLOAD + document.path
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                    {/each}
+                  </ul>
+                {:else if professionnelData.cni != null}
+                  <div class="mt-6 grid grid-cols-2 gap-6">
+                    <ul class="space-y-4">
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">CNI</p>
+                            <div class="grid grid-cols-2 space-x-4">
+                              <a
+                                target="_blank"
+                                class="text-lg"
+                                style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                                href={professionnelData.cni.url
+                                  ? BASE_URL_API_UPLOAD +
+                                    professionnelData.cni.url
+                                  : "#"}>Voir Document</a
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">PHOTO</p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={professionnelData.photo.url
+                                ? BASE_URL_API_UPLOAD +
+                                  professionnelData.photo.url
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">CASIER</p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={professionnelData.casier.url
+                                ? BASE_URL_API_UPLOAD +
+                                  professionnelData.casier.url
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">CERTIFICAT</p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={professionnelData.certificat
+                                ? BASE_URL_API_UPLOAD +
+                                  professionnelData.certificat.url
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">DIPLOME</p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={professionnelData.diplomeFile
+                                ? BASE_URL_API_UPLOAD +
+                                  professionnelData.diplomeFile.url
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                      <li
+                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div class="flex items-center gap-4">
+                          <i class="ri-file-line text-3xl text-blue-500"></i>
+                          <div>
+                            <p class="font-medium text-gray-900">CV</p>
+                            <a
+                              class="text-lg"
+                              target="_blank"
+                              style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
+                              href={professionnelData.cv
+                                ? BASE_URL_API_UPLOAD + professionnelData.cv.url
+                                : "#"}>Voir Document</a
+                            >
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                    {#if user?.status == "refuse_mise_a_jour"}
+                      <div class="space-y-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                          Section de Mise à jour des documents
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                          <!-- Photo d'identité -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Photo d'identité <span class="text-red-500"
+                                >*</span
+                              >
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview.photo}
+                                <div class="flex-shrink-0">
+                                  <img
+                                    src={imagePreview.photo}
+                                    alt="Aperçu photo"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                </div>
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-photo"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-photo"
+                                    accept="image/*"
+                                    onchange={(e) =>
+                                      handleFileUpload(e, "photo")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    required
+                                  />
+                                </div>
+                                {#if errors.photo}
+                                  <p class="mt-1 text-sm text-red-600">
+                                    {errors.photo}
+                                  </p>
+                                {/if}
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- CNI -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Carte nationale d'identité (CNI) <span
+                                class="text-red-500">*</span
+                              >
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview.cni}
+                                <div class="flex-shrink-0">
+                                  <!-- <p>{imagePreview.cni}</p> -->
+                                  {#if imagePreview.cni.startsWith("data:image") || imagePreview.cni.endsWith(".jpg") || imagePreview.cni.endsWith(".png")}
+                                    <img
+                                      src={imagePreview.cni}
+                                      alt="Aperçu cni"
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {:else}
+                                    <img
+                                      src="/PDF.png"
+                                      alt="Aperçu cni"
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {/if}
+                                </div>
+                              {:else}
+                                <div class="flex-shrink-0">
+                                  <img
+                                    src="/PDF.png"
+                                    alt="Aperçu cni"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                </div>
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-cni"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-cni"
+                                    accept="image/*,application/pdf"
+                                    onchange={(e) => handleFileUpload(e, "cni")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    required
+                                  />
+                                </div>
+                                {#if errors.cni}
+                                  <p class="mt-1 text-sm text-red-600">
+                                    {errors.cni}
+                                  </p>
+                                {/if}
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Diplôme -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Diplôme <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview.diplomeFile}
+                                <div class="flex-shrink-0">
+                                  {#if imagePreview.diplomeFile.startsWith("data:image") || imagePreview.diplomeFile.endsWith(".jpg") || imagePreview.diplomeFile.endsWith(".png")}
+                                    <img
+                                      src={imagePreview.diplomeFile}
+                                      alt="Aperçu diplôme"
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {:else}
+                                    <img
+                                      src="/PDF.png"
+                                      alt="Aperçu diplôme"
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {/if}
+                                </div>
+                              {:else}
+                                <img
+                                  src="/PDF.png"
+                                  alt="Aperçu diplôme"
+                                  class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                />
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-diplomeFile"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-diplomeFile"
+                                    accept="image/*,application/pdf"
+                                    onchange={(e) =>
+                                      handleFileUpload(e, "diplomeFile")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    required
+                                  />
+                                </div>
+                                {#if errors.diplomeFile}
+                                  <p class="mt-1 text-sm text-red-600">
+                                    {errors.diplomeFile}
+                                  </p>
+                                {/if}
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Casier judiciaire -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Casier judiciaire <span class="text-red-500"
+                                >*</span
+                              >
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview.casier}
+                                <div class="flex-shrink-0">
+                                  {#if imagePreview.casier.startsWith("data:image") || imagePreview.casier.endsWith(".jpg") || imagePreview.casier.endsWith(".png")}
+                                    <img
+                                      src={imagePreview.casier}
+                                      alt="Aperçu casier "
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {:else}
+                                    <img
+                                      src="/PDF.png"
+                                      alt="Aperçu diplôme"
+                                      class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                    />
+                                  {/if}
+                                </div>
+                              {:else}
+                                <img
+                                  src="/PDF.png"
+                                  alt="Aperçu diplôme"
+                                  class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                />
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-casier"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-casier"
+                                    accept="image/*,application/pdf"
+                                    onchange={(e) =>
+                                      handleFileUpload(e, "casier")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    required
+                                  />
+                                </div>
+                                {#if errors.casier}
+                                  <p class="mt-1 text-sm text-red-600">
+                                    {errors.casier}
+                                  </p>
+                                {/if}
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Certificat (optionnel) -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Certificat (optionnel)
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview.certificat}
+                                {#if imagePreview.certificat.startsWith("data:image") || imagePreview.certificat.endsWith(".jpg") || imagePreview.certificat.endsWith(".png")}
+                                  <img
+                                    src={imagePreview.certificat}
+                                    alt="Aperçu certificat"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                {:else}
+                                  <img
+                                    src="/PDF.png"
+                                    alt="Aperçu diplôme"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                {/if}
+                              {:else}
+                                <img
+                                  src="/PDF.png"
+                                  alt="Aperçu diplôme"
+                                  class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                />
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-certificat"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-certificat"
+                                    accept="image/*,application/pdf"
+                                    onchange={(e) =>
+                                      handleFileUpload(e, "certificat")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- CV (optionnel) -->
+                          <div>
+                            <label
+                              class="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              CV (optionnel)
+                            </label>
+                            <div class="flex gap-4 items-start">
+                              {#if imagePreview?.cv}
+                                {#if imagePreview.cv.startsWith("data:image") || imagePreview.cv.endsWith(".jpg") || imagePreview.cv.endsWith(".png")}
+                                  <img
+                                    src={imagePreview.cv}
+                                    alt="Aperçu cv"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                {:else}
+                                  <img
+                                    src="/PDF.png"
+                                    alt="Aperçu diplôme"
+                                    class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                  />
+                                {/if}
+                              {:else}
+                                <img
+                                  src="/PDF.png"
+                                  alt="Aperçu diplôme"
+                                  class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                                />
+                              {/if}
+                              <div class="flex-1">
+                                <div
+                                  class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                                >
+                                  <label
+                                    for="file-cv"
+                                    class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                                  >
+                                    Cliquez ou glissez-déposez une image ici
+                                  </label>
+
+                                  <input
+                                    type="file"
+                                    id="file-cv"
+                                    accept="image/*,application/pdf"
+                                    onchange={(e) => handleFileUpload(e, "cv")}
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onclick={handleSaveImage}
+                            disabled={isSubmitting}
+                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-[1.02]"
+                            style="background-color: #2563eb;"
+                            >{isSubmitting ? "Envoi en cours..." : "Renvoyer les dossiers"}</button
                           >
                         </div>
                       </div>
-                    </li>
-                  {/each}
-                </ul>
-              {:else if professionnelData.cni != null}
-                <ul class="space-y-4">
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">CNI</p>
-                        <a
-                        target="_blank"
-                          class="text-lg"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.cni.url
-                            ? BASE_URL_API_UPLOAD + professionnelData.cni.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">PHOTO</p>
-                        <a
-                          class="text-lg"
-                          target="_blank"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.photo.url
-                            ? BASE_URL_API_UPLOAD + professionnelData.photo.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">CASIER</p>
-                        <a
-                          class="text-lg"
-                          target="_blank"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.casier.url
-                            ? BASE_URL_API_UPLOAD + professionnelData.casier.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">CERTIFICAT</p>
-                        <a
-                          class="text-lg"
-                          target="_blank"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.certificat
-                            ? BASE_URL_API_UPLOAD +
-                              professionnelData.certificat.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">DIPLOME</p>
-                        <a
-                          class="text-lg"
-                          target="_blank"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.diplomeFile
-                            ? BASE_URL_API_UPLOAD +
-                              professionnelData.diplomeFile.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-                  <li
-                    class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div class="flex items-center gap-4">
-                      <i class="ri-file-line text-3xl text-blue-500"></i>
-                      <div>
-                        <p class="font-medium text-gray-900">CV</p>
-                        <a
-                          class="text-lg"
-                          target="_blank"
-                          style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
-                          href={professionnelData.cv
-                            ? BASE_URL_API_UPLOAD + professionnelData.cv.url
-                            : "#"}>Voir Document</a
-                        >
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              {:else}
-                <div class="text-center py-16 text-gray-500">
-                  <i class="ri-folder-2-line text-6xl text-gray-400 mb-4"></i>
-                  <p class="text-lg">Aucun document ajouté pour le moment.</p>
-                </div>
+                    {/if}
+                  </div>
+                {:else}
+                  <div class="text-center py-16 text-gray-500">
+                    <i class="ri-folder-2-line text-6xl text-gray-400 mb-4"></i>
+                    <p class="text-lg">Aucun document ajouté pour le moment.</p>
+                  </div>
+                {/if}
               {/if}
-              {/if}
+              {#if activeTab != "documents"}
               <div class="flex justify-end space-x-4 pt-6">
                 <a
                   class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
@@ -935,6 +1509,7 @@
                   Sauvegarder les modifications
                 </button>
               </div>
+              {/if}
             </form>
           </div>
         </div>

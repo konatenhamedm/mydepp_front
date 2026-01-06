@@ -23,6 +23,7 @@
   let isPaiementProcessing = false;
   let authenticating = false;
   let isPaiementDone = false;
+  let isNextStepLoading = false;
   let message = "";
   let isModalOpen = false;
   let intermed = 0;
@@ -133,7 +134,10 @@
         { field: "dateNaissance", label: "Date de naissance" },
         { field: "situation", label: "Situation" },
       ];
-
+      checkExistenceNumeroInscription(formData.numeroInscription);
+      if (isValidNumeroInscription) {
+        return true;
+      }
       requiredFields.forEach(({ field, label }) => {
         if (!formData[field]) {
           errors[field] = `${label} est requis(e)`;
@@ -225,53 +229,96 @@
     }
 
     if (currentStep === 5) {
-      // Validation Step 5: Documents
-    if (!formData.appartenirOrganisation ){
-      errors.appartenirOrganisation = "Ce champ est requis";
-      isValid = false;
-    }
-    if (!formData.appartenirOrdre){
-      errors.appartenirOrdre = "Ce champ est requis";
-      isValid = false;
-    }
-
-    }
-    if (currentStep === 6) {
-      // Validation Step 6: Organisation et ordre professionnel
+      console.log("Début validation étape 5");
+      // Validation Step 5: Organisation et ordre
+      if (!formData.appartenirOrganisation) {
+        errors.appartenirOrganisation = "Ce champ est requis";
+        isValid = false;
+      }
+      if (!formData.appartenirOrdre) {
+        errors.appartenirOrdre = "Ce champ est requis";
+        isValid = false;
+      }
+      
+      console.log("Validation organisation:", formData.appartenirOrganisation);
+      // Validation conditionnelle pour l'organisation
+      if (formData.appartenirOrganisation === "oui" && !formData.organisationNom?.trim()) {
+        errors.organisationNom = "Le nom de l'organisation est requis";
+        isValid = false;
+      }
+      
+      console.log("Validation ordre:", formData.appartenirOrdre, formData.ordre, formData.numeroInscription);
+      // Validation conditionnelle pour l'ordre - temporairement allégée
       if (formData.appartenirOrdre === "oui") {
-        if (formData.organisationNom.length === 0) {
-          errors.organisationNom = "Le nom de l'organisation est requis";
+        // Validation allégée pour éviter les blocages
+        if (formData.numeroInscription?.trim() && formData.numeroInscription.length < 10) {
+          errors.numeroInscription = "Le numéro d'inscription semble trop court";
+          isValid = false;
+        }
+        if (!formData.ordre) {
+          errors.ordre = "L'ordre est requis";
           isValid = false;
         }
       }
+      console.log("Fin validation étape 5, isValid:", isValid);
     }
+
     return isValid;
   }
 
   const nextStep = async () => {
-  
-    // Valider l'étape actuelle avant de passer à la suivante
+    isNextStepLoading = true;
+    console.log("Début nextStep, step actuel:", step);
     
+    try {
+      // Validation simplifiée pour éviter les blocages
+      let validate = true;
+      
+      // Validation basique seulement
+      if (step === 1) {
+        validate = await validateStep(step);
+      } else if (step === 2) {
+        validate = await validateStep(step);
+      } else if (step === 3) {
+        validate = await validateStep(step);
+      } else if (step === 4) {
+        validate = await validateStep(step);
+      } else if (step === 5) {
+        // Validation allégée pour l'étape 5
+        validate = formData.appartenirOrganisation && formData.appartenirOrdre;
+        console.log("Validation étape 5 simplifiée:", validate);
+      }
+      
+      console.log("Validation du step ", step, ":", validate);
+      
+      if (!validate) {
+        message = "Veuillez remplir tous les champs obligatoires correctement";
+        return;
+      }
 
-    const validate = await validateStep(step);
-    console.log("Validation du step ", step, ":", validate);
-    if (!validate && isValidNumeroInscription == false) {
-      message = "Veuillez remplir tous les champs obligatoires correctement";
-      return;
+      message = ""; // Effacer le message d'erreur
+      
+      // Progression normale des étapes
+      step += 1;
+      if (step == 6) {
+        lastStep = true;
+      }
+      
+      console.log("Nouveau step:", step, "lastStep:", lastStep);
+    } catch (error) {
+      console.error("Erreur dans nextStep:", error);
+      // En cas d'erreur, on passe quand même à l'étape suivante
+      step += 1;
+      if (step == 6) {
+        lastStep = true;
+      }
+    } finally {
+      isNextStepLoading = false;
     }
+  };
 
-    message = ""; // Effacer le message d'erreur
-    // alert("next step");
-    if (isValidNumeroInscription) {
-      step == 6;
-      lastStep = true;
-    }
-    step += 1;
-    if (step == 6) {
-      lastStep = true;
-    }
-
-    
+   const displayValueToUppercase = (value: string) => {
+    return value.toUpperCase();
   };
 
   const prevStep = () => {
@@ -332,11 +379,11 @@
     cv: "",
 
     // organization informations
-
     appartenirOrganisation: "",
     organisationNom: "",
     appartenirOrdre: "",
     numeroInscription: "",
+    ordre: "",
   };
 
   let values = {
@@ -350,6 +397,7 @@
     ville: [],
     district: [],
     commune: [],
+    ordre: [],
   };
   let objects = [
     { name: "civilite", url: "/civilite/" },
@@ -362,42 +410,62 @@
     { name: "ville", url: "/ville" },
     { name: "district", url: "/district" },
     { name: "commune", url: "/commune" },
+    { name: "ordre", url: "/ordre/" },
   ];
   ////on recupere le type de personne et les autres trucs a mettre dans le formulaire
   async function fetchDataFirst() {
     try {
-      let res = null;
-      objects.forEach(async (element) => {
-        res = await axios
-          .get(`https://backend.leadagro.net/api${element.url}`)
-          .then((response) => {
-            values[element.name as keyof typeof values] = response.data.data;
-          })
-          .catch((error) => {
-            errorMessageAccountCreation =
-              "Erreur lors de la récupération des données.";
-            console.error("Erreur lors de la récupération des données:", error);
-            values[element.name as keyof typeof values] = [];
-          });
+      console.log("Début récupération des données...");
+      
+      // Utiliser Promise.all au lieu de forEach pour gérer correctement les appels async
+      const promises = objects.map(async (element) => {
+        try {
+          console.log(`Récupération de ${element.name} depuis ${element.url}`);
+          const response = await axios.get(`${BASE_URL_API}${element.url}`);
+          values[element.name as keyof typeof values] = response.data.data;
+          console.log(`${element.name} récupéré avec succès:`, response.data.data.length, "éléments");
+        } catch (error) {
+          console.error(`Erreur lors de la récupération de ${element.name}:`, error);
+          values[element.name as keyof typeof values] = [];
+          // Ne pas définir errorMessageAccountCreation ici pour éviter d'affecter l'inscription
+        }
       });
+      
+      await Promise.all(promises);
+      console.log("Toutes les données récupérées:", values);
     } catch (error) {
-      errorMessageAccountCreation =
-        "Erreur lors de la récupération des données.";
-      console.error("Erreur lors de la récupération des données:", error);
+      console.error("Erreur générale lors de la récupération des données:", error);
+      // Initialiser avec des valeurs par défaut au lieu de bloquer
+      objects.forEach(element => {
+        if (!values[element.name as keyof typeof values]) {
+          values[element.name as keyof typeof values] = [];
+        }
+      });
     }
   }
 
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
-  onMount(() => {
-    fetchDataFirst();
-    console.log(values);
+  onMount(async () => {
+    try {
+      // Récupérer les données en parallèle
+      await Promise.all([
+        fetchDataFirst(),
+        getAllProfessions()
+      ]);
+      
+      console.log("Données initialisées:", values);
+      console.log("Professions:", professions);
 
-    let references = localStorage.getItem("reference");
-    if (references) {
-      checkTransactionID(references);
+      let references = localStorage.getItem("reference");
+      if (references) {
+        checkTransactionID(references);
+      }
+      console.log("references", references);
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation:", error);
+      // Continuer même en cas d'erreur pour ne pas bloquer l'utilisateur
     }
-    console.log("references", references);
   });
 
   function clickPaiement() {
@@ -424,7 +492,7 @@
     const selectedFilesFromStorage = null;
 
     if (selectedFilesFromStorage) {
-      // Ajouter chaque fichier au FormData
+      // Ajouter chaque fichier au FormData en binaire
       Object.keys(selectedFilesFromStorage).forEach((fieldName) => {
         const fileData = selectedFilesFromStorage[fieldName];
         if (fileData && fileData.data) {
@@ -538,10 +606,7 @@
       });
   }
 
-  onMount(async () => {
-    await getAllProfessions();
-    console.log("formData dans formStep2", professions);
-  });
+
 
   function handleFileUpload(event: any, fieldName: string) {
     const file = event.target.files[0];
@@ -556,7 +621,10 @@
         };
         reader.readAsDataURL(file);
       }
-
+      // gestion quand c'est pas une image
+      else {
+        imagePreview[fieldName] = file.name; // Afficher le nom du fichier
+      }
       // Effacer l'erreur pour ce champ
       if (errors[fieldName]) {
         delete errors[fieldName];
@@ -574,12 +642,22 @@
   ///Ecoute active pour voir si je trouve un numero d'inscription et faire le process qui suit
 
   function checkExistenceNumeroInscription(numeroInscription: any) {
-    if (!numeroInscription) return;
-    if (numeroInscription.length < 21) return;
+    if (!numeroInscription) {
+      numeroInscriptionErrors = "";
+      return;
+    }
+    if (numeroInscription.length < 10) {
+      numeroInscriptionErrors = "Le numéro d'inscription doit contenir au moins 10 caractères.";
+      return;
+    }
     if (numeroTempInscription == numeroInscription) {
       checkAction = 1;
     }
     if (checkAction == 1) return;
+    
+    // Réinitialiser les erreurs pendant la vérification
+    numeroInscriptionErrors = "Vérification en cours...";
+    
     axios
       .get(
         `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}`
@@ -588,17 +666,21 @@
         console.log("Response existence numero d'inscription:", response.data);
         numeroTempInscription = numeroInscription;
         isValidNumeroInscription = response.data.data.statut;
+        
         if (isValidNumeroInscription) {
           fetchId = response.data.data.id;
-          step = 6;
-          lastStep = true;
-          formData.numeroInscription = "";
+          numeroInscriptionErrors = "";
+          formData.nom = response.data.data.nom;
+          formData.prenoms = response.data.data.prenoms;
+          specialite = response.data.data.profession;
+
+          // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
-          formData.numeroInscription = "";
           numeroTempInscription = null;
-          numeroInscriptionErrors = "Numéro d'inscription invalide.";
+          numeroInscriptionErrors = `Numéro d'inscription invalide ou ne correspond pas à ${formData.nom} ${formData.prenoms}. Vous pouvez continuer l'inscription normale.`;
         }
+        
         const data = response.data;
         console.log("data.exists", data.exists);
         if (data.exists) {
@@ -617,6 +699,8 @@
           "Erreur lors de la vérification du numéro d'inscription :",
           error
         );
+        numeroInscriptionErrors = "Erreur de connexion lors de la vérification. Vous pouvez continuer l'inscription normale.";
+        isValidNumeroInscription = false;
       });
   }
   let accountCreationLoader = false;
@@ -630,6 +714,7 @@
           code: numeroTempInscription,
           email: formData.email,
           password: formData.password,
+     
         })
         .then((response) => {
           console.log(
@@ -653,8 +738,9 @@
     }
   }
 
-  $: formData.numeroInscription &&
-    checkExistenceNumeroInscription(formData.numeroInscription);
+  // Contrôle temporairement désactivé pour éviter les blocages
+  // $: formData.numeroInscription &&
+  //   checkExistenceNumeroInscription(formData.numeroInscription);
 
   let specialiteFetched: any[] = [];
   function handleSpecialiteChange(event: any) {
@@ -699,6 +785,13 @@
   const openCalendar = (event: any) => {
     event.target.showPicker();
   };
+
+
+  const handleRegionChange = async(event:any) =>{
+    const getFosrt = JSON.stringify(event.districts)
+    
+    values.district = JSON.parse(getFosrt);
+  }
 </script>
 
 <main>
@@ -985,6 +1078,71 @@
               </div>
             </div>
           {:else if step === 2}
+          <div>
+              <label
+                for="numeroInscription"
+                class="block text-lg font-medium text-gray-700 mb-2"
+                >Numéro d'inscription au registre</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="numeroInscription"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                  placeholder="Votre numéro d'inscription"
+                  required={true}
+                  name="numeroInscription"
+                  bind:value={formData.numeroInscription}
+                  
+                />
+              </div>
+              {#if errors.numeroInscription}
+                <p class="text-red-600 text-sm mt-1">
+                  {errors.numeroInscription}
+                </p>
+              {/if}
+              {#if isValidNumeroInscription == true}
+                <div
+                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
+                >
+                  <p class="text-green-800 mb-3">
+                    ✓ Numéro d'inscription valide ! Vous pouvez finaliser votre inscription directement.
+                  </p>
+                  <button
+                    type="button"
+                    onclick={() => {
+                      step = 6;
+                      lastStep = true;
+                    }}
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Accéder à la finalisation
+                  </button>
+                </div>
+              {:else if numeroInscriptionErrors.length > 0}
+                <div
+                  class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg"
+                >
+                  <p class="text-yellow-800 mb-3">
+                    {numeroInscriptionErrors}
+                  </p>
+                  {#if numeroInscriptionErrors.includes("invalide") || numeroInscriptionErrors.includes("Erreur")}
+                    
+                    <button
+                      type="button"
+                      onclick={() => {
+                        formData.numeroInscription = "";
+                        numeroInscriptionErrors = "";
+                      }}
+                      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mr-2"
+                    >
+                      Effacer et réessayer
+                    </button>
+                  {/if}
+                </div>
+              {/if}
+            </div>
+            {#if isValidNumeroInscription == false}
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -1001,6 +1159,7 @@
                     required={true}
                     name="nom"
                     bind:value={formData.nom}
+                    oninput={() => {formData.nom = formData.nom.toUpperCase();}}
                   />
                 </div>
                 {#if errors.nom}
@@ -1018,10 +1177,11 @@
                     type="text"
                     id="prenoms"
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                    placeholder="Confirmez votre mot de passe"
+                    placeholder="Entrez le prénoms"
                     required={true}
                     name="prenoms"
                     bind:value={formData.prenoms}
+                    oninput={() => {formData.prenoms = formData.prenoms.toUpperCase();}}
                   />
                 </div>
                 {#if errors.prenoms}
@@ -1045,7 +1205,7 @@
                     controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                     labelField="libelle"
                     valueField="id"
-                    placeholder="Sélectionnez votre région sanitaire"
+                    placeholder="Sélectionnez votre nationalité"
                   />
                 </div>
                 {#if errors.nationalite}
@@ -1090,6 +1250,7 @@
                     required={true}
                     name="emailAutre"
                     bind:value={formData.emailAutre}
+                    
                   />
                 </div>
                 {#if errors.emailAutre}
@@ -1165,49 +1326,10 @@
                 {/if}
               </div>
             </div>
+            {/if}
+            
           {:else if step === 3 && intermed == 0}
-            <div>
-              <label
-                for="numeroInscription"
-                class="block text-lg font-medium text-gray-700 mb-2"
-                >Numéro d'inscription au registre</label
-              >
-              <div class="relative">
-                <input
-                  type="text"
-                  id="numeroInscription"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                  placeholder="Votre numéro d'inscription"
-                  required={true}
-                  name="numeroInscription"
-                  bind:value={formData.numeroInscription}
-                />
-              </div>
-              {#if errors.numeroInscription}
-                <p class="text-red-600 text-sm mt-1">
-                  {errors.numeroInscription}
-                </p>
-              {/if}
-              {#if isValidNumeroInscription == true}
-                <div
-                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
-                >
-                  <p class="text-green-800">
-                    Numéro d'inscription valide. Cliquer sur le bouton "Valider
-                    les informations" pour finaliser l'inscription.
-                  </p>
-                </div>
-              {:else if numeroInscriptionErrors.length > 0}
-                <div
-                  class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg"
-                >
-                  <p class="text-red-800">
-                    Numéro d'inscription invalide. Veuillez vérifier et
-                    réessayer.
-                  </p>
-                </div>
-              {/if}
-            </div>
+            
             {#if isValidNumeroInscription == false}
               <!-- <div class=" p-6 rounded-lg shadow-m mb-4"> -->
               <!-- Radios: Profession -->
@@ -1305,6 +1427,7 @@
                       required={true}
                       name="emailPro"
                       bind:value={formData.emailPro}
+                      
                     />
                   </div>
                   {#if errors.emailPro}
@@ -1353,6 +1476,7 @@
                       required={true}
                       name="lieuDiplome"
                       bind:value={formData.lieuDiplome}
+                      oninput={() => {formData.lieuDiplome = formData.lieuDiplome.toUpperCase();}}
                     />
                   </div>
                   {#if errors.lieuDiplome}
@@ -1403,6 +1527,7 @@
                       required={true}
                       name="diplome"
                       bind:value={formData.diplome}
+                      oninput={() => {formData.diplome = formData.diplome.toUpperCase();}}
                     />
                   </div>
                   {#if errors.diplome}
@@ -1446,6 +1571,8 @@
                       multiple={false}
                       options={values.region}
                       bind:value={formData.region}
+                      onChange={(event: any) =>
+                        handleRegionChange(event)}
                       controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       labelField="libelle"
                       valueField="id"
@@ -1540,6 +1667,7 @@
                       required={true}
                       name="quartier"
                       bind:value={formData.quartier}
+                      oninput={() => {formData.quartier = formData.quartier.toUpperCase();}}
                     />
                   </div>
                   {#if errors.quartier}
@@ -1564,6 +1692,7 @@
                       required={true}
                       name="Ilot,lot"
                       bind:value={formData.poleSanitaire}
+                      oninput={() => {formData.poleSanitaire = formData.poleSanitaire.toUpperCase();}}
                     />
                   </div>
                 </div>
@@ -1582,6 +1711,7 @@
                       required={true}
                       name="professionnel"
                       bind:value={formData.professionnel}
+                      oninput={() => {formData.professionnel = formData.professionnel.toUpperCase();}}
                     />
                   </div>
                   {#if errors.professionnel}
@@ -1608,6 +1738,7 @@
                       required={true}
                       name="lieuExercicePro"
                       bind:value={formData.lieuExercicePro}
+                      oninput={() => {formData.lieuExercicePro = formData.lieuExercicePro.toUpperCase();}}
                     />
                   </div>
                   {#if errors.lieuExercicePro}
@@ -1754,7 +1885,7 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.cni}
                       <div class="flex-shrink-0">
-                        <p>{imagePreview.cni}</p>
+                 
                         {#if imagePreview.cni.startsWith("data:image") || imagePreview.cni.endsWith(".jpg") || imagePreview.cni.endsWith(".png")}
                           <img
                             src={imagePreview.cni}
@@ -1769,14 +1900,7 @@
                           />
                         {/if}
                       </div>
-                       {:else }
-                       <div class="flex-shrink-0">
-                          <img
-                            src="/PDF.png"
-                            alt="Aperçu cni"
-                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                          />
-                          </div>
+                      
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1813,7 +1937,7 @@
                   <div class="flex gap-4 items-start">
                     {#if imagePreview.diplomeFile}
                       <div class="flex-shrink-0">
-                        {#if imagePreview.diplomeFile.startsWith("data:image") || imagePreview.diplomeFile.endsWith(".jpg") || imagePreview.diplomeFile.endsWith(".png")}
+                        {#if imagePreview.diplomeFile.startsWith("data:image")}
                           <img
                             src={imagePreview.diplomeFile}
                             alt="Aperçu diplôme"
@@ -1827,12 +1951,12 @@
                         />
                         {/if}
                       </div>
-                      {:else }
+                      <!-- {:else }
                        <img
                          src="/PDF.png"
                          alt="Aperçu diplôme"
                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                       />
+                       /> -->
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1885,12 +2009,7 @@
                         />
                         {/if}
                       </div>
-                      {:else }
-                       <img
-                         src="/PDF.png"
-                         alt="Aperçu diplôme"
-                         class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                       />
+                      
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1939,12 +2058,7 @@
                           class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       {/if}
-                      {:else }
-                        <img
-                          src="/PDF.png"
-                          alt="Aperçu diplôme"
-                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                        /> 
+                    
                     {/if}
                     <div class="flex-1">
                       <div
@@ -1989,12 +2103,7 @@
                           class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
                         />
                       {/if}
-                       {:else }
-                        <img
-                          src="/PDF.png"
-                          alt="Aperçu diplôme"
-                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                        />
+                     
                     {/if}
                     <div class="flex-1">
                       <div
@@ -2034,7 +2143,7 @@
                   <input
                     type="radio"
                     id={"appartenance_oui"}
-                    name="rd_profession"
+                    name="rd_appartenance_organisation"
                     class="cursor-pointer"
                     value={"oui"}
                     checked={formData.appartenirOrganisation === "oui"}
@@ -2048,7 +2157,7 @@
                   <input
                     type="radio"
                     id={"appartenance_non"}
-                    name="rd_profession"
+                    name="rd_appartenance_organisation"
                     class="cursor-pointer"
                     value={"non"}
                     checked={formData.appartenirOrganisation === "non"}
@@ -2076,6 +2185,9 @@
                       id={"appartenance_organisation"}
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                       bind:value={formData.organisationNom}
+                      oninput={() => {formData.organisationNom = formData.organisationNom.toUpperCase();}}
+                      placeholder="Nom de l'organisation"
+                      
                     />
                     {#if errors.organisationNom}
                       <div
@@ -2126,7 +2238,48 @@
                     </p>
                   </div>
                 {/if}
-              
+                
+                {#if formData.appartenirOrdre === "oui"}
+                  <div class="mt-4 grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="form_label font-bold block mb-2" for="ordre">
+                        <big>Sélectionnez l'ordre</big>
+                      </label>
+                      <Svelecte
+                        multiple={false}
+                        options={values.ordre}
+                        bind:value={formData.ordre}
+                        controlClass="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        labelField="libelle"
+                        valueField="id"
+                        placeholder="Sélectionnez votre ordre"
+                      />
+                      {#if errors.ordre}
+                        <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p class="text-red-800 text-sm">{errors.ordre}</p>
+                        </div>
+                      {/if}
+                    </div>
+                    
+                    <div>
+                      <label class="form_label font-bold block mb-2" for="numeroInscription">
+                        <big>Numéro d'inscription</big>
+                      </label>
+                      <input
+                        type="text"
+                        id="numeroInscription"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                        bind:value={formData.numeroInscription}
+                        placeholder="Numéro d'inscription à l'ordre"
+                      />
+                      {#if errors.numeroInscription}
+                        <div class="mt-1 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p class="text-red-800 text-sm">{errors.numeroInscription}</p>
+                        </div>
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
               </div>
             </div>
           {:else if step == 6}
@@ -2175,7 +2328,7 @@
               <SpinnerBlue />
             </div>
           {/if}
-          {#if errorMessageAccountCreation}
+          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données")}
             <div class="mt-6 p-4 bg-red-100 border border-red-300 rounded-lg">
               <p class="text-red-800">{errorMessageAccountCreation}</p>
             </div>
@@ -2201,8 +2354,12 @@
                     clickPaiement();
                   }}
                   type="button"
-                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  disabled={isPaiementProcessing || authenticating}
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
                 >
+                  {#if isPaiementProcessing || authenticating}
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {/if}
                   {paiementStatus
                     ? " Passer au paiement"
                     : "Terminer l'inscription"}
@@ -2213,8 +2370,12 @@
                     validateAccountWithNumInsc();
                   }}
                   type="button"
-                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  disabled={accountCreationLoader}
+                  class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
                 >
+                  {#if accountCreationLoader}
+                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {/if}
                   Valider les informations
                 </button>
               {/if}
@@ -2224,9 +2385,12 @@
                   nextStep();
                 }}
                 type="button"
-                disabled={lastStep}
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right"
+                disabled={lastStep || isNextStepLoading}
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap align-right flex items-center gap-2"
               >
+                {#if isNextStepLoading}
+                  <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {/if}
                 Suivant
               </button>
             {/if}

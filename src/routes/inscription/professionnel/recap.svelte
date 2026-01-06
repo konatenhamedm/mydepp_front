@@ -63,7 +63,7 @@
     <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; padding-left:2.75rem;">
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Civilité</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.civilite) ? allValuesAsTables[0][parseInt(formdata.civilite)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.civilite) && allValuesAsTables[0] && allValuesAsTables[0][parseInt(formdata.civilite)-1] ? allValuesAsTables[0][parseInt(formdata.civilite)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Nom</p>
@@ -75,7 +75,7 @@
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Nationalité</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.nationalite) ? allValuesAsTables[3][parseInt(formdata.nationalite)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.nationalite) && allValuesAsTables[3] && allValuesAsTables[3][parseInt(formdata.nationalite)-1] ? allValuesAsTables[3][parseInt(formdata.nationalite)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Date de naissance</p>
@@ -115,7 +115,7 @@
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Type de diplôme</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.typeDiplome) ? allValuesAsTables[2][parseInt(formdata.typeDiplome)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.typeDiplome) && allValuesAsTables[2] && allValuesAsTables[2][parseInt(formdata.typeDiplome)-1] ? allValuesAsTables[2][parseInt(formdata.typeDiplome)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Date du diplôme</p>
@@ -123,11 +123,11 @@
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Lieu d'obtention du diplôme</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.lieuObtentionDiplome) ? allValuesAsTables[5][parseInt(formdata.lieuObtentionDiplome)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.lieuObtentionDiplome) && allValuesAsTables[5] && allValuesAsTables[5][parseInt(formdata.lieuObtentionDiplome)-1] ? allValuesAsTables[5][parseInt(formdata.lieuObtentionDiplome)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Situation professionnelle</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.situationPro) ? allValuesAsTables[4][parseInt(formdata.situationPro)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.situationPro) && allValuesAsTables[4] && allValuesAsTables[4][parseInt(formdata.situationPro)-1] ? allValuesAsTables[4][parseInt(formdata.situationPro)-1].libelle : "Non renseigné"}</p>
       </div>
       {#if formdata?.emailPro}
         <div>
@@ -147,19 +147,19 @@
     <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; padding-left:2.75rem;">
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Région</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.region) ? allValuesAsTables[6][parseInt(formdata?.region)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.region) && allValuesAsTables[6] && allValuesAsTables[6][parseInt(formdata?.region)-1] ? allValuesAsTables[6][parseInt(formdata?.region)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">District</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.district) ? allValuesAsTables[8][parseInt(formdata?.district)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.district) && allValuesAsTables[8] && allValuesAsTables[8][parseInt(formdata?.district)-1] ? allValuesAsTables[8][parseInt(formdata?.district)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Ville</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.ville) ? allValuesAsTables[7][parseInt(formdata?.ville)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.ville) && allValuesAsTables[7] && allValuesAsTables[7][parseInt(formdata?.ville)-1] ? allValuesAsTables[7][parseInt(formdata?.ville)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Commune</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.commune) ? allValuesAsTables[9][parseInt(formdata?.commune)-1].libelle : "Non renseigné"}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.commune) && allValuesAsTables[9] && allValuesAsTables[9][parseInt(formdata?.commune)-1] ? allValuesAsTables[9][parseInt(formdata?.commune)-1].libelle : "Non renseigné"}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Quartier</p>
@@ -227,6 +227,10 @@
           </div>
         {/if}
         {#if formdata.appartenirOrdre === "oui"}
+          <div>
+            <p style="font-size:0.875rem; color:#4b5563;">Ordre professionnel</p>
+            <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.ordre) && allValuesAsTables[10] && allValuesAsTables[10][parseInt(formdata.ordre)-1] ? allValuesAsTables[10][parseInt(formdata.ordre)-1].libelle : "Non renseigné"}</p>
+          </div>
           <div>
             <p style="font-size:0.875rem; color:#4b5563;">Numéro d'inscription à l'ordre</p>
             <p style="font-weight:500; color:#1f2937;">{displayValue(formdata.numeroInscription)}</p>

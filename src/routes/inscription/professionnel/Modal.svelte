@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { apiFetch } from '$lib/api';
   import { formatDate } from '$lib/dateUtils';
   import { faArrowLeftRotate } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +16,7 @@
     title: 'Reçu de Paiement - Nouvelle Demande',
     date: '04 novembre 2024 à 16:39:59',
     name: 'Kra Rita',
+    prenoms: '',
     paymentMethod: 'OMCIV2',
     profession: "",
     phone: '0564924282',
@@ -25,7 +26,7 @@
   };
 
 
-  let transactionData; // Variable pour stocker les données de la transaction
+  let transactionData:any; // Variable pour stocker les données de la transaction
   function generatePDF() {
     try{
     const doc = new jsPDF({
@@ -54,11 +55,13 @@
 
     const fields = [
       { label: "Date d'édition:", value: transactionData.createdAt },
-      { label: "Nom complet:", value: transactionData.user.personne.nom + " " + transactionData.user.personne.prenoms },
+      { label: "Nom:", value: transactionData.user.personne.nom },
+      { label: "Prénom(s):", value: transactionData.user.personne.prenoms },
       { label: "Mode de paiement:", value: transactionData.channel },
       { label: "Email:", value: transactionData.user.email },
       { label: "Réference paiement:", value: `N° ${transactionData.reference}` },
-      { label: "Paiement:", value: `${transactionData.montant}` }
+      { label: "Paiement:", value: `${transactionData.montant}` },
+      // { label: "Profession:", value: `${transactionData.user.personne.profession.libelle}` },
     ];
 
     let yPos = startY;
@@ -100,9 +103,13 @@
           receiptData.paymentMethod = response.data.data.channel;
           receiptData.receiptNumber = response.data.data.reference;
           receiptData.residence = response.data.data.user.personne.quartier;
-          receiptData.name = response.data.data.user.typeUser == "PROFESSIONNEL" 
-            ? response.data.data.user.personne.nom + " "+ response.data.data.user.personne.prenoms 
-            : response.data.data.user.email;
+          if (response.data.data.user.typeUser == "PROFESSIONNEL") {
+            receiptData.name = response.data.data.user.personne.nom;
+            receiptData.prenoms = response.data.data.user.personne.prenoms;
+          } else {
+            receiptData.name = response.data.data.user.email;
+            receiptData.prenoms = "";
+          }
           receiptData.phone = response.data.data.user.typeUser == "PROFESSIONNEL" 
             ? response.data.data.user.personne.number 
             : response.data.data.user.username

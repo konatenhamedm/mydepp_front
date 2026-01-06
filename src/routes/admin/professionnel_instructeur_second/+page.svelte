@@ -114,6 +114,7 @@
     { key: "refuse", label: "Refusé" },
     { key: "renouvellement", label: "Renouvellement" },
     { key: "a_jour", label: "À jour" },
+    { key: "refuse_mise_a_jour", label: "Attente de Mise à jour" },
   ];
 
   // Fonctions
@@ -574,7 +575,7 @@ $: filteredData = main_data
                         <span
                           class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
                         >
-                          {item.personne.imputationData.username}
+                          {item?.personne?.imputationData?.nom}{" "}{item?.personne?.imputationData?.prenoms}
                         </span>
                       {:else}
                         <span

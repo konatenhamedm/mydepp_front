@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { apiFetch } from '$lib/api';
   import { formatDate } from '$lib/dateUtils';
   import { faArrowLeftRotate } from '@fortawesome/free-solid-svg-icons';
@@ -24,7 +24,7 @@
   };
 
 
-  let transactionData; // Variable pour stocker les données de la transaction
+  let transactionData:any; // Variable pour stocker les données de la transaction
   function generatePDF() {
     try{
     const doc = new jsPDF();
