@@ -27,7 +27,12 @@
       "isSectionTitle": true,
       "title": "PARAMETRAGES"
     },
-    
+    {
+      "title": "Charger les données",
+      "icon": "fa-solid fa-upload",
+      "path": "/admin/upload_data",
+      "exact": false
+    },
     {
       "title": "Civilités",
       "icon": "uil uil-setting",

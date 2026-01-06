@@ -36,7 +36,7 @@
 	async function SaveFunction() {
 		isLoad = true;
 		try {
-			const res = await apiFetch(true, "/devises/create", "POST", {
+			const res = await apiFetch(true, "/profession/create", "POST", {
 				code: devise.code,
 				libelle: devise.libelle,
 				codeGeneration: devise.codeGeneration,

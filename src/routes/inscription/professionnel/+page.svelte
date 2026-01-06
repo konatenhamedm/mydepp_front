@@ -134,7 +134,10 @@
         { field: "dateNaissance", label: "Date de naissance" },
         { field: "situation", label: "Situation" },
       ];
-
+      checkExistenceNumeroInscription(formData.numeroInscription);
+      if (isValidNumeroInscription) {
+        return true;
+      }
       requiredFields.forEach(({ field, label }) => {
         if (!formData[field]) {
           errors[field] = `${label} est requis(e)`;
@@ -418,7 +421,7 @@
       const promises = objects.map(async (element) => {
         try {
           console.log(`Récupération de ${element.name} depuis ${element.url}`);
-          const response = await axios.get(`https://backend.leadagro.net/api${element.url}`);
+          const response = await axios.get(`${BASE_URL_API}${element.url}`);
           values[element.name as keyof typeof values] = response.data.data;
           console.log(`${element.name} récupéré avec succès:`, response.data.data.length, "éléments");
         } catch (error) {
@@ -643,8 +646,8 @@
       numeroInscriptionErrors = "";
       return;
     }
-    if (numeroInscription.length < 21) {
-      numeroInscriptionErrors = "Le numéro d'inscription doit contenir au moins 21 caractères.";
+    if (numeroInscription.length < 10) {
+      numeroInscriptionErrors = "Le numéro d'inscription doit contenir au moins 10 caractères.";
       return;
     }
     if (numeroTempInscription == numeroInscription) {
@@ -657,7 +660,7 @@
     
     axios
       .get(
-        `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}/${formData.nom}/${formData.prenoms}`
+        `${BASE_URL_API}/professionnel/check/code/existe/${numeroInscription}`
       )
       .then((response) => {
         console.log("Response existence numero d'inscription:", response.data);
@@ -667,6 +670,10 @@
         if (isValidNumeroInscription) {
           fetchId = response.data.data.id;
           numeroInscriptionErrors = "";
+          formData.nom = response.data.data.nom;
+          formData.prenoms = response.data.data.prenoms;
+          specialite = response.data.data.profession;
+
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
@@ -1071,6 +1078,71 @@
               </div>
             </div>
           {:else if step === 2}
+          <div>
+              <label
+                for="numeroInscription"
+                class="block text-lg font-medium text-gray-700 mb-2"
+                >Numéro d'inscription au registre</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="numeroInscription"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                  placeholder="Votre numéro d'inscription"
+                  required={true}
+                  name="numeroInscription"
+                  bind:value={formData.numeroInscription}
+                  
+                />
+              </div>
+              {#if errors.numeroInscription}
+                <p class="text-red-600 text-sm mt-1">
+                  {errors.numeroInscription}
+                </p>
+              {/if}
+              {#if isValidNumeroInscription == true}
+                <div
+                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
+                >
+                  <p class="text-green-800 mb-3">
+                    ✓ Numéro d'inscription valide ! Vous pouvez finaliser votre inscription directement.
+                  </p>
+                  <button
+                    type="button"
+                    onclick={() => {
+                      step = 6;
+                      lastStep = true;
+                    }}
+                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Accéder à la finalisation
+                  </button>
+                </div>
+              {:else if numeroInscriptionErrors.length > 0}
+                <div
+                  class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg"
+                >
+                  <p class="text-yellow-800 mb-3">
+                    {numeroInscriptionErrors}
+                  </p>
+                  {#if numeroInscriptionErrors.includes("invalide") || numeroInscriptionErrors.includes("Erreur")}
+                    
+                    <button
+                      type="button"
+                      onclick={() => {
+                        formData.numeroInscription = "";
+                        numeroInscriptionErrors = "";
+                      }}
+                      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mr-2"
+                    >
+                      Effacer et réessayer
+                    </button>
+                  {/if}
+                </div>
+              {/if}
+            </div>
+            {#if isValidNumeroInscription == false}
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label
@@ -1254,80 +1326,10 @@
                 {/if}
               </div>
             </div>
+            {/if}
+            
           {:else if step === 3 && intermed == 0}
-            <div>
-              <label
-                for="numeroInscription"
-                class="block text-lg font-medium text-gray-700 mb-2"
-                >Numéro d'inscription au registre</label
-              >
-              <div class="relative">
-                <input
-                  type="text"
-                  id="numeroInscription"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
-                  placeholder="Votre numéro d'inscription"
-                  required={true}
-                  name="numeroInscription"
-                  bind:value={formData.numeroInscription}
-                  
-                />
-              </div>
-              {#if errors.numeroInscription}
-                <p class="text-red-600 text-sm mt-1">
-                  {errors.numeroInscription}
-                </p>
-              {/if}
-              {#if isValidNumeroInscription == true}
-                <div
-                  class="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
-                >
-                  <p class="text-green-800 mb-3">
-                    ✓ Numéro d'inscription valide ! Vous pouvez finaliser votre inscription directement.
-                  </p>
-                  <button
-                    type="button"
-                    onclick={() => {
-                      step = 6;
-                      lastStep = true;
-                    }}
-                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Accéder à la finalisation
-                  </button>
-                </div>
-              {:else if numeroInscriptionErrors.length > 0}
-                <div
-                  class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg"
-                >
-                  <p class="text-yellow-800 mb-3">
-                    {numeroInscriptionErrors}
-                  </p>
-                  {#if numeroInscriptionErrors.includes("invalide") || numeroInscriptionErrors.includes("Erreur")}
-                    <button
-                      type="button"
-                      onclick={() => {
-                        numeroInscriptionErrors = "";
-                        formData.numeroInscription = "";
-                      }}
-                      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mr-2"
-                    >
-                      Continuer l'inscription normale
-                    </button>
-                    <button
-                      type="button"
-                      onclick={() => {
-                        formData.numeroInscription = "";
-                        numeroInscriptionErrors = "";
-                      }}
-                      class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      Effacer et réessayer
-                    </button>
-                  {/if}
-                </div>
-              {/if}
-            </div>
+            
             {#if isValidNumeroInscription == false}
               <!-- <div class=" p-6 rounded-lg shadow-m mb-4"> -->
               <!-- Radios: Profession -->
