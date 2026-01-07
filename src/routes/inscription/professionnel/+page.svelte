@@ -672,8 +672,10 @@
           numeroInscriptionErrors = "";
           formData.nom = response.data.data.nom;
           formData.prenoms = response.data.data.prenoms;
-          specialite = response.data.data.profession;
-
+          formData.profession = response.data.data.profession;
+          formData.dateNaissance = response.data.data.DateNaissance;
+          formData.civilite = response.data.data.sexe;
+          formData.nationalite = response.data.data.nationalite;
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
@@ -722,14 +724,22 @@
             response.data
           );
           accountCreationLoader = false;
-          alert("Votre inscription a été validée avec succès !");
+          // alert("Votre inscription a été validée avec succès !");
           window.location.href = "/success";
           // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
         })
         .catch((error) => {
           accountCreationLoader = false;
+          if (error.response && error.response.data && error.response.data.detail) {
+            if(error.response.data.detail.includes("An exception occurred while executing a query: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry")) {
+              // alert("Votre inscription a été validée avec succès !");
+              window.location.href = "/success";
+              errorMessageAccountCreation = "L'email fourni est déjà utilisé. Veuillez en utiliser un autre.";
+              return;
+            }
+          } 
           errorMessageAccountCreation =
-            "Erreur lors de la création du compte. Veuillez réessayer.\n Si le problème persiste, contactez le support.";
+            "Veuillez valider à nouveau.\n Si le problème persiste, contactez le support.";
           console.error(
             "Erreur lors de la validation avec le numéro d'inscription :",
             error
