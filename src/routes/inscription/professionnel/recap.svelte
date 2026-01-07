@@ -81,19 +81,29 @@
         <p style="font-size:0.875rem; color:#4b5563;">Date de naissance</p>
         <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.dateNaissance)}</p>
       </div>
+      {#if formdata?.numero}
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Numéro de téléphone</p>
         <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.numero)}</p>
       </div>
+      {/if}
+      {#if formdata?.situation}
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Situation matrimoniale</p>
         <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.situation)}</p>
       </div>
+      {/if}
       {#if formdata?.emailAutre}
         <div>
           <p style="font-size:0.875rem; color:#4b5563;">Email alternatif</p>
           <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.emailAutre)}</p>
         </div>
+      {/if}
+      {#if formdata?.profession}
+      <div>
+        <p style="font-size:0.875rem; color:#4b5563;">Profession</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.profession)}</p>
+      </div>
       {/if}
     </div>
   </div>
