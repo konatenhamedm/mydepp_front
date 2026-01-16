@@ -444,16 +444,21 @@
     }
   }
 
+
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
+  // Loader pour l'initialisation de la page
+  let isPageLoading = true;
+
   onMount(async () => {
+    isPageLoading = true;
     try {
       // Récupérer les données en parallèle
       await Promise.all([
         fetchDataFirst(),
         getAllProfessions()
       ]);
-      
+
       console.log("Données initialisées:", values);
       console.log("Professions:", professions);
 
@@ -465,6 +470,8 @@
     } catch (error) {
       console.error("Erreur lors de l'initialisation:", error);
       // Continuer même en cas d'erreur pour ne pas bloquer l'utilisateur
+    } finally {
+      isPageLoading = false;
     }
   });
 
@@ -730,7 +737,7 @@
         })
         .catch((error) => {
           accountCreationLoader = false;
-          if (error.response && error.response.data && error.response.data.detail) {
+          if (error.response) {
             if(error.response.data.detail.includes("An exception occurred while executing a query: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry")) {
               // alert("Votre inscription a été validée avec succès !");
               window.location.href = "/success";
@@ -805,6 +812,12 @@
 </script>
 
 <main>
+  {#if isPageLoading}
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
+      <SpinnerBlue size="60" />
+      <span class="ml-4 text-blue-700 text-lg font-semibold">Chargement en cours...</span>
+    </div>
+  {/if}
   <HeaderNew />
   <section
     class="relative text-white bg-blue-600"
