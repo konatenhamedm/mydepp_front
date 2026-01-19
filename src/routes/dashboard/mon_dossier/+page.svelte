@@ -61,7 +61,7 @@
   let nbDocumentSoumis = 0;
   let Documents: any[] = [];
   let isLoading: boolean = true;
-  let professionnelData: any = {
+  let   professionnelData: any = {
     nom: "",
     prenoms: "",
     number: "",
@@ -176,13 +176,43 @@
       .then((response) => response.json())
       .then((result) => {
         userData = result.data;
+        console.log("user data mon dossier", userData);
         if (user?.type === "ETABLISSEMENT") {
           etablissementData = userData?.personne;
+          console.log("Etablissement data:", etablissementData);
         } else {
-          // console.log("Professionnel data:", userData?.personne);
-          professionnelData = userData?.personne;
+          console.log("Professionnel data:", userData);
+          // Mappage explicite pour gérer les champs vides
+          const p = userData?.personne || {};
+          professionnelData = {
+            nom: p.nom || "",
+            prenoms: p.prenoms || "",
+            number: p.number || "",
+            emailPro: p.emailPro || "",
+            appartenirOrdre: p.appartenirOrdre || "",
+            ordre: p.ordre || {},
+            numeroInscription: p.numeroInscription || "",
+            appartenirOrganisation: p.appartenirOrganisation || "",
+            organisationNom: p.organisationNom || "",
+            dateDiplome: p.dateDiplome || "",
+            lieuDiplome: p.lieuDiplome || "",
+            datePremierDiplome: p.datePremierDiplome || "",
+            diplome: p.diplome || "",
+            situationPro: p.situationPro || {},
+            region: p.region || {},
+            district: p.district || {},
+            ville: p.ville || {},
+            commune: p.commune || {},
+            quartier: p.quartier || "",
+            poleSanitaire: p.poleSanitaire || "",
+            professionnel: p.professionnel || "",
+            lieuExercicePro: p.lieuExercicePro || "",
+            typeDiplome: p.typeDiplome || {},
+            statusPro: p.statusPro || {},
+            lieuObtentionDiplome: p.lieuObtentionDiplome || {},
+          };
         }
-        nbDocumentSoumis = userData?.personne?.documents?.length || 6;
+        nbDocumentSoumis = userData?.personne?.documents?.length || 0;
         Documents = userData?.personne?.documents || [];
       });
   }
@@ -482,7 +512,7 @@
                         type="text"
                         disabled
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        value={userData?.personne?.email}
+                        value={userData?.username}
                       />
                     </div>
 
@@ -558,7 +588,7 @@
                     disabled
                       type="text"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100"
-                      value={professionnelData?.numeroInscription}
+                      value={userData?.personne?.code}
                     />
                   </div>
                    <div>
@@ -1486,10 +1516,302 @@
                     {/if}
                   </div>
                 {:else}
-                  <div class="text-center py-16 text-gray-500">
-                    <i class="ri-folder-2-line text-6xl text-gray-400 mb-4"></i>
-                    <p class="text-lg">Aucun document ajouté pour le moment.</p>
+                 <div class="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-4">
+                <!-- Photo d'identité -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Photo d'identité <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.photo}
+                      <div class="flex-shrink-0">
+                        <img
+                          src={imagePreview.photo}
+                          alt="Aperçu photo"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      </div>
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-photo"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-photo"
+                          accept="image/*"
+                          onchange={(e) => handleFileUpload(e, "photo")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
+                      {#if errors.photo}
+                        <p class="mt-1 text-sm text-red-600">{errors.photo}</p>
+                      {/if}
+                    </div>
                   </div>
+                </div>
+
+                <!-- CNI -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Carte nationale d'identité (CNI) <span class="text-red-500"
+                      >*</span
+                    >
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.cni}
+                      <div class="flex-shrink-0">
+                 
+                        {#if imagePreview.cni.startsWith("data:image") || imagePreview.cni.endsWith(".jpg") || imagePreview.cni.endsWith(".png")}
+                          <img
+                            src={imagePreview.cni}
+                            alt="Aperçu cni"
+                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                          />
+                        {:else }
+                          <img
+                            src="/PDF.png"
+                            alt="Aperçu cni"
+                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                          />
+                        {/if}
+                      </div>
+                      
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-cni"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-cni"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "cni")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
+                      {#if errors.cni}
+                        <p class="mt-1 text-sm text-red-600">{errors.cni}</p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Diplôme -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Diplôme <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.diplomeFile}
+                      <div class="flex-shrink-0">
+                        {#if imagePreview.diplomeFile.startsWith("data:image")}
+                          <img
+                            src={imagePreview.diplomeFile}
+                            alt="Aperçu diplôme"
+                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                          />
+                        {:else }
+                        <img
+                          src="/PDF.png"
+                          alt="Aperçu diplôme"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                        {/if}
+                      </div>
+                      <!-- {:else }
+                       <img
+                         src="/PDF.png"
+                         alt="Aperçu diplôme"
+                         class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                       /> -->
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-diplomeFile"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-diplomeFile"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "diplomeFile")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
+                      {#if errors.diplomeFile}
+                        <p class="mt-1 text-sm text-red-600">
+                          {errors.diplomeFile}
+                        </p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Casier judiciaire -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Casier judiciaire <span class="text-red-500">*</span>
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.casier}
+                      <div class="flex-shrink-0">
+                        {#if imagePreview.casier.startsWith("data:image") || imagePreview.casier.endsWith(".jpg") || imagePreview.casier.endsWith(".png")}
+                          <img
+                            src={imagePreview.casier}
+                            alt="Aperçu casier "
+                            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                          />
+                         {:else }
+                        <img
+                          src="/PDF.png"
+                          alt="Aperçu diplôme"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                        {/if}
+                      </div>
+                      
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-casier"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-casier"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "casier")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          required
+                        />
+                      </div>
+                      {#if errors.casier}
+                        <p class="mt-1 text-sm text-red-600">{errors.casier}</p>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Certificat (optionnel) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Certificat (optionnel)
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview.certificat}
+                      {#if imagePreview.certificat.startsWith("data:image") || imagePreview.certificat.endsWith(".jpg") || imagePreview.certificat.endsWith(".png")}
+                        <img
+                          src={imagePreview.certificat}
+                          alt="Aperçu certificat"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      {:else }
+                        <img
+                          src="/PDF.png"
+                          alt="Aperçu diplôme"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      {/if}
+                    
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-certificat"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-certificat"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "certificat")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CV (optionnel) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    CV (optionnel)
+                  </label>
+                  <div class="flex gap-4 items-start">
+                    {#if imagePreview?.cv}
+                      {#if imagePreview.cv.startsWith("data:image") || imagePreview.cv.endsWith(".jpg") || imagePreview.cv.endsWith(".png")}
+                        <img
+                          src={imagePreview.cv}
+                          alt="Aperçu cv"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      {:else }
+                        <img
+                          src="/PDF.png"
+                          alt="Aperçu diplôme"
+                          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+                        />
+                      {/if}
+                     
+                    {/if}
+                    <div class="flex-1">
+                      <div
+                        class="relative w-full h-32 border-dashed border-2 border-gray-300"
+                      >
+                        <label
+                          for="file-cv"
+                          class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none text-center"
+                        >
+                          Cliquez ou glissez-déposez une image ici
+                        </label>
+
+                        <input
+                          type="file"
+                          id="file-cv"
+                          accept="image/*,application/pdf"
+                          onchange={(e) => handleFileUpload(e, "cv")}
+                          class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
                 {/if}
               {/if}
               {#if activeTab != "documents"}

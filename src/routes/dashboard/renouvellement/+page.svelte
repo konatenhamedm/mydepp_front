@@ -62,7 +62,14 @@ let isValiding = false;
       //apiFetch(provenance: boolean, url: string, method?: string, data?: any, options?: RequestInit)
 
 
-
+// console.log("formdata",JSON.stringify({
+//         nom: formData.nom,
+//         prenoms: formData.prenoms,
+//         numero: formData.numero,
+//         email: user?.username,
+//         type: user?.type,
+//         user: user?.id,
+//       }))
       fetch( BASE_URL_API +"/paiement/renouvellement", {
       method: "POST",
       body: JSON.stringify({
