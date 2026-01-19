@@ -214,6 +214,7 @@
         }
         nbDocumentSoumis = userData?.personne?.documents?.length || 0;
         Documents = userData?.personne?.documents || [];
+        
       });
   }
   //hh
@@ -245,26 +246,26 @@
         imagePreview[fieldName] = null;
       }
       formData.append(fieldName, file);
-      // const fileData = file
-      // if (fileData) {
-      //   const byteCharacters = atob(fileData.data.split(",")[1]);
-      //   const byteArrays = [];
+      const fileData = file
+      if (fileData) {
+        const byteCharacters = atob(fileData.data.split(",")[1]);
+        const byteArrays = [];
 
-      //   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      //     const slice = byteCharacters.slice(offset, offset + 512);
-      //     const byteNumbers = new Array(slice.length);
-      //     for (let i = 0; i < slice.length; i++) {
-      //       byteNumbers[i] = slice.charCodeAt(i);
-      //     }
-      //     byteArrays.push(new Uint8Array(byteNumbers));
-      //   }
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+          const slice = byteCharacters.slice(offset, offset + 512);
+          const byteNumbers = new Array(slice.length);
+          for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+          }
+          byteArrays.push(new Uint8Array(byteNumbers));
+        }
 
-      //   const blob = new Blob(byteArrays, {
-      //     type: "application/octet-stream",
-      //   });
-      //   // formData.append(fieldName, blob, fileData.name);
-      //   formData[fieldName] = blob;
-      // }
+        const blob = new Blob(byteArrays, {
+          type: "application/octet-stream",
+        });
+        // formData.append(fieldName, blob, fileData.name);
+        formData[fieldName] = blob;
+      }
 
       // Effacer l'erreur pour ce champ
       if (errors[fieldName]) {
@@ -1812,6 +1813,14 @@
                   </div>
                 </div>
               </div>
+               <button
+                            type="button"
+                            onclick={handleSaveImage}
+                            disabled={isSubmitting}
+                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-[1.02]"
+                            style="background-color: #2563eb;"
+                            >{isSubmitting ? "Envoi en cours..." : "Renvoyer les dossiers"}</button
+                          >
                 {/if}
               {/if}
               {#if activeTab != "documents"}
