@@ -112,7 +112,7 @@
       // });
       formData.append("nom", professionnelData.nom);
       formData.append("prenoms", professionnelData.prenoms);
-      formData.append("number", professionnelData.number);
+      formData.append("numero", professionnelData.number);
       formData.append("emailPro", professionnelData.emailPro);
       formData.append("dateDiplome", professionnelData.dateDiplome);
       formData.append("lieuDiplome", professionnelData.lieuDiplome);
@@ -1517,6 +1517,7 @@
                     {/if}
                   </div>
                 {:else}
+                <div>
                  <div class="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-4">
                 <!-- Photo d'identité -->
                 <div>
@@ -1821,6 +1822,7 @@
                             style="background-color: #2563eb;"
                             >{isSubmitting ? "Envoi en cours..." : "Renvoyer les dossiers"}</button
                           >
+                </div>
                 {/if}
               {/if}
               {#if activeTab != "documents"}
