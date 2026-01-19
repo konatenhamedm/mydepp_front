@@ -444,16 +444,21 @@
     }
   }
 
+
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
+  // Loader pour l'initialisation de la page
+  let isPageLoading = true;
+
   onMount(async () => {
+    isPageLoading = true;
     try {
       // Récupérer les données en parallèle
       await Promise.all([
         fetchDataFirst(),
         getAllProfessions()
       ]);
-      
+
       console.log("Données initialisées:", values);
       console.log("Professions:", professions);
 
@@ -465,6 +470,8 @@
     } catch (error) {
       console.error("Erreur lors de l'initialisation:", error);
       // Continuer même en cas d'erreur pour ne pas bloquer l'utilisateur
+    } finally {
+      isPageLoading = false;
     }
   });
 
@@ -672,8 +679,10 @@
           numeroInscriptionErrors = "";
           formData.nom = response.data.data.nom;
           formData.prenoms = response.data.data.prenoms;
-          specialite = response.data.data.profession;
-
+          formData.profession = response.data.data.profession;
+          formData.dateNaissance = response.data.data.DateNaissance;
+          formData.civilite = response.data.data.sexe;
+          formData.nationalite = response.data.data.nationalite;
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
@@ -722,14 +731,22 @@
             response.data
           );
           accountCreationLoader = false;
-          alert("Votre inscription a été validée avec succès !");
+          // alert("Votre inscription a été validée avec succès !");
           window.location.href = "/success";
           // Vous pouvez rediriger l'utilisateur ou effectuer d'autres actions ici
         })
         .catch((error) => {
           accountCreationLoader = false;
+          if (error.response) {
+            if(error.response.data.detail.includes("An exception occurred while executing a query: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry")) {
+              // alert("Votre inscription a été validée avec succès !");
+              window.location.href = "/success";
+              errorMessageAccountCreation = "L'email fourni est déjà utilisé. Veuillez en utiliser un autre.";
+              return;
+            }
+          } 
           errorMessageAccountCreation =
-            "Erreur lors de la création du compte. Veuillez réessayer.\n Si le problème persiste, contactez le support.";
+            "Veuillez valider à nouveau.\n Si le problème persiste, contactez le support.";
           console.error(
             "Erreur lors de la validation avec le numéro d'inscription :",
             error
@@ -795,6 +812,12 @@
 </script>
 
 <main>
+  {#if isPageLoading}
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
+      <SpinnerBlue size="60" />
+      <span class="ml-4 text-blue-700 text-lg font-semibold">Chargement en cours...</span>
+    </div>
+  {/if}
   <HeaderNew />
   <section
     class="relative text-white bg-blue-600"

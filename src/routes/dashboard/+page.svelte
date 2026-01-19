@@ -150,6 +150,7 @@
       )
         .then((response) => response.json())
         .then((result) => {
+          console.log("payment info", result.data);
           info.expire = result.data.expire;
           expire = result.data.expire;
           info.finRenouvellement = result.data.date_expiration;
