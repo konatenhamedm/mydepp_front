@@ -212,9 +212,28 @@
             lieuObtentionDiplome: p.lieuObtentionDiplome || {},
           };
         }
-        nbDocumentSoumis = userData?.personne?.documents?.length || 0;
-        Documents = userData?.personne?.documents || [];
-        
+
+        // Gestion des documents individuels
+        const docFields = [
+          "photo",
+          "cv",
+          "casier",
+          "certificat",
+          "diplomeFile",
+          "cni"
+        ];
+        nbDocumentSoumis = 0;
+        Documents = [];
+        const personne = userData?.personne || {};
+        docFields.forEach((field) => {
+          if (personne[field] && personne[field].url) {
+            nbDocumentSoumis++;
+            Documents.push({
+              libelle: field.toUpperCase(),
+              ...personne[field]
+            });
+          }
+        });
       });
   }
   //hh
@@ -232,52 +251,101 @@
   let imagePreview: any = {};
   let errors: any = {};
 
+  // function handleFileUpload(event: any, fieldName: string) {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     // Créer une prévisualisation pour les images
+  //     if (file.type.startsWith("image/")) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         imagePreview[fieldName] = e.target?.result as string;
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }else{
+  //       imagePreview[fieldName] = null;
+  //     }
+  //     formData.append(fieldName, file);
+  //     const fileData = file
+  //     if (fileData) {
+  //       const byteCharacters = atob(fileData.data.split(",")[1]);
+  //       const byteArrays = [];
+
+  //       for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+  //         const slice = byteCharacters.slice(offset, offset + 512);
+  //         const byteNumbers = new Array(slice.length);
+  //         for (let i = 0; i < slice.length; i++) {
+  //           byteNumbers[i] = slice.charCodeAt(i);
+  //         }
+  //         byteArrays.push(new Uint8Array(byteNumbers));
+  //       }
+
+  //       const blob = new Blob(byteArrays, {
+  //         type: "application/octet-stream",
+  //       });
+  //       // formData.append(fieldName, blob, fileData.name);
+  //       formData[fieldName] = blob;
+  //     }
+
+  //     // Effacer l'erreur pour ce champ
+  //     if (errors[fieldName]) {
+  //       delete errors[fieldName];
+  //     }
+  //   }
+  // }
+
   function handleFileUpload(event: any, fieldName: string) {
-    const file = event.target.files[0];
-    if (file) {
-      // Créer une prévisualisation pour les images
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          imagePreview[fieldName] = e.target?.result as string;
-        };
-        reader.readAsDataURL(file);
-      }else{
-        imagePreview[fieldName] = null;
-      }
-      formData.append(fieldName, file);
-      const fileData = file
-      if (fileData) {
-        const byteCharacters = atob(fileData.data.split(",")[1]);
-        const byteArrays = [];
+  const file = event.target.files[0];
+  if (file) {
+    // Créer une prévisualisation pour les images
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview[fieldName] = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview[fieldName] = null;
+    }
+    
+    formData.append(fieldName, file);
 
-        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-          const slice = byteCharacters.slice(offset, offset + 512);
-          const byteNumbers = new Array(slice.length);
-          for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-          }
-          byteArrays.push(new Uint8Array(byteNumbers));
-        }
-
-        const blob = new Blob(byteArrays, {
-          type: "application/octet-stream",
-        });
-        // formData.append(fieldName, blob, fileData.name);
-        formData[fieldName] = blob;
-      }
-
-      // Effacer l'erreur pour ce champ
-      if (errors[fieldName]) {
-        delete errors[fieldName];
-      }
+    // Effacer l'erreur pour ce champ
+    if (errors[fieldName]) {
+      delete errors[fieldName];
     }
   }
+}
+
+  // function handleFileUpload(event: any, fieldName: string) {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     formData[fieldName] = file;
+
+  //     // Créer une prévisualisation pour les images
+  //     if (file.type.startsWith("image/")) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         imagePreview[fieldName] = e.target?.result as string;
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //     // gestion quand c'est pas une image
+  //     else {
+  //       imagePreview[fieldName] = file.name; // Afficher le nom du fichier
+  //     }
+  //     // Effacer l'erreur pour ce champ
+  //     if (errors[fieldName]) {
+  //       delete errors[fieldName];
+  //     }
+  //   }
+  // }
+
 
   async function handleSaveImage() {
     // Logique pour sauvegarder l'image sur le serveur
     isSubmitting = true;
-    // console.log("Sauvegarder l'image pour le champ:", formData);
+    console.log("Sauvegarder l'image pour le champ:", formData);
+
     await fetch(BASE_URL_API + "/professionnel/update-all-documents/"+user?.id, {
       method: "POST",
       body: formData
@@ -1010,7 +1078,7 @@
                 {/if}
               {:else if activeTab === "documents"}
                 {#if Documents.length > 0}
-                  <ul class="space-y-4">
+                  <ul class="space-y-4 grid grid-cols-2 gap-6">
                     {#each Documents as document}
                       <li
                         class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
@@ -1026,7 +1094,7 @@
                               target="_blank"
                               style="background-color:#2563eb; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; margin-top: 0.5rem; display: inline-block;"
                               href={document.path
-                                ? BASE_URL_API_UPLOAD + document.path
+                                ? BASE_URL_API_UPLOAD + document.url
                                 : "#"}>Voir Document</a
                             >
                           </div>
@@ -1036,7 +1104,7 @@
                   </ul>
                 {:else if professionnelData.cni != null}
                   <div class="mt-6 grid grid-cols-2 gap-6">
-                    <ul class="space-y-4">
+                    <ul class="space-y-4 grid grid-cols-2 gap-6">
                       <li
                         class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                       >
