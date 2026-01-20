@@ -1078,7 +1078,7 @@
                 {/if}
               {:else if activeTab === "documents"}
                 {#if Documents.length > 0}
-                  <ul class="space-y-4">
+                  <ul class="space-y-4 grid grid-cols-2 gap-6">
                     {#each Documents as document}
                       <li
                         class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
@@ -1104,7 +1104,7 @@
                   </ul>
                 {:else if professionnelData.cni != null}
                   <div class="mt-6 grid grid-cols-2 gap-6">
-                    <ul class="space-y-4">
+                    <ul class="space-y-4 grid grid-cols-2 gap-6">
                       <li
                         class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                       >
