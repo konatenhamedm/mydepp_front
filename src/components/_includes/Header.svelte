@@ -12,7 +12,7 @@
   onMount(async () => {
     user = getAuthCookie();
 
-    console.log(user);
+    // console.log(user);
   });
 </script>
 

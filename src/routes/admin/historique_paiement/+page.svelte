@@ -186,14 +186,14 @@
 
   // Réactivité
   $: filteredData = main_data.filter((item) => {
+    console.log('Filtrage de l\'élément:', item);
     const textMatch =
       item.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.personne?.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.personne?.prenoms.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.user?.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.user?.prenoms.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.personne?.profession?.libelle.toLowerCase().includes(searchQuery.toLowerCase());
-
+      item.user?.profession?.libelle.toLowerCase().includes(searchQuery.toLowerCase());
     let amountMatch = true;
     if (selectedAmount) {
       amountMatch = parseInt(item.montant, 10) === parseInt(selectedAmount, 10);
@@ -316,7 +316,7 @@
 
           {#if !['INSTRUCTEUR', 'SOUS-DIRECTEUR'].includes(user.type)}
             <Select bind:value={selectedAmount} class="w-full">
-              <option value="">Tous les montants</option>
+              <!-- <option value="">Tous les montants</option> -->
               {#each amountOptions as option}
                 <option value={option.value}>{option.label}</option>
               {/each}

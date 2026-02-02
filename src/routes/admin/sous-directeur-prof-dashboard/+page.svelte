@@ -142,7 +142,7 @@
       ]);
 
       allEtab2 = allEtab?.data || [];
-      console.log("allStats:", allStats);
+      // console.log("allStats:", allStats);
       allStats2 = allStats?.data || [];
       if (statsRes?.data) {
         stats = {
