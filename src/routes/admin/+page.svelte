@@ -48,7 +48,7 @@ let user : any;
 
   onMount(() => {
      user = getAuthCookie();
-      console.log("User from cookie:", user);
+      // console.log("User from cookie:", user);
 
     if (!user) {
       goto("/login");

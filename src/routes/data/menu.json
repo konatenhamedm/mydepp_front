@@ -530,6 +530,16 @@
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
+    },
+    {
+      "isSectionTitle": true,
+      "title": "Espace partenaire"
+    },
+    {
+      "title": "Partenaire ",
+      "icon": "uil uil-store",
+      "path": "https://manag-transacts.paysecurehub.com/",
+      "exact": false
     }
   ]
 }

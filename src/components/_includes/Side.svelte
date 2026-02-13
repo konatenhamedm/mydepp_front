@@ -134,7 +134,7 @@
       
       menuItems = roleMenu && Array.isArray(roleMenu) && roleMenu.length ? roleMenu : getDefaultMenu();
       
-      console.log(`Menu chargé pour le rôle: ${userRole}`, menuItems);
+      // console.log(`Menu chargé pour le rôle: ${userRole}`, menuItems);
       
       setTimeout(() => {
         menuItems.forEach((item, index) => {
