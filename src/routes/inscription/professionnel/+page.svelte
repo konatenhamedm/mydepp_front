@@ -684,24 +684,27 @@
           formData.civilite = response.data.data.sexe;
           formData.nationalite = response.data.data.nationalite;
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
+          console.log("Numéro d'inscription valide trouvé pour:", formData.nom, formData.prenoms, formData.profession);
         } else {
           fetchId = null;
           numeroTempInscription = null;
           numeroInscriptionErrors = `Numéro d'inscription invalide ou ne correspond pas à ${formData.nom} ${formData.prenoms}. Vous pouvez continuer l'inscription normale.`;
         }
         
-        const data = response.data;
-        console.log("data.exists", data.exists);
-        if (data.exists) {
-          specialite = data.specialite;
-          formData.profession = specialite;
-          if (errors["profession"]) {
-            delete errors["profession"];
-          }
-        } else {
-          specialite = null;
-          formData.profession = "";
-        }
+        // const data = response.data;
+        // // console.log("data.exists", data.exists);
+        // if (data && data.profession) {
+        //   specialite = data.profession;
+        //   console.log("Specialite trouvée:", specialite);
+        //   console.log("avant update formData.profession:", formData.profession);
+        //   formData.profession = specialite;
+        //   if (errors["profession"]) {
+        //     delete errors["profession"];
+        //   }
+        // } else {
+        //   specialite = null;
+        //   formData.profession = "";
+        // }
       })
       .catch((error) => {
         console.error(
