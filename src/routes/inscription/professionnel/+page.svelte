@@ -272,7 +272,7 @@
     
     try {
       // Validation simplifiée pour éviter les blocages
-      let validate = true;
+      let validate :any = true;
       
       // Validation basique seulement
       if (step === 1) {
@@ -817,7 +817,7 @@
 <main>
   {#if isPageLoading}
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
-      <SpinnerBlue size="60" />
+      <SpinnerBlue  />
       <span class="ml-4 text-blue-700 text-lg font-semibold">Chargement en cours...</span>
     </div>
   {/if}

@@ -184,7 +184,7 @@
   });
 
   // Réactivité
-  $: statusCounts = main_data.reduce((acc, item) => {
+  $: statusCounts = main_data.reduce((acc:any, item:any) => {
     acc[item.personne.status] = (acc[item.personne.status] || 0) + 1;
     return acc;
   }, {});
@@ -194,7 +194,7 @@
     .filter((item) => {
       if (!searchQuery) return true;
       const query = searchQuery.toLowerCase();
-      const personne: PersonneGetEtablissementData = item.personne;
+      const personne: PersonneGetEtablissementData | any = item.personne;
       return (
         item.email?.toLowerCase().includes(query) ||
         personne.telephone?.toLowerCase().includes(query) ||
