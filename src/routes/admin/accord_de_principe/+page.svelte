@@ -25,7 +25,7 @@
 
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
-  type ActionType = 'view' | 'edit' | 'delete' | 'add' | 'imputation' | 'details';
+  type ActionType = 'view' | 'edit' | 'delete' | 'add'  | 'details';
   type Action = {
     action: ActionType;
     title: string;
@@ -60,7 +60,7 @@
     view: ['R', 'RD', 'RU', 'CRUD', 'CRU', 'CR'],
     edit: ['RU', 'CRUD', 'CRU'],
     delete: ['RD', 'CRUD'],
-    imputation: ['CRUD', 'CRU'],
+    // imputation: ['CRUD', 'CRU'],
     details: ['R', 'RD', 'RU', 'CRUD', 'CRU', 'CR'],
   };
 
@@ -81,11 +81,17 @@
     // }
   ];
   const tallActions: Action[] = [
-    {
-      action: 'imputation',
-      title: 'Imputation',
-      icon: 'user-check',
-      color: 'warning',
+    // {
+    //   action: 'imputation',
+    //   title: 'Imputation',
+    //   icon: 'user-check',
+    //   color: 'warning',
+    // }
+     {
+      action: 'view',
+      title: 'Voir',
+      icon: 'eye',
+      color: 'success',
     }
   ];
   
@@ -139,9 +145,9 @@
       case 'delete':
         openDelete = true;
         break;
-      case 'imputation':
-        openImputation = true;
-        break;
+      // case 'imputation':
+      //   openImputation = true;
+      //   break;
       case 'details':
         openShowDetails = true;
         break;

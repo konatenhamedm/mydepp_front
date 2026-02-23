@@ -482,7 +482,7 @@
                       {item.personne?.telephone ? item.personne.telephone : item.personne.adresse ? item.personne.adresse : item.personne.number}
                     </td>
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 text-gray-500">
-                      {item.created_at ? new Date(item.personne.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+                      {item.personne.createdAt ? new Date(item.personne.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
                     </td>
                   {:else}
                     <td class="px-4 text-[14px]  py-3 border border-gray-200 font-medium text-gray-900">
