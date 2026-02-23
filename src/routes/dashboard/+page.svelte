@@ -27,6 +27,8 @@
   let photoProfile: any | null =
     "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
 
+  console.log("user", user);
+
   function handlePhotoChange(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -63,13 +65,16 @@
     formData.append("username", user?.username || "");
 
     try {
-      const response = await fetch(BASE_URL_API + "/user/profil/update/" + user?.id, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${user?.token || ""}`, // Ajuster selon ton système d'auth
+      const response = await fetch(
+        BASE_URL_API + "/user/profil/update/" + user?.id,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${user?.token || ""}`, // Ajuster selon ton système d'auth
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -86,18 +91,18 @@
       alert("Erreur lors de l'upload de la photo");
     }
   }
-
+  let statusDossier = "none";
   async function fetchData() {
     try {
       const response = await fetch(
-        BASE_URL_API + `/notification/by/${user?.id}`
+        BASE_URL_API + `/notification/by/${user?.id}`,
       );
       if (response.ok) {
         const result = await response.json();
         if (result.code === 200 && result.data) {
           notifications = result.data;
           const notificationsLu = notifications.filter(
-            (notif:any) => notif.isRead === false
+            (notif: any) => notif.isRead === false,
           );
           cardNotif = notificationsLu.length;
           notificationCount = notifications.length;
@@ -108,14 +113,10 @@
         console.error("Erreur de récupération:", response.statusText);
       }
 
-
-       const response2 = await fetch(
-        BASE_URL_API + `/adminDocument/`
-      );
+      const response2 = await fetch(BASE_URL_API + `/adminDocument/`);
       if (response2.ok) {
         const result = await response2.json();
         if (result.code === 200 && result.data) {
-          
           documentCount = result.data.length;
         } else {
           console.error("Erreur dans la réponse de l'API:", result.message);
@@ -124,13 +125,10 @@
         console.error("Erreur de récupération:", response2.statusText);
       }
 
-        const response3 = await fetch(
-        BASE_URL_API + `/forum/`
-      );
+      const response3 = await fetch(BASE_URL_API + `/forum/`);
       if (response3.ok) {
         const result = await response3.json();
         if (result.code === 200 && result.data) {
-          
           forumCount = result.data.length;
         } else {
           console.error("Erreur dans la réponse de l'API:", result.message);
@@ -138,16 +136,37 @@
       } else {
         console.error("Erreur de récupération:", response3.statusText);
       }
+  if (user?.type=="ETABLISSEMENT"){
+       const response4 = await fetch(
+        BASE_URL_API + `/etablissement/get/one/${user?.personneId}`
+      );
+      if (response4.ok) {
+        const result = await response4.json();
+        if (result.code === 200 && result.data) {
+         console.log("pour ton bonheur",result)
+         statusDossier = result.data.personne.status;
+        } else {
+          console.error("Erreur dans la réponse de l'API:", result.message);
+        }
+      } else {
+        console.error("Erreur de récupération:", response4.statusText);
+      }
+    }
+
     } catch (error) {
       console.error("Erreur API:", error);
     }
+
+  
+
+
+
+
   }
 
   async function fetchDataInfo() {
     try {
-      await fetch(
-        BASE_URL_API + "/paiement/status/renouvellement/" + (user?.id )
-      )
+      await fetch(BASE_URL_API + "/paiement/status/renouvellement/" + user?.id)
         .then((response) => response.json())
         .then((result) => {
           console.log("payment info", result.data);
@@ -161,17 +180,15 @@
       console.error("Erreur API:", error);
     }
   }
-  let firstPaymentDate:any ;
+  let firstPaymentDate: any;
   async function fetchPaymentStats() {
     try {
-      await fetch(
-        BASE_URL_API + "/paiement/historique/by/user/" + (user?.id )
-      )
+      await fetch(BASE_URL_API + "/paiement/historique/by/user/" + user?.id)
         .then((response) => response.json())
         .then((result) => {
           firstPaymentDate = result.data[0]?.createdAt || null;
           nbPayment = result.data.length;
-          
+
           console.log("payment stats", result.data);
         });
     } catch (error) {
@@ -179,13 +196,10 @@
     }
   }
   onMount(async () => {
-
-
     console.log("=============user", user);
 
     if (user?.avatar) {
       photoProfile = BASE_URL_API_UPLOAD + user.avatar;
-     
     }
 
     console.log("user", user);
@@ -194,7 +208,6 @@
     await fetchDataInfo();
     await fetchPaymentStats();
     isLoad = false;
-
   });
 
   const cards = [
@@ -258,9 +271,8 @@
     },
   ];
 
-
-function formatDate(dateString:any) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  function formatDate(dateString: any) {
+    const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 </script>
@@ -270,9 +282,7 @@ function formatDate(dateString:any) {
 >
   <HeaderNew />
 
-  <section
-    class=" min-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20"
-  >
+  <section class=" min-w-7xl mx-auto px-6 lg:px-10 py-12 animate-fadeIn pt-20">
     <!-- Header de bienvenue -->
     <div
       class="bg-white shadow-md border border-blue-100 rounded-3xl p-8 mb-10 flex flex-col md:flex-row justify-between items-center"
@@ -290,18 +300,22 @@ function formatDate(dateString:any) {
         <div class="flex flex-wrap gap-4 text-sm text-gray-500">
           <span class="flex items-center gap-2"
             ><i class="ri-building-line"></i>
-            {user?.type ? (user?.type).toLowerCase() + " de Santé" : "Clinique de la Santé"}</span
+            {user?.type
+              ? (user?.type).toLowerCase() + " de Santé"
+              : "Clinique de la Santé"}</span
           >
           <span class="flex items-center gap-2"
             ><i class="ri-map-pin-line"></i> Côte d'Ivoire</span
           >
           <span class="flex items-center gap-2"
-            ><i class="ri-calendar-line"></i> Inscrit depuis le {formatDate(firstPaymentDate)}</span
+            ><i class="ri-calendar-line"></i> Inscrit depuis le {formatDate(
+              firstPaymentDate,
+            )}</span
           >
         </div>
 
         <!-- Alerte d'expiration -->
-        {#if expire && user.type == "PROFESSIONNEL" }
+        {#if expire && user.type == "PROFESSIONNEL"}
           <div
             class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
           >
@@ -322,11 +336,12 @@ function formatDate(dateString:any) {
               </a>
             </div>
           </div>
-          {:else if expire && user.type == "ETABLISSEMENT"}
+        {:else if expire && user.type == "ETABLISSEMENT"}
           <div
             class="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3"
           >
-            <i class="ri-error-warning-line text-red-500 text-2xl animate-pulse"></i>
+            <i class="ri-error-warning-line text-red-500 text-2xl animate-pulse"
+            ></i>
             <div>
               <p class="font-semibold text-red-800">Abonnement expiré</p>
               <p class="text-sm text-red-600">
@@ -346,61 +361,56 @@ function formatDate(dateString:any) {
       </div>
 
       <!-- Photo de profil (tout le bloc cliquable) -->
-      <div class="grid grid-cols-2 mt-6 md:mt-0  gap-6 items-center">
-         <div class="">
-        <text class="font-medium text-gray-700 mt-2 text-center block">
-          {user?.nom}
-        </text>
-        <div class="text-sm text-gray-500 text-center">
-           {user?.username}
-      </div>
-      </div>
-      <div >
-        <label for="photo-upload" class="cursor-pointer group relative block">
-          <div
-            class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white"
-          >
-          
-            {#if photoProfile}
-              <!-- Photo de profil -->
-              <img
-                src={photoProfile}
-                alt="Photo de profil"
-                class="w-full h-full object-cover"
-                
-              />
-              
-            {:else}
-              <!-- Placeholder avec dégradé -->
-              <div
-                class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
-              >
-                <i class="ri-user-line text-white text-5xl"></i>
-              </div>
-            {/if}
-
-            <!-- Overlay au survol -->
+      <div class="grid grid-cols-2 mt-6 md:mt-0 gap-6 items-center">
+        <div class="">
+          <text class="font-medium text-gray-700 mt-2 text-center block">
+            {user?.nom}
+          </text>
+          <div class="text-sm text-gray-500 text-center">
+            {user?.username}
+          </div>
+        </div>
+        <div>
+          <label for="photo-upload" class="cursor-pointer group relative block">
             <div
-              class="absolute inset-0 bg-none bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center"
+              class="relative w-32 h-32 rounded-full overflow-hidden shadow-xl border-4 border-white"
             >
+              {#if photoProfile}
+                <!-- Photo de profil -->
+                <img
+                  src={photoProfile}
+                  alt="Photo de profil"
+                  class="w-full h-full object-cover"
+                />
+              {:else}
+                <!-- Placeholder avec dégradé -->
+                <div
+                  class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+                >
+                  <i class="ri-user-line text-white text-5xl"></i>
+                </div>
+              {/if}
+
+              <!-- Overlay au survol -->
               <div
-                class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1"
+                class="absolute inset-0 bg-none bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center"
               >
-                <i class="ri-camera-line text-white text-3xl"></i>
-                <span class="text-white text-xs font-medium">Changer</span>
+                <div
+                  class="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1"
+                >
+                  <i class="ri-camera-line text-white text-3xl"></i>
+                  <span class="text-white text-xs font-medium">Changer</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Badge hôpital en bas à droite -->
-          <div
-            class="absolute -bottom-2 -right-2 bg-white text-blue-600 rounded-full shadow-lg p-2 border-2 border-white"
-          >
-            <i class="ri-building-2-line text-lg"></i>
-          </div>
-
-          
-        </label>
+            <!-- Badge hôpital en bas à droite -->
+            <div
+              class="absolute -bottom-2 -right-2 bg-white text-blue-600 rounded-full shadow-lg p-2 border-2 border-white"
+            >
+              <i class="ri-building-2-line text-lg"></i>
+            </div>
+          </label>
         </div>
         <!-- Input file caché -->
         <input
@@ -410,7 +420,7 @@ function formatDate(dateString:any) {
           class="hidden"
           on:change={handlePhotoChange}
         />
-        
+
         <!-- Icône de warning si expiré -->
         {#if expire}
           <div
@@ -419,15 +429,13 @@ function formatDate(dateString:any) {
             <i class="ri-alert-line text-xl"></i>
           </div>
         {/if}
-        
       </div>
     </div>
-    {#if user.status == "acp_dossier_valide_directrice"}
+    {#if statusDossier == "acp_dossier_valide_directrice"}
       <div
         class="col-lg-12 col-md-12 d-flex mx-[40%] justify-center items-center my-3"
       >
         <button
-          
           on:click={() => (window.location.href = "/dashboard/oep_initie")}
           style="font-size: 1.1rem; padding: 0.75rem 1.5rem; background-color: #2563eb; color: white; border: none; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;  "
         >
@@ -511,7 +519,13 @@ function formatDate(dateString:any) {
                     <span
                       class="text-xs px-3 py-1 rounded-full font-medium bg-gray-200 text-gray-500"
                     >
-                      {card.badge === "notification" ? cardNotif : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
+                      {card.badge === "notification"
+                        ? cardNotif
+                        : card.badge === "document"
+                          ? documentCount
+                          : card.badge === "forum"
+                            ? forumCount
+                            : card.badge}
                     </span>
                   {/if}
                   <i class="ri-lock-line text-gray-400 text-xl"></i>
@@ -551,7 +565,13 @@ function formatDate(dateString:any) {
                   <span
                     class="text-xs px-3 py-1 rounded-full font-medium {card.badgeColor}"
                   >
-                     {card.badge === "notification" ? cardNotif : card.badge === "document" ? documentCount : card.badge === "forum" ? forumCount : card.badge}
+                    {card.badge === "notification"
+                      ? cardNotif
+                      : card.badge === "document"
+                        ? documentCount
+                        : card.badge === "forum"
+                          ? forumCount
+                          : card.badge}
                   </span>
                 {/if}
               </div>
