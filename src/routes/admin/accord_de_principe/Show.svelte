@@ -487,4 +487,4 @@
   />
 {/if}
 
-<DocShow bind:open={openShow} data={current_data} sizeModal="xl" />
+<!-- <DocShow bind:open={openShow} data={current_data} sizeModal="xl" /> -->
