@@ -13,7 +13,7 @@
   <ul class="grid md:grid-cols-2 gap-4 mx-auto items-center align-middle justify-center text-center">
     <li><b>Email:</b> {formData.email}</li>
     <li><b>Type de personne:</b> {formData.typePersonne}</li>
-    <li><b>Niveau d'intervention:</b> {values.niveauIntervention[formData.niveauIntervention]}</li>
+    <li><b>Niveau d'intervention:</b> {values.niveauIntervention[formData.niveauIntervention].libelle}</li>
       {#if formData.nom}
         <li><b>Nom:</b> {formData.nom}</li>
       {/if}
