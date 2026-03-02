@@ -683,6 +683,8 @@
           formData.dateNaissance = response.data.data.DateNaissance;
           formData.civilite = response.data.data.sexe;
           formData.nationalite = response.data.data.nationalite;
+          console.log("formData après pré-remplissage:", formData);
+          console.log("response on good", response.data.data);
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
         } else {
           fetchId = null;
@@ -690,10 +692,10 @@
           numeroInscriptionErrors = `Numéro d'inscription invalide ou ne correspond pas à ${formData.nom} ${formData.prenoms}. Vous pouvez continuer l'inscription normale.`;
         }
         
-        const data = response.data;
-        console.log("data.exists", data.exists);
-        if (data.exists) {
-          specialite = data.specialite;
+        const data = response.data.data;
+        console.log("data.exists", data);
+        if (data.profession) {
+          specialite = data.profession;
           formData.profession = specialite;
           if (errors["profession"]) {
             delete errors["profession"];
@@ -714,6 +716,8 @@
   }
   let accountCreationLoader = false;
   let errorMessageAccountCreation = "";
+  let tryAfterFirstError = 0;
+  let successMessageAccountCreation = "Merci de valider votre inscription en cliquant sur le bouton ci-dessous. Si vous avez utilisé un numéro d'inscription valide.";
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
       let formulaire = new FormData();
@@ -745,6 +749,7 @@
               return;
             }
           } 
+          tryAfterFirstError += 1;
           errorMessageAccountCreation =
             "Veuillez valider à nouveau.\n Si le problème persiste, contactez le support.";
           console.error(
@@ -2351,9 +2356,14 @@
               <SpinnerBlue />
             </div>
           {/if}
-          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données")}
+          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données") && tryAfterFirstError > 1}
             <div class="mt-6 p-4 bg-red-100 border border-red-300 rounded-lg">
               <p class="text-red-800">{errorMessageAccountCreation}</p>
+            </div>
+          {/if}
+          {#if successMessageAccountCreation && tryAfterFirstError == 1}
+            <div class="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg">
+              <p class="text-green-800">{successMessageAccountCreation}</p>
             </div>
           {/if}
           <div class="flex justify-between mt-8 pt-6">

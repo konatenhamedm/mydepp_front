@@ -9,6 +9,8 @@
     return String(value);
   }
 
+  console.log("Formdata recap:", formdata);
+
   let recapRef: HTMLDivElement;
   async function printRecapPDF() {
     const jsPDF = (await import('jspdf')).jsPDF;
