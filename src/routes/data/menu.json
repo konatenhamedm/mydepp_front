@@ -219,7 +219,7 @@
       "title": "Gestion des statistiques"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques" ,
       "icon": "uil uil-chart-bar",
       "path": "/admin/statistique/general",
       "exact": false
@@ -318,7 +318,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -356,7 +356,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -422,7 +422,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -460,7 +460,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -498,7 +498,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -526,7 +526,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false

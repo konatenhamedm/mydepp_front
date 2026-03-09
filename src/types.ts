@@ -780,7 +780,7 @@ export interface PersonneGetEtablissementData {
   niveauIntervention: NiveauInterventionGetEtablissementData;
   dateVisite: any;
   typePersonne: NiveauInterventionGetEtablissementData;
-  imputationData: null;
+  imputationData: null | any;
   denomination: any;
   typeSociete: any;
   nomRepresentant: any;
