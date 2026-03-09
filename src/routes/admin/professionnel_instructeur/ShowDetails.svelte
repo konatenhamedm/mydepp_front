@@ -76,7 +76,7 @@
 		status = data.personne.status || "";
 		professionLibelle = data.personne.profession
 			? data.personne.profession.libelle
-			: "";
+			: "Medecin";
 		prenoms = data.personne.prenoms || "";
 		reason = data.personne.reason || "";
 		professionnel = data.personne.professionnel || "";

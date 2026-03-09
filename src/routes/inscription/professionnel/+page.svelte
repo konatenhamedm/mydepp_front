@@ -384,6 +384,7 @@
     appartenirOrdre: "",
     numeroInscription: "",
     ordre: "",
+    phoneNumber:"",
   };
 
   let values = {
@@ -476,8 +477,14 @@
   });
 
   function clickPaiement() {
+    // Valider que le numéro MTN est saisi avant de lancer le paiement
+    const numero = formData.numero || formData.phoneNumber;
+    if (paiementStatus && !numero) {
+      errorMessageAccountCreation = "Veuillez saisir votre numéro MTN MoMo avant de procéder au paiement.";
+      return;
+    }
+    errorMessageAccountCreation = "";
     isPaiementProcessing = true;
-
     initPaiement();
   }
 
@@ -495,6 +502,11 @@
       formDatas.append("reference", reference);
     }
     formDatas.append("type", "professionnel");
+
+      // Ajout du numéro saisi à la fin du FormData
+      if (formData.numero) {
+        formDatas.append("phoneNumber", formData.numero);
+      }
 
     const selectedFilesFromStorage = null;
 
@@ -525,22 +537,56 @@
 
     console.log(formDatas);
     if (await checkPaiementStatus(formData.profession)) {
-      await fetch(BASE_URL_API + "/paiement/paiement", {
+      await fetch(BASE_URL_API + "/paiement2/paiement", {
         method: "POST",
         body: formDatas,
       })
         .then((response) => response.json())
         .then((result) => {
           authenticating = false;
-
-          if (result.data.url) {
+          if (result.data && (result.data.code === 200 || result.data.success)) {
+            alert("Une requête MTN MoMo a été envoyée au numéro saisi. Veuillez valider le paiement sur le téléphone pour finaliser votre inscription.");
             localStorage.setItem("reference", result.data.reference);
-            window.location.href = result.data.url + "?return=1"; // 🔥 Ajout du paramètre `return`
+
+            let attempts = 0;
+            const pollInterval = setInterval(async () => {
+              attempts++;
+              try {
+                // On poll sur l'ancienne fonction de transaction pour voir son état
+                const res = await fetch(`https://backend.leadagro.net/api/paiement2/info/transaction/${result.data.reference}`);
+                const dat = await res.json();
+                if (dat.data && dat.data.state == 1) {
+                  clearInterval(pollInterval);
+                  window.location.href = "/success";
+                } else if (dat.data && dat.data.state == -1) {
+                  clearInterval(pollInterval);
+                  alert("Le paiement a échoué. Veuillez réessayer.");
+                  isPaiementProcessing = false;
+                } else if (attempts > 70) { // 5 minutes timeout
+                  clearInterval(pollInterval);
+                  alert("Délai de paiement expiré. Veuillez reprendre.");
+                  isPaiementProcessing = false;
+                }
+              } catch (e) {
+                console.error("Erreur de vérification du statut", e);
+                isPaiementProcessing = false;
+              }
+            }, 5000);
+            
+          } else if (result.data && result.data.url) {
+            localStorage.setItem("reference", result.data.reference);
+            window.location.href = result.data.url + "?return=1"; 
+          } else {
+            // Erreur retournée par l'API (MTN ou autre) : afficher et réactiver le bouton
+            const msg = (result.data && result.data.message) || result.error || result.message || "Erreur lors de l'initiation du paiement MTN MoMo.";
+            errorMessageAccountCreation = msg;
+            isPaiementProcessing = false;
+            authenticating = false;
           }
         })
         .catch((error) => {
           errorMessageAccountCreation =
-            "Erreur lors de l'initialisation du paiement.";
+            "Erreur réseau lors de l'initialisation du paiement. Veuillez réessayer.";
           console.error("Erreur paiements :", error);
           isPaiementProcessing = false;
           authenticating = false;
@@ -683,6 +729,8 @@
           formData.dateNaissance = response.data.data.DateNaissance;
           formData.civilite = response.data.data.sexe;
           formData.nationalite = response.data.data.nationalite;
+          console.log("formData après pré-remplissage:", formData);
+          console.log("response on good", response.data.data);
           // Ne pas passer automatiquement à l'étape 6, laisser l'utilisateur choisir
           console.log("Numéro d'inscription valide trouvé pour:", formData.nom, formData.prenoms, formData.profession);
         } else {
@@ -691,20 +739,18 @@
           numeroInscriptionErrors = `Numéro d'inscription invalide ou ne correspond pas à ${formData.nom} ${formData.prenoms}. Vous pouvez continuer l'inscription normale.`;
         }
         
-        // const data = response.data;
-        // // console.log("data.exists", data.exists);
-        // if (data && data.profession) {
-        //   specialite = data.profession;
-        //   console.log("Specialite trouvée:", specialite);
-        //   console.log("avant update formData.profession:", formData.profession);
-        //   formData.profession = specialite;
-        //   if (errors["profession"]) {
-        //     delete errors["profession"];
-        //   }
-        // } else {
-        //   specialite = null;
-        //   formData.profession = "";
-        // }
+        const data = response.data.data;
+        console.log("data.exists", data);
+        if (data.profession) {
+          specialite = data.profession;
+          formData.profession = specialite;
+          if (errors["profession"]) {
+            delete errors["profession"];
+          }
+        } else {
+          specialite = null;
+          formData.profession = "";
+        }
       })
       .catch((error) => {
         console.error(
@@ -717,6 +763,8 @@
   }
   let accountCreationLoader = false;
   let errorMessageAccountCreation = "";
+  let tryAfterFirstError = 0;
+  let successMessageAccountCreation = "Merci de valider votre inscription en cliquant sur le bouton ci-dessous. Si vous avez utilisé un numéro d'inscription valide.";
   function validateAccountWithNumInsc() {
     if (isValidNumeroInscription) {
       let formulaire = new FormData();
@@ -748,6 +796,7 @@
               return;
             }
           } 
+          tryAfterFirstError += 1;
           errorMessageAccountCreation =
             "Veuillez valider à nouveau.\n Si le problème persiste, contactez le support.";
           console.error(
@@ -1846,6 +1895,7 @@
               </div>
             {:else}
               <Recap
+                specialiteFetched={specialiteFetched}
                 formdata={formData}
                 {values}
                 isValidated={isValidNumeroInscription}
@@ -2354,9 +2404,33 @@
               <SpinnerBlue />
             </div>
           {/if}
-          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données")}
+          {#if errorMessageAccountCreation && !errorMessageAccountCreation.includes("récupération des données") && tryAfterFirstError > 1}
             <div class="mt-6 p-4 bg-red-100 border border-red-300 rounded-lg">
               <p class="text-red-800">{errorMessageAccountCreation}</p>
+            </div>
+          {/if}
+          {#if successMessageAccountCreation && tryAfterFirstError == 1}
+            <div class="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg">
+              <p class="text-green-800">{successMessageAccountCreation}</p>
+            </div>
+          {/if}
+          {#if paiementStatus && lastStep}
+            <div class="mt-6 p-4 bg-blue-100 border border-blue-300 rounded-lg">
+              <label class="block font-bold text-blue-800 mb-2">
+                📱 Numéro MTN MoMo pour le paiement :
+              </label>
+              <input
+                type="tel"
+                placeholder="Ex: 05XXXXXXXX"
+                bind:value={formData.numero}
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <p class="text-sm text-blue-700 mt-1">Un code de validation sera envoyé sur ce numéro via l'application MTN MoMo.</p>
+            </div>
+          {/if}
+          {#if errorMessageAccountCreation && isPaiementProcessing === false && !authenticating}
+            <div class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg">
+              <p class="text-red-800 text-sm">{errorMessageAccountCreation}</p>
             </div>
           {/if}
           <div class="flex justify-between mt-8 pt-6">
