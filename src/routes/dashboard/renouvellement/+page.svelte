@@ -5,7 +5,7 @@
   import { EyeOutline } from "flowbite-svelte-icons";
   import { goto } from "$app/navigation";
   import Spinner from "$components/_skeletons/Spinner.svelte";
-    import { isValid } from "date-fns";
+  import { isValid } from "date-fns";
   import FooterNew from "$components/_includes/FooterNew.svelte";
   import HeaderNew from "$components/_includes/HeaderNew.svelte";
 
@@ -15,13 +15,12 @@ export let data;
 let user = data?.user;
 
 let formData = {
-
   nom: "",
   prenoms: "",
   numero : "",
- 
 };
 
+let errorMessagePaiement = "";
 
 let loading = false;
 
@@ -32,13 +31,11 @@ async function fetchData(userId: number) {
 
       console.log("Response:", res);
         if (res) {
-          
             formData = {
                 nom: res.data.personne?.nom || "",
                 prenoms: res.data.personne?.prenoms || "",
                 numero: res.data.personne?.number || "",
             };
-          
         } else {
             console.error("Erreur de récupération:");
         }
@@ -51,27 +48,22 @@ async function fetchData(userId: number) {
 
 onMount(async () => {
     await fetchData(user?.personneId);
-    
 });
 
 let isValiding = false;
- function clickValidation() {
+let isPaiementDone = false;
 
+function clickValidation() {
+    if (!formData.numero) {
+      errorMessagePaiement = "Veuillez saisir votre numéro MTN MoMo.";
+      return;
+    }
+    errorMessagePaiement = "";
     isValiding = true;
     try {
-      //apiFetch(provenance: boolean, url: string, method?: string, data?: any, options?: RequestInit)
-
-
-// console.log("formdata",JSON.stringify({
-//         nom: formData.nom,
-//         prenoms: formData.prenoms,
-//         numero: formData.numero,
-//         email: user?.username,
-//         type: user?.type,
-//         user: user?.id,
-//       }))
-      fetch( BASE_URL_API +"/paiement/renouvellement", {
+      fetch( BASE_URL_API + "/paiement2/renouvellement", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         nom: formData.nom,
         prenoms: formData.prenoms,
@@ -83,35 +75,60 @@ let isValiding = false;
     })
       .then((response) => response.json())
       .then((result) => {
-        
         console.log("TTFDGFDTD", result);
 
-        if (result.data.url) {
+        if (result.data && (result.data.code === 200 || result.data.reference)) {
+          alert("Une requête MTN MoMo a été envoyée. Veuillez valider le paiement sur votre téléphone.");
+          localStorage.setItem("reference", result.data.reference);
+
+          let attempts = 0;
+          const pollInterval = setInterval(async () => {
+            attempts++;
+            try {
+              const res = await fetch(`${BASE_URL_API}/paiement2/info/transaction/${result.data.reference}`);
+              const dat = await res.json();
+              if (dat.data && dat.data.state == 1) {
+                clearInterval(pollInterval);
+                isPaiementDone = true;
+                isValiding = false;
+                errorMessagePaiement = "";
+                alert("Renouvellement effectué avec succès !");
+                goto("/site/dashboard");
+              } else if (dat.data && dat.data.state == -1) {
+                clearInterval(pollInterval);
+                errorMessagePaiement = "Le paiement a échoué. Veuillez réessayer.";
+                isValiding = false;
+              } else if (attempts > 70) {
+                clearInterval(pollInterval);
+                errorMessagePaiement = "Délai de paiement expiré. Veuillez reprendre.";
+                isValiding = false;
+              }
+            } catch (e) {
+              console.error("Erreur polling", e);
+            }
+          }, 5000);
+        } else if (result.data && result.data.url) {
           localStorage.setItem("reference", result.data.reference);
           window.location.href = result.data.url + "?return=1";
+        } else {
+          errorMessagePaiement = (result.data && result.data.message) || result.error || "Erreur lors de l'initiation du paiement.";
+          isValiding = false;
         }
-        isValiding = false;
-
       })
       
     } catch (error) {
         console.error("Erreur API:", error);
+        errorMessagePaiement = "Erreur réseau. Veuillez réessayer.";
         isValiding = false;
     } 
 }
-
-
 
 function navigateToDashboard() {
     goto("/site/dashboard");
 }
 </script>
 
-<!-- <Slide {user} /> <br /><br /><br /><br /><br /><br /> -->
-
-
 <HeaderNew />
-
 
 <main class="renew-bg-gradient">
   <style>
@@ -190,21 +207,29 @@ function navigateToDashboard() {
       align-items: center;
       gap: 10px;
     }
-    .renew-ariane {
-      position: absolute;
+    .renew-input {
       width: 100%;
-      top: 96px;
-      background: #4292cecc;
-      padding: 22px;
-      color: white;
-      font-size: 14px;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 1em;
+      margin-top: 4px;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .renew-ariane span {
-      color: white;
-      margin: 0 5px;
+    .renew-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 2px 8px #a5b4fc;
+      outline: none;
+    }
+    .renew-error {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 1em;
+      text-align: center;
     }
   </style>
   <link
@@ -241,14 +266,26 @@ function navigateToDashboard() {
           <span class="renew-value">{user?.type}</span>
         </div>
         <div class="mb-4">
-          <span class="renew-label">Numéro de téléphone :</span>
-          <span class="renew-value">{formData.numero}</span>
+          <span class="renew-label">📱 Numéro MTN MoMo pour le paiement :</span>
+          <input
+            type="tel"
+            placeholder="Ex: 05XXXXXXXX"
+            bind:value={formData.numero}
+            class="renew-input"
+          />
+          <p style="font-size:13px;color:#6366f1;margin-top:4px;">Un code de validation sera envoyé sur ce numéro via l'application MTN MoMo.</p>
         </div>
+
+        {#if errorMessagePaiement}
+          <div class="renew-error">{errorMessagePaiement}</div>
+        {/if}
+
         <div class="mt-6 flex justify-center">
           <button
             type="button"
             on:click={clickValidation}
             class="renew-btn"
+            disabled={isValiding}
           >
             {#if isValiding}
               <div class="renew-btn-flex">
@@ -264,6 +301,5 @@ function navigateToDashboard() {
     </div>
   </section>
 </main>
-
 
 <FooterNew />

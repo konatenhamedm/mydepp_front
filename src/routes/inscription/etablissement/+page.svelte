@@ -140,7 +140,9 @@
     nomRepresentant: "",
     denomination: "",
     documents: [],
+    numero: "",
   };
+  let errorMessagePaiement = "";
   let errors = {
     email: "",
     password: "",
@@ -401,8 +403,12 @@ formData.emailAutre = "";
 
   function clickPaiement() {
     console.log("click payment");
+    if (!formData.numero) {
+      errorMessagePaiement = "Veuillez saisir votre numéro MTN MoMo.";
+      return;
+    }
+    errorMessagePaiement = "";
     isPaiementProcessing = true;
-
     initPaiement();
   }
   async function initPaiement() {
@@ -425,6 +431,7 @@ formData.emailAutre = "";
       "adresse",
       "nomRepresentant",
       "denomination",
+      "numero",
     ];
 
     simpleFields.forEach((key) => {
@@ -500,7 +507,7 @@ formData.emailAutre = "";
 
     try {
       const response = await fetch(
-        `https://backend.leadagro.net/api/paiement/paiement`,
+        `${BASE_URL_API}/paiement2/paiement`,
         {
           method: "POST",
           body: formDatas,
@@ -512,12 +519,42 @@ formData.emailAutre = "";
 
       authenticating = false;
 
-      if (result.data && result.data.url) {
+      if (result.data && (result.data.code === 200 || result.data.success)) {
+        alert("Une requête MTN MoMo a été envoyée. Veuillez valider le paiement sur votre téléphone.");
+        localStorage.setItem("reference", result.data.reference);
+
+        let attempts = 0;
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const res = await fetch(`${BASE_URL_API}/paiement2/info/transaction/${result.data.reference}`);
+            const dat = await res.json();
+            if (dat.data && dat.data.state == 1) {
+              clearInterval(pollInterval);
+              window.location.href = "/success";
+            } else if (dat.data && dat.data.state == -1) {
+              clearInterval(pollInterval);
+              errorMessagePaiement = "Le paiement a échoué. Veuillez réessayer.";
+              isPaiementProcessing = false;
+            } else if (attempts > 70) {
+              clearInterval(pollInterval);
+              errorMessagePaiement = "Délai de paiement expiré. Veuillez reprendre.";
+              isPaiementProcessing = false;
+            }
+          } catch (e) {
+            console.error("Erreur de vérification du statut", e);
+          }
+        }, 5000);
+      } else if (result.data && result.data.url) {
         localStorage.setItem("reference", result.data.reference);
         window.location.href = result.data.url + "?return=1";
+      } else {
+        errorMessagePaiement = (result.data && result.data.message) || result.error || "Erreur lors de l'initiation du paiement MTN MoMo.";
+        isPaiementProcessing = false;
       }
     } catch (error) {
       console.error("Erreur lors du paiement:", error);
+      errorMessagePaiement = "Erreur réseau. Veuillez réessayer.";
       isPaiementProcessing = false;
       authenticating = false;
     }
@@ -527,7 +564,7 @@ formData.emailAutre = "";
     console.log("idtransaction", idtransaction);
     try {
       const res = await fetch(
-        `https://backend.leadagro.net/api/paiement/info/transaction/${idtransaction}`
+        `${BASE_URL_API}/paiement2/info/transaction/${idtransaction}`
       );
       const data = await res.json();
       isPaiementDone = data.data.state;
@@ -1079,6 +1116,26 @@ formData.emailAutre = "";
                 Merci de cliquer sur le bouton "Terminer" pour finaliser votre
                 inscription.
               </p>
+
+              <div class="mt-6 p-4 bg-blue-100 border border-blue-300 rounded-lg">
+                <label class="block font-bold text-blue-800 mb-2">
+                  📱 Numéro MTN MoMo pour le paiement :
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Ex: 05XXXXXXXX"
+                  bind:value={formData.numero}
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <p class="text-sm text-blue-700 mt-1">Un code de validation sera envoyé sur ce numéro via l'application MTN MoMo.</p>
+              </div>
+
+              {#if errorMessagePaiement}
+                <div class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg">
+                  <p class="text-red-800 text-sm">{errorMessagePaiement}</p>
+                </div>
+              {/if}
+
               {#if isPaiementProcessing}
                 <div class="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
                   <p>

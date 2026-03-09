@@ -2,6 +2,9 @@
   export let formdata: any;
   export let values: any;
   export let isValidated: boolean;
+
+
+ 
   let allValuesAsTables : any[] = Object.values(values);
   function displayValue(value: any): string {
     if (!value) return "Non renseigné";
@@ -9,8 +12,7 @@
     return String(value);
   }
 
-  // console.log("Formdata dans recap:", formdata);
-
+  console.log("Formdata recap:", formdata);
 
   let recapRef: HTMLDivElement;
   async function printRecapPDF() {
@@ -105,7 +107,7 @@
       {#if formdata?.profession}
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Profession</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.profession)}</p>
+        <p style="font-weight:500; color:#1f2937;">{displayValue((formdata?.profession))}</p>
       </div>
       {/if}
     </div>

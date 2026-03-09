@@ -32,6 +32,8 @@ export let data;
   $: isPaiementDone = false;
   $: message = "";
   let step = 1;
+  let errorMessagePaiement = "";
+  let numeroMomo = "";
 
 
 
@@ -183,9 +185,13 @@ function handleDocumentChange(event: Event, libelle: string, libelleGroupe: any)
   // 🔹 Gestion du paiements
   function clickPaiement() {
     console.log("click payment");
+    if (!numeroMomo) {
+      errorMessagePaiement = "Veuillez saisir votre numéro MTN MoMo.";
+      return;
+    }
+    errorMessagePaiement = "";
     isPaiementProcessing = true;
-    saveFormState(); // 🔥 Sauvegarder avant de partir
-
+    saveFormState();
     initPaiement();
   }
 
@@ -266,8 +272,10 @@ console.log("formDatas avant fichiers", formDatas);
 
     console.log("formDatas", formDatas);
 
+    formDatas.append("numero", numeroMomo);
+
     try {
-      const response = await fetch(`${BASE_URL_API}/paiement/inite/oep`, {
+      const response = await fetch(`${BASE_URL_API}/paiement2/inite/oep`, {
         method: "POST",
         body: formDatas,
       });
@@ -276,14 +284,45 @@ console.log("formDatas avant fichiers", formDatas);
       console.log("Réponse du serveur:", result);
 
       authenticating = false;
-      
-      if (result && result.url) {
-        // alert(result.url);
+
+      if (result && (result.code === 200 || result.reference)) {
+        alert("Une requête MTN MoMo a été envoyée. Veuillez valider le paiement sur votre téléphone.");
+        localStorage.setItem("reference", result.reference);
+
+        let attempts = 0;
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const res = await fetch(`${BASE_URL_API}/paiement2/info/transaction/${result.reference}`);
+            const dat = await res.json();
+            if (dat.data && dat.data.state == 1) {
+              clearInterval(pollInterval);
+              isPaiementDone = true;
+              message = "";
+              isPaiementProcessing = false;
+            } else if (dat.data && dat.data.state == -1) {
+              clearInterval(pollInterval);
+              errorMessagePaiement = "Le paiement a échoué. Veuillez réessayer.";
+              isPaiementProcessing = false;
+            } else if (attempts > 70) {
+              clearInterval(pollInterval);
+              errorMessagePaiement = "Délai de paiement expiré. Veuillez reprendre.";
+              isPaiementProcessing = false;
+            }
+          } catch (e) {
+            console.error("Erreur polling", e);
+          }
+        }, 5000);
+      } else if (result && result.url) {
         localStorage.setItem("reference", result.reference);
         window.location.href = result.url + "?return=1";
+      } else {
+        errorMessagePaiement = result.error || result.message || "Erreur lors de l'initiation du paiement MTN MoMo.";
+        isPaiementProcessing = false;
       }
     } catch (error) {
       console.error("Erreur lors du paiement:", error);
+      errorMessagePaiement = "Erreur réseau. Veuillez réessayer.";
       isPaiementProcessing = false;
       authenticating = false;
     }
@@ -498,6 +537,25 @@ console.log("formDatas avant fichiers", formDatas);
                 </div>
               </div>
             {/if}
+          {/if}
+
+          <div class="oep-form-group" style="margin-top:16px;">
+            <label class="oep-label">📱 Numéro MTN MoMo pour le paiement :</label>
+            <input
+              type="tel"
+              placeholder="Ex: 05XXXXXXXX"
+              bind:value={numeroMomo}
+              class="oep-input-file"
+              style="max-width:400px;"
+            />
+            <p style="font-size:13px;color:#6366f1;margin-top:4px;">Un code de validation sera envoyé sur ce numéro via l'application MTN MoMo.</p>
+          </div>
+
+          {#if errorMessagePaiement}
+            <div class="oep-alert" role="alert">
+              <strong>Erreur : </strong>
+              <span>{errorMessagePaiement}</span>
+            </div>
           {/if}
 
           <div class="oep-form-group oep-btn-group">
