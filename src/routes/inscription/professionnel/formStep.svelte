@@ -3,6 +3,7 @@
    
     export let formdata;
   export let values;
+  export let errors;
      const situationsMatrimoniales = [
     {value: 'Célibataire', label: 'Célibataire'},
     {value: 'Marié(e)', label: 'Marié(e)'},
@@ -31,6 +32,9 @@
                         bind:value={formdata.nom}
                       />
                     </div>
+                    {#if errors.nom}
+                      <p class="text-red-600 text-sm mt-1">{errors.nom}</p>
+                    {/if}
                   </div>
                   <div>
                     <label
@@ -49,6 +53,9 @@
                         bind:value={formdata.prenoms}
                       />
                     </div>
+                    {#if errors.prenoms}
+                      <p class="text-red-600 text-sm mt-1">{errors.prenoms}</p>
+                    {/if}
                   </div>
                 </div>
                  <div class="grid md:grid-cols-2 gap-4">
@@ -72,6 +79,9 @@
                        {/each}
                      </select>
                     </div>
+                  {#if errors.nationalite}
+                      <p class="text-red-600 text-sm mt-1">{errors.nationalite}</p>
+                  {/if}
                   </div>
                   <div>
                     <label
@@ -93,6 +103,9 @@
                        {/each}
                      </select>
                     </div>
+                  {#if errors.civilite}
+                      <p class="text-red-600 text-sm mt-1">{errors.civilite}</p>
+                  {/if}
                   </div>
                 </div>
                  <div class="grid md:grid-cols-2 gap-4">
@@ -100,7 +113,7 @@
                     <label
                       for="emailAutre"
                       class="block text-sm font-medium text-gray-700 mb-2"
-                      >Email *</label
+                      >Email Professional *</label
                     >
                     <div class="relative">
                       <input
@@ -114,6 +127,9 @@
                         bind:value={formdata.emailAutre}
                       />
                     </div>
+                  {#if errors.emailAutre}
+                      <p class="text-red-600 text-sm mt-1">{errors.emailAutre}</p>
+                  {/if}
                   </div>
                   <div>
                     <label

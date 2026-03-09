@@ -19,7 +19,7 @@ export const CookieManager = {
       
       // Vérification que le cookie a bien été créé
       const stored = this.get(name);
-      console.log(`Cookie ${name} créé:`, stored !== null);
+      // console.log(`Cookie ${name} créé:`, stored !== null);
       return stored !== null;
     } catch (error) {
       console.error('Erreur lors de la création du cookie:', error);
@@ -58,7 +58,7 @@ export const CookieManager = {
 
 export async function login(login: string, password: string, plateforme: string) {
   try {
-    console.log('Tentative de connexion pour:', login);
+    // console.log('Tentative de connexion pour:', login);
     
     const response = await axios.post(`${BASE_URL_API}/login`, {
       email: login,
@@ -66,7 +66,7 @@ export async function login(login: string, password: string, plateforme: string)
       plateforme: plateforme
     });
 
-    console.log('Réponse API login:', response.data);
+    // console.log('Réponse API login:', response.data);
 
     if (!response.data) {
       console.error("Token manquant dans la réponse");
@@ -76,7 +76,7 @@ export async function login(login: string, password: string, plateforme: string)
     const { token, data } = response.data.data;
 
     if (!token) {
-      console.error("Token invalide");
+      // console.error("Token invalide");
       return null;
     }
 
@@ -97,7 +97,7 @@ export async function login(login: string, password: string, plateforme: string)
       token,
     };
 
-    console.log('Données d\'auth à stocker:', authData);
+    // console.log('Données d\'auth à stocker:', authData);
 
     // Utiliser le gestionnaire de cookies
     const cookieSuccess = CookieManager.set('auth', authData, 1);
@@ -107,7 +107,7 @@ export async function login(login: string, password: string, plateforme: string)
       return null;
     }
 
-    console.log('Connexion réussie et cookie stocké');
+    // console.log('Connexion réussie et cookie stocké');
     return { token, data };
 
   } catch (error: any) {
@@ -286,7 +286,7 @@ export function getAuthCookie(): User | null {
     const authData = CookieManager.get('auth');
     
     if (authData) {
-      console.log('Auth data from CookieManager:', authData);
+      // console.log('Auth data from CookieManager:', authData);
       
       if (authData.id && authData.role && authData.token) {
         return {

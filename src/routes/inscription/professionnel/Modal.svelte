@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { apiFetch } from '$lib/api';
   import { formatDate } from '$lib/dateUtils';
   import { faArrowLeftRotate } from '@fortawesome/free-solid-svg-icons';
@@ -13,10 +13,12 @@
 
   let receiptData = {
     logo: 'https://mydepps.pages.dev/_files/logo-depps.png', // URL du logo
-    title: 'Reçu de Paiement - Renouvellement',
+    title: 'Reçu de Paiement - Nouvelle Demande',
     date: '04 novembre 2024 à 16:39:59',
     name: 'Kra Rita',
+    prenoms: '',
     paymentMethod: 'OMCIV2',
+    profession: "",
     phone: '0564924282',
     receiptNumber: '1730738267',
     amount: '10000 XOF',
@@ -24,10 +26,12 @@
   };
 
 
-  let transactionData; // Variable pour stocker les données de la transaction
+  let transactionData:any; // Variable pour stocker les données de la transaction
   function generatePDF() {
     try{
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+        format: "letter"
+    });
 
     // Centrer le logo
     const imgWidth = 30;
@@ -51,11 +55,13 @@
 
     const fields = [
       { label: "Date d'édition:", value: transactionData.createdAt },
-      // { label: "Nom complet:", value: data.name },
+      { label: "Nom:", value: transactionData.user.personne.nom },
+      { label: "Prénom(s):", value: transactionData.user.personne.prenoms },
       { label: "Mode de paiement:", value: transactionData.channel },
       { label: "Email:", value: transactionData.user.email },
       { label: "Réference paiement:", value: `N° ${transactionData.reference}` },
-      { label: "Paiement:", value: `${transactionData.montant}` }
+      { label: "Paiement:", value: `${transactionData.montant}` },
+      // { label: "Profession:", value: `${transactionData.user.personne.profession.libelle}` },
     ];
 
     let yPos = startY;
@@ -97,9 +103,13 @@
           receiptData.paymentMethod = response.data.data.channel;
           receiptData.receiptNumber = response.data.data.reference;
           receiptData.residence = response.data.data.user.personne.quartier;
-          receiptData.name = response.data.data.user.typeUser == "PROFESSIONNEL" 
-            ? response.data.data.user.personne.nom + " "+ response.data.data.user.personne.prenoms 
-            : response.data.data.user.email;
+          if (response.data.data.user.typeUser == "PROFESSIONNEL") {
+            receiptData.name = response.data.data.user.personne.nom;
+            receiptData.prenoms = response.data.data.user.personne.prenoms;
+          } else {
+            receiptData.name = response.data.data.user.email;
+            receiptData.prenoms = "";
+          }
           receiptData.phone = response.data.data.user.typeUser == "PROFESSIONNEL" 
             ? response.data.data.user.personne.number 
             : response.data.data.user.username
@@ -137,7 +147,7 @@
         {#if isLoading}
           <p>Chargement en cours...</p>
         {:else if pdfUrlAffiche}
-          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="700px" type="application/pdf"></iframe>
+          <iframe src={pdfUrlAffiche} title="Aperçu du PDF" width="100%" height="500px" type="application/pdf"></iframe>
         {/if}
       </div>
     </div>
@@ -147,6 +157,7 @@
 <style>
   .modal {
     position: fixed;
+    z-index: 200000;
     top: 0;
     left: 0;
     right: 0;
@@ -155,6 +166,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-x: scroll;
   }
   .modal-content {
     background-color: white;
@@ -166,11 +178,12 @@
   }
   .close-btn {
     position: absolute;
-    top: -13px;
+    top: 5px;
     right: 10px;
     color:black !important;
     background-color: transparent;
     border: none;
+    font-weight: bold;
     font-size: 18px;
     cursor: pointer;
   }

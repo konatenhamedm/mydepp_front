@@ -11,12 +11,12 @@
         >{title}</th
       >
     {/each}
-    {#if afficheAction}
+    <!-- {#if afficheAction}
       <th
         style="width: 10px;text-align: center; "
         class="px-4 py-3 border border-gray-200 text-[14px] text-center font-medium uppercase"
         >Actions</th
       >
-    {/if}
+    {/if} -->
   </tr>
 </thead>

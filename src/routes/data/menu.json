@@ -27,11 +27,22 @@
       "isSectionTitle": true,
       "title": "PARAMETRAGES"
     },
-    
+    {
+      "title": "Charger les données",
+      "icon": "fa-solid fa-upload",
+      "path": "/admin/upload_data",
+      "exact": false
+    },
     {
       "title": "Civilités",
       "icon": "uil uil-setting",
       "path": "/admin/civilite",
+      "exact": false
+    },
+    {
+      "title": "Ordre",
+      "icon": "uil uil-setting",
+      "path": "/admin/ordre",
       "exact": false
     }
     ,
@@ -208,7 +219,7 @@
       "title": "Gestion des statistiques"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques" ,
       "icon": "uil uil-chart-bar",
       "path": "/admin/statistique/general",
       "exact": false
@@ -254,7 +265,8 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      
+      "path":"#",
       "exact": false
     },
     {
@@ -272,7 +284,7 @@
     {
       "title": "Dashboard",
       "icon": "uil uil-apps",
-      "path": "/admin/sous-directeur-dashboard",
+      "path": "/admin/sous-directeur-etab-dashboard",
       "exact": true
     },
     {
@@ -298,7 +310,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -306,7 +318,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -316,7 +328,7 @@
      {
       "title": "Dashboard",
       "icon": "uil uil-apps",
-      "path": "/admin/sous-directeur-dashboard",
+      "path": "/admin/sous-directeur-prof-dashboard",
       "exact": true
     },
     {
@@ -336,7 +348,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -344,7 +356,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -374,7 +386,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     }
   ],
@@ -390,9 +402,9 @@
       "title": "Gestion dossiers"
     },
      {
-      "title": "Etablissements",
+      "title": "Professionnels",
       "icon": "uil uil-apps",
-      "path": "/admin/inspection_etablissement",
+      "path": "/admin/professionnel_instructeur",
       "exact": false
     },
      {
@@ -402,7 +414,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -410,7 +422,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -440,7 +452,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement_etablissement",
+      "path":"#",
       "exact": false
     },
     {
@@ -448,7 +460,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -478,7 +490,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -486,7 +498,7 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
       "exact": false
@@ -506,7 +518,7 @@
     {
       "title": "Historique paiement",
       "icon": "uil uil-apps",
-      "path": "/admin/historique_paiement",
+      "path":"/admin/historique_paiement",
       "exact": false
     },
     {
@@ -514,9 +526,19 @@
       "title": "Gestion statistique"
     },
     {
-      "title": "Générales",
+      "title": "Statistiques",
       "icon": "uil uil-apps",
       "path": "/admin/statistique/general",
+      "exact": false
+    },
+    {
+      "isSectionTitle": true,
+      "title": "Espace partenaire"
+    },
+    {
+      "title": "Partenaire ",
+      "icon": "uil uil-store",
+      "path": "https://manag-transacts.paysecurehub.com/",
       "exact": false
     }
   ]

@@ -45,6 +45,7 @@
   let currentPage = 1;
   const itemsPerPage = 10;
   let professionnels: any[] = [];
+    let allStats2: any[] = [];
   let allEtab2: any[] = [];
   let professions: any[] = [];
   let selectedProfession: string = '';
@@ -134,15 +135,16 @@
       }
 
       // Chargement parallèle optimisé
-      const [statsRes, listeProfessionnels, profRes, allEtab] = await Promise.all([
+      const [statsRes, listeProfessionnels, profRes, allEtab,allStats] = await Promise.all([
         apiFetch(true, statsUrl).catch(() => null),
         apiFetch(true, `/professionnel/`).catch(() => ({ data: [] })),
         apiFetch(true, '/profession/').catch(() => ({ data: [] })),
         apiFetch(true, '/etablissement/').catch(() => ({ data: [] })),
+        apiFetch(true, '/statistique/stats-card').catch(() => ({ data: [] })),
       ]);
 
       allEtab2 = allEtab?.data || [];
-
+      allStats2 = allStats?.data || [];
       if (statsRes?.data) {
         stats = {
           ...stats,
@@ -246,12 +248,13 @@
   }
 
   // Données pour les cartes - rendues réactives
-  $: cardData = [
+  $: cardData = 
+  [
     {
       id: 'all',
       title: 'Tous les dossiers',
       subtitle: 'Statistique actuelle',
-      value: stats.atttente + stats.accepte + stats.rejete + stats.valide + stats.refuse + stats.renouvelle + stats.a_jour + allEtab2.length,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.total : 0,
       icon: 'folder',
       color: 'blue',
       bgColor: 'bg-blue-50',
@@ -262,7 +265,7 @@
       id: 'attente',
       title: 'En attente',
       subtitle: 'Statistique actuelle',
-      value: stats.atttente,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.attente : 0,
       icon: 'clock',
       color: 'yellow',
       bgColor: 'bg-yellow-50',
@@ -273,7 +276,7 @@
       id: 'accepted',
       title: 'Acceptés',
       subtitle: 'Statistique actuelle',
-      value: stats.accepte,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.accepte : 0,
       icon: 'check',
       color: 'green',
       bgColor: 'bg-green-50',
@@ -284,7 +287,7 @@
       id: 'rejected',
       title: 'Rejetés',
       subtitle: 'Statistique actuelle',
-      value: stats.rejete,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.rejete : 0,
       icon: 'x',
       color: 'red',
       bgColor: 'bg-red-50',
@@ -295,7 +298,7 @@
       id: 'validated',
       title: 'Validés',
       subtitle: 'Statistique actuelle',
-      value: stats.valide,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.valide : 0,
       icon: 'shield-check',
       color: 'green',
       bgColor: 'bg-green-50',
@@ -306,23 +309,12 @@
       id: 'a_jour',
       title: 'À jour',
       subtitle: 'Statistique actuelle',
-      value: stats.a_jour,
+      value: Object.values(allStats2).length > 0 ? allStats2?.professionnel.a_jour : 0,
       icon: 'calendar',
       color: 'blue',
       bgColor: 'bg-blue-50',
       textColor: 'text-blue-600',
       borderColor: 'border-blue-200'
-    },
-    {
-      id: 'etablissement',
-      title: 'Etablissement',
-      subtitle: 'Statistique actuelle',
-      value: allEtab2.length,
-      icon: 'building',
-      color: 'purple',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
-      borderColor: 'border-purple-200'
     },
     {
       id: 'datetime',
@@ -376,7 +368,7 @@
   }
 </script>
 
-<div class="ssm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
+<div class="sm:mt-[30px] mx-[30px] mt-[15px] mb-[30px] min-h-[calc(100vh-195px)]">
   <!-- Indicateur de chargement global -->
   {#if loading && !dataLoaded}
     <div class="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
@@ -391,7 +383,7 @@
   {/if}
 
   <!-- Grille de cartes améliorée -->
-  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
     {#each cardData as card}
       {#if card.id === 'datetime'}
         <!-- Carte Date/Heure spéciale -->
@@ -554,7 +546,7 @@
       {:else}
         <div class="overflow-x-auto rounded-xl border border-gray-200">
           <table class="min-w-full divide-y divide-gray-200">
-            <HeaderTable  afficheAction
+            <HeaderTable  afficheAction={false}
               item={dossierFilter === 'etablissement'
                 ? ['Entité Juridique', 'Email', 'Téléphone/Adresse', 'Créé le']
                 : ['N°', 'Nom & Prénoms', 'Téléphone/Adresse', 'Email', 'Profession / Entité Juridique', 'Statut']} 

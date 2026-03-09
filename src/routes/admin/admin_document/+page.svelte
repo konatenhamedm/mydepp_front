@@ -20,9 +20,10 @@
   import HeaderTable from '$components/_includes/HeaderTable.svelte';
   import LoaderTable from '$components/_includes/LoaderTable.svelte';
   import {getAuthCookie} from '$lib/auth';
+  import Download from './Download.svelte';
   // Types
   type Permission = 'R' | 'RD' | 'RU' | 'CRUD' | 'CR' | 'CRU' | 'null';
-  type ActionType = 'view' | 'edit' | 'delete' | 'add';
+  type ActionType = 'view' | 'edit' | 'delete' | 'add' | 'download';
   type Action = {
     action: ActionType;
     title: string;
@@ -42,6 +43,7 @@
   let openDelete = false;
   let openEdit = false;
   let openAdd = false;
+  let openDownload = false;
   let openShow = false;
   let current_data = {};
   let permission: Permission | null = null;
@@ -56,6 +58,7 @@
     view: ['R', 'RD', 'RU', 'CRUD', 'CRU', 'CR'],
     edit: ['RU', 'CRUD', 'CRU'],
     delete: ['RD', 'CRUD'],
+    download: ['RD', 'CRUD'],
   };
 
   const allActions: Action[] = [
@@ -70,6 +73,12 @@
       title: 'Modifier',
       icon: 'edit',
       color: 'warning',
+    },
+    {
+      action: 'download',
+      title: 'download',
+      icon: 'file-download',
+      color: 'primary',
     },
     {
       action: 'delete',
@@ -126,6 +135,9 @@
         break;
       case 'edit':
         openEdit = true;
+        break;
+      case 'download':
+        openDownload = true;
         break;
       case 'delete':
         openDelete = true;
@@ -294,3 +306,8 @@
 <Modale bind:open={openDelete} size="xl" title="Supprimer document">
   <Delete bind:open={openDelete} data={current_data} on:updated={fetchData} />
 </Modale>
+
+<Modale bind:open={openDownload} size="xl" title="Télécharger document">
+  <Download bind:open={openDownload} data={current_data} on:updated={fetchData} />
+</Modale>
+

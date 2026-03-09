@@ -59,7 +59,7 @@
 
   async function getData() {
     try {
-      const res = await fetch(BASE_URL_API + "/user/liste/instructeur");
+      const res = await fetch(BASE_URL_API + "/user/liste/instructeur/etablissement");
       const data = await res.json();
       imputations = data.data;
 

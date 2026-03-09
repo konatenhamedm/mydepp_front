@@ -14,7 +14,7 @@
 
   onMount(async () => {
     let user = getAuthCookie();
-    console.log("fgfghgfghf",user);
+    // console.log("fgfghgfghf",user);
   });
 </script>
 

@@ -84,7 +84,7 @@
   // Fonctions
   onMount(() => {
     user = getAuthCookie();
-    console.log('User from cookie:', user);
+    // console.log('User from cookie:', user);
 
     if (user) {
       userType = user.type;

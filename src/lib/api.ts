@@ -1,8 +1,8 @@
 import * as cookie from 'cookie';
 
-export const BASE_URL_API = "http://backend.leadagro.net/api"; // Remplacez par l'URL de votre API
+export const BASE_URL_API = "https://backend.leadagro.net/api"; // Remplacez par l'URL de votre API
 export const BASE_URL_API_V2 = "http://127.0.0.1:8000/api"; // Remplacez par l'URL de votre API
-export const BASE_URL_API_UPLOAD = "http://backend.leadagro.net/uploads/"; // Remplacez par l'URL de votre API
+export const BASE_URL_API_UPLOAD = "https://backend.leadagro.net/uploads/"; // Remplacez par l'URL de votre API
 
 import { getAuthCookie } from '$lib/auth';
 

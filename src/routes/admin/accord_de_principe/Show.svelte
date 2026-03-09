@@ -42,7 +42,7 @@
   }
   let valid_endUser = {
     raison: "",
-    status: status == "accepte" ? "validation" : "acceptation",
+    status: status == "accepte" ? "validation" : "",
   };
 
   onMount(() => {
@@ -487,4 +487,4 @@
   />
 {/if}
 
-<DocShow bind:open={openShow} data={current_data} sizeModal="xl" />
+<!-- <DocShow bind:open={openShow} data={current_data} sizeModal="xl" /> -->

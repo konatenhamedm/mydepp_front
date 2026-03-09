@@ -4,6 +4,7 @@
 
 
   let isAuth = false;
+  let showDropdown = false;
 
   const checkLogin = () => {
     const token = CookieManager.get("auth");
@@ -62,7 +63,7 @@
                 href="/dashboard"
                 >Tableau de bord</a
               ><button 
-                on:click={logout}
+                onclick={logout}
                 class="text-blue-600 border border-blue-600 px-4 py-2 rounded-lg text-lg font-medium hover:bg-blue-50 transition-colors cursor-pointer whitespace-nowrap"
               >
                 Deconnexion
@@ -80,14 +81,30 @@
               {/if}
             </div>
           </div>
-          <div class="md:hidden">
+          <div class="md:hidden relative">
             <button
               class="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 cursor-pointer"
+              onclick={() => showDropdown = !showDropdown}
             >
               <div class="w-6 h-6 flex items-center justify-center">
                 <i class="ri-menu-line text-xl"></i>
               </div>
             </button>
+            {#if showDropdown}
+              <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 border">
+                <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Accueil</a>
+                <a href="/about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">À propos</a>
+                <a href="/services" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">E-DEPPS</a>
+                <a href="/contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Contact</a>
+                {#if isAuth}
+                  <a href="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Tableau de bord</a>
+                  <button onclick={logout} class="block w-full text-left px-4 py-2 text-blue-600 hover:bg-blue-50">Déconnexion</button>
+                {:else}
+                  <a href="/inscription" class="block px-4 py-2 text-gray-700 hover:bg-blue-50">Inscription</a>
+                  <a href="/connexion" class="block px-4 py-2 text-blue-600 hover:bg-blue-50">Connexion</a>
+                {/if}
+              </div>
+            {/if}
           </div>
         </div>
       </nav>

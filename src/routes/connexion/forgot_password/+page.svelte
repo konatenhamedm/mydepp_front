@@ -1,8 +1,9 @@
 <script>
-  import { apiFetch } from "$lib/api";
+  import { apiFetch, BASE_URL_API } from "$lib/api";
   import axios from "axios";
   import PutMdp from "./putMdp.svelte";
   import PutOtp from "./putOtp.svelte";
+  import { login } from "$lib/auth";
 
   let emailSubmitted = false;
   let otpSubmitted = false;
@@ -99,7 +100,7 @@
     event.preventDefault();
     isLoading = true;
     if (checkMdp(mdp) && mdp == confirmMdp) {
-      const email = sessionStorage.getItem("resetEmail");
+      const email =  sessionStorage.getItem("resetEmail");
       const otp = JSON.parse(sessionStorage.getItem("otp"));
       const res = await axios.post(
         "https://backend.leadagro.net/api/reset-password/reset",
@@ -111,7 +112,13 @@
       );
       console.log("mdp",res);
       if (res.data.success) {
-        window.location.href = "/";
+        const success = await login(email, mdp, "front");
+        if (success?.token != null) {
+          window.location.href = "/dashboard";
+        } else {
+          errorMessage = "Veuillez vérifier vos identifiants";
+          alert("Veuillez verifier vos identifiants");
+        }
         isLoading = false;
       } else {
         if (res.data.message) {
