@@ -385,7 +385,7 @@
                         {getStatus(item.state)}
                       </span>
                     </td>
-                    {#if !['INSTRUCTEUR', 'SOUS-DIRECTEUR'].includes(user.type)}
+                    {#if !['INSTRUCTEUR','INSTRUCTEUR-PROF',"SOUS-DIRECTEUR-PROF", 'SOUS-DIRECTEUR'].includes(user.type)}
                       <td class="px-4 text-[14px] py-3 border border-gray-200 text-right">
                         {formatAmount(parseInt(item.montant, 10))}
                       </td>

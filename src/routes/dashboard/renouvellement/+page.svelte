@@ -93,7 +93,7 @@ function clickValidation() {
                 isValiding = false;
                 errorMessagePaiement = "";
                 alert("Renouvellement effectué avec succès !");
-                goto("/site/dashboard");
+                goto("/dashboard");
               } else if (dat.data && dat.data.state == -1) {
                 clearInterval(pollInterval);
                 errorMessagePaiement = "Le paiement a échoué. Veuillez réessayer.";
@@ -124,7 +124,7 @@ function clickValidation() {
 }
 
 function navigateToDashboard() {
-    goto("/site/dashboard");
+    goto("/dashboard");
 }
 </script>
 
