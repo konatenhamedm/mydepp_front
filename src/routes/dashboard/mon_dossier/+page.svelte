@@ -346,7 +346,7 @@
     isSubmitting = true;
     console.log("Sauvegarder l'image pour le champ:", formData);
 
-    await fetch(BASE_URL_API + "/professionnel/update-all-documents/"+user?.id, {
+    await fetch(BASE_URL_API + "/professionnel/update-all-documents/"+user?.personneId, {
       method: "POST",
       body: formData
     })
