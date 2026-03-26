@@ -20,6 +20,14 @@ let formData = {
   numero : "",
 };
 
+let renewalInfo = {
+  expire: false,
+  yearDue: 0,
+  montantUnitaire: 0,
+  montantTotal: 0
+};
+let yearsToPay = 1;
+
 let errorMessagePaiement = "";
 
 let loading = false;
@@ -28,7 +36,6 @@ async function fetchData(userId: number) {
     loading = true;
     try {
       const res = await apiFetch(true, `/professionnel/get/one/${userId}`)
-
       console.log("Response:", res);
         if (res) {
             formData = {
@@ -36,9 +43,17 @@ async function fetchData(userId: number) {
                 prenoms: res.data.personne?.prenoms || "",
                 numero: res.data.personne?.number || "",
             };
-        } else {
-            console.error("Erreur de récupération:");
         }
+
+        // Fetch renewal status
+        const statusRes = await fetch(`${BASE_URL_API}/paiement2/status/renouvellement/${user?.id}`);
+        const statusData = await statusRes.json();
+        if (statusData.data) {
+          renewalInfo = statusData.data;
+          yearsToPay = renewalInfo.yearDue || 1;
+          if (yearsToPay < 1) yearsToPay = 1;
+        }
+
     } catch (error) {
         console.error("Erreur API:", error);
     } finally {
@@ -71,6 +86,7 @@ function clickValidation() {
         email: user?.username,
         type: user?.type,
         user: user?.id,
+        yearsToPay: yearsToPay
       }),
     })
       .then((response) => response.json())
@@ -265,6 +281,35 @@ function navigateToDashboard() {
           <span class="renew-label">Type d'utilisateur :</span>
           <span class="renew-value">{user?.type}</span>
         </div>
+
+        {#if renewalInfo.yearDue > 0}
+          <div class="mb-3 bg-purple-50 p-4 rounded-xl border border-purple-100">
+            <div class="flex justify-between items-center mb-2">
+              <span class="renew-label">Années d'arriérés :</span>
+              <span class="font-bold text-purple-700">{renewalInfo.yearDue} an(s)</span>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <label for="years" class="renew-label font-semibold">Nombre d'années à régulariser :</label>
+              <select 
+                id="years" 
+                bind:value={yearsToPay}
+                class="renew-input border-purple-300 focus:border-purple-500"
+              >
+                {#each Array.from({ length: renewalInfo.yearDue }, (_, i) => i + 1) as year}
+                  <option value={year}>{year} an(s)</option>
+                {/each}
+              </select>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center border-t border-purple-200 pt-3">
+              <span class="renew-label">Montant à payer :</span>
+              <span class="text-xl font-bold text-purple-800">
+                {(renewalInfo.montantUnitaire * yearsToPay).toLocaleString()} FCFA
+              </span>
+            </div>
+          </div>
+        {/if}
         <div class="mb-4">
           <span class="renew-label">📱 Numéro MTN MoMo pour le paiement :</span>
           <input
