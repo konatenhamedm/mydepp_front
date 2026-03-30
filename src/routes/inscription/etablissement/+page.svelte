@@ -361,8 +361,9 @@ formData.emailAutre = "";
 
   let uploadedFiles: { [key: string]: string } = {}; // key: libelle+libelleGroupe, value: file name or base64
 
-  function handleDocumentChange(event, libelle, libelleGroupe, index) {
-    console.log("Document changed:", event, libelleGroupe);
+  function handleDocumentChange(event, libelle, libelleGroupe) {
+    const cleanLibelle = libelle.trim();
+    console.log("Document changed:", cleanLibelle, libelleGroupe);
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
 
@@ -372,17 +373,27 @@ formData.emailAutre = "";
     reader.onload = () => {
       const base64 = reader.result as string;
 
-      // On ajoute l'objet formaté dans formData.documents
-      formData.documents[index] = {
-        libelle: libelle,
-        path: base64, // ou file.name si tu veux juste le nom
+      // Chercher si ce document existe déjà dans formData.documents
+      const existingIndex = formData.documents.findIndex(
+        (d) => d.libelle === cleanLibelle && d.libelleGroupe === libelleGroupe
+      );
+
+      const docData = {
+        libelle: cleanLibelle,
+        path: base64, // Garder base64 pour l'aperçu dans l'UI
+        file: file,   // Garder le fichier réel pour l'upload
         libelleGroupe: libelleGroupe,
+        type: file.type // Store file type for easy preview logic
       };
-      uploadedFiles[libelle + libelleGroupe] = file.name;
+
+      if (existingIndex > -1) {
+        formData.documents[existingIndex] = docData;
+      } else {
+        formData.documents = [...formData.documents, docData];
+      }
+
+      uploadedFiles[cleanLibelle + libelleGroupe] = file.name;
       console.log("Updated formData.documents:", formData.documents);
-      console.log("Uploaded files:", uploadedFiles);
-      // Sauvegarde dans localStorage si besoin
-      // localStorage.setItem("formData", JSON.stringify(formData));
     };
     reader.readAsDataURL(file);
   }
@@ -445,7 +456,8 @@ formData.emailAutre = "";
       console.log("formData.documents", formData.documents);
       formData.documents.forEach((doc, index) => {
         formDatas.append(`documents[${index}][libelle]`, doc.libelle);
-        formDatas.append(`documents[${index}][path]`, doc.path);
+        // On envoie le fichier réel (doc.file) plutôt que le base64 (doc.path)
+        formDatas.append(`documents[${index}][path]`, doc.file);
         if (doc.libelleGroupe) {
           formDatas.append(
             `documents[${index}][libelleGroupe]`,
@@ -1005,24 +1017,27 @@ formData.emailAutre = "";
                                       class="w-full h-full border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50"
                                     >
                                       {#if uploadedFiles && uploadedFiles[requiredFile.libelle.trim() + document.id]}
-                                        {#if formData.documents
-                                          .find((d) => d.libelle === requiredFile.libelle && d.libelleGroupe === document.id)
-                                          ?.path.startsWith("data:image")}
+                                        {@const currentDoc = formData.documents.find((d) => d.libelle === requiredFile.libelle.trim() && d.libelleGroupe === document.id)}
+                                        {#if currentDoc?.type?.startsWith("image/") || currentDoc?.path?.startsWith("data:image")}
                                           <img
-                                            src={formData.documents.find(
-                                              (d) =>
-                                                d.libelle ===
-                                                  requiredFile.libelle &&
-                                                d.libelleGroupe === document.id
-                                            )?.path}
+                                            src={currentDoc.path}
                                             alt="miniature"
+                                            class="w-full h-full object-cover rounded-lg"
                                           />
+                                        {:else if currentDoc?.type === "application/pdf" || currentDoc?.path?.startsWith("data:application/pdf")}
+                                          <div class="text-center">
+                                            <i class="ri-file-pdf-2-line text-red-500 text-4xl"></i>
+                                            <p class="text-[10px] text-gray-500 mt-1 truncate max-w-[100px]">
+                                              {uploadedFiles[requiredFile.libelle.trim() + document.id]}
+                                            </p>
+                                          </div>
                                         {:else}
-                                          <span class="doc-filename">
-                                            {uploadedFiles[
-                                              requiredFile.libelle.trim() + document.id
-                                            ]}
-                                          </span>
+                                          <div class="text-center">
+                                            <i class="ri-file-3-line text-blue-500 text-4xl"></i>
+                                            <p class="text-[10px] text-gray-500 mt-1 truncate max-w-[100px]">
+                                              {uploadedFiles[requiredFile.libelle.trim() + document.id]}
+                                            </p>
+                                          </div>
                                         {/if}
                                       {:else}
                                         <div class="text-center">
@@ -1030,7 +1045,7 @@ formData.emailAutre = "";
                                             class="ri-image-line text-gray-400 text-2xl"
                                           ></i>
                                           <p class="text-xs text-gray-400 mt-1">
-                                            Aperçu VIde
+                                            Aperçu Vide
                                           </p>
                                         </div>
                                       {/if}
@@ -1166,12 +1181,15 @@ formData.emailAutre = "";
                     clickPaiement();
                   }}
                   type="button"
-                  disabled={step ==1}
-                  class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  disabled={step == 1 || isPaiementProcessing}
+                  class="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center justify-center gap-2"
                 >
-                 {#if step!=1}
-                  Terminer
-                 {/if}
+                  {#if isPaiementProcessing}
+                    <i class="ri-loader-4-line animate-spin text-xl"></i>
+                    <span>Chargement...</span>
+                  {:else}
+                    Terminer
+                  {/if}
                 </button>
               {:else}
                 <button
