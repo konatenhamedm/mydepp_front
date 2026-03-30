@@ -98,8 +98,7 @@
           {  handleDocumentChange(
               e,
               requiredFile.libelle,
-              document.id,
-              i
+              document.id
             ), console.log("Document changé:",  requiredFile.libelle, document.id)}}                      />
                       <p class="text-xs text-gray-500 mt-1">
                         Parcourir... Aucun fichier sélectionné.

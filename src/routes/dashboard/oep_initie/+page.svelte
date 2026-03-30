@@ -273,6 +273,7 @@ console.log("formDatas avant fichiers", formDatas);
     console.log("formDatas", formDatas);
 
     formDatas.append("numero", numeroMomo);
+    formDatas.append("telephone", numeroMomo);
 
     try {
       const response = await fetch(`${BASE_URL_API}/paiement2/inite/oep`, {
