@@ -47,6 +47,7 @@ async function fetchData(userId: number) {
 
         // Fetch renewal status
         const statusRes = await fetch(`${BASE_URL_API}/paiement2/status/renouvellement/${user?.id}`);
+        console.log("statusRes", statusRes);
         const statusData = await statusRes.json();
         if (statusData.data) {
           renewalInfo = statusData.data;
