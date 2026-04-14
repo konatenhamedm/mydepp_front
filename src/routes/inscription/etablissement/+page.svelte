@@ -245,7 +245,7 @@
         } else {
           errors.emailAutre = "";
         }
-        errors.adresse = ";";
+        errors.adresse = "";
         errors.nomRepresentant = "";
         errors.denomination = "";
         formData.adresse = "";
