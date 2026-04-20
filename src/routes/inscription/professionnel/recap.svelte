@@ -1,10 +1,16 @@
 <script lang="ts">
   export let formdata: any;
   export let values: any;
+  export let professions: any[] = [];
   export let isValidated: boolean;
 
 
  
+  function getProfessionLabel(id: any) {
+    if (!id) return "Non renseigné";
+    const prof = professions?.find(p => String(p.id) === String(id));
+    return prof ? prof.libelle : id;
+  }
   let allValuesAsTables : any[] = Object.values(values);
   function displayValue(value: any): string {
     if (!value) return "Non renseigné";
@@ -107,7 +113,7 @@
       {#if formdata?.profession}
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Profession</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue((formdata?.profession))}</p>
+        <p style="font-weight:500; color:#1f2937;">{getProfessionLabel(formdata?.profession)}</p>
       </div>
       {/if}
     </div>
@@ -122,7 +128,7 @@
     <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1rem; padding-left:2.75rem;">
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Profession</p>
-        <p style="font-weight:500; color:#1f2937;">{displayValue(formdata?.profession)}</p>
+        <p style="font-weight:500; color:#1f2937;">{getProfessionLabel(formdata?.profession)}</p>
       </div>
       <div>
         <p style="font-size:0.875rem; color:#4b5563;">Diplôme</p>
