@@ -94,6 +94,7 @@ export async function login(login: string, password: string, plateforme: string)
       finRenouvellement: data.finRenouvellement,
       expire: data.expire,
       typePersonne: data.typePersonne,
+      createdAt: data.createdAt,
       token,
     };
 
@@ -142,7 +143,7 @@ export async function loginUserFront(username_field: string, password: string) {
       throw new Error(jsonData.message || 'Erreur lors de la connexion');
     }
 
-    const { token, data: { id, username, role, type, status, payement, avatar, personneId, nom, finRenouvellement, expire, typePersonne } } = jsonData;
+    const { token, data: { id, username, role, type, status, payement, avatar, personneId, nom, finRenouvellement, expire, typePersonne, createdAt } } = jsonData;
 
     // Préparer les données pour le cookie
     const authData = {
@@ -158,7 +159,8 @@ export async function loginUserFront(username_field: string, password: string) {
       nom,
       finRenouvellement,
       expire,
-      typePersonne
+      typePersonne,
+      createdAt
     };
 
     // Utiliser le gestionnaire de cookies
@@ -303,6 +305,7 @@ export function getAuthCookie(): User | null {
           typePersonne: authData.typePersonne || "",
           finRenouvellement: authData.finRenouvellement || null,
           expire: authData.expire || null,
+          createdAt: authData.createdAt || null,
         };
       }
     }
@@ -335,6 +338,7 @@ export function getAuthCookie(): User | null {
           typePersonne: parsedAuth.typePersonne || "",
           finRenouvellement: parsedAuth.finRenouvellement || null,
           expire: parsedAuth.expire || null,
+          createdAt: parsedAuth.createdAt || null,
         };
       }
     } catch (parseError) {
@@ -360,6 +364,7 @@ export function getAuthCookie(): User | null {
             typePersonne: cleanedAuth.typePersonne || "",
             finRenouvellement: cleanedAuth.finRenouvellement || null,
             expire: cleanedAuth.expire || null,
+            createdAt: cleanedAuth.createdAt || null,
           };
         }
       } catch (cleanError) {

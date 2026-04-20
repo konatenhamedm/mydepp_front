@@ -59,6 +59,7 @@ export interface User {
   typePersonne?: string;
   finRenouvellement?: string;
   expire?: string;
+  createdAt?: string;
 }
 
 export interface Civilite {

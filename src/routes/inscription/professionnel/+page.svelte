@@ -2367,6 +2367,7 @@
               <Recap
                 formdata={formData}
                 {values}
+                professions={specialiteFetched}
                 isValidated={isValidNumeroInscription}
               />
               {#if isPaiementProcessing}

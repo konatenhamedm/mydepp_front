@@ -8,6 +8,26 @@ let Nbprofessionel = 0
 let Nbetab = 0
 let Nbvisite = 0
 
+let currentSlide = 0;
+const totalSlides = 4;
+let carouselInterval: ReturnType<typeof setInterval>;
+
+function goToSlide(index: number) {
+  currentSlide = (index + totalSlides) % totalSlides;
+}
+
+function nextSlide() {
+  goToSlide(currentSlide + 1);
+}
+
+function startCarousel() {
+  carouselInterval = setInterval(nextSlide, 4000);
+}
+
+function stopCarousel() {
+  clearInterval(carouselInterval);
+}
+
  function FetchData(){
    axios.get(`${BASE_URL_API}/statistique/web-site-statistique/`)
   .then(response => {
@@ -16,11 +36,13 @@ let Nbvisite = 0
   })
   .catch(error => {
     console.error("Error fetching data:", error);
-  }); 
+  });
 }
 
 onMount(() => {
   FetchData();
+  startCarousel();
+  return () => stopCarousel();
 });
 
 </script>
@@ -33,7 +55,9 @@ onMount(() => {
           class="relative h-screen flex items-center justify-center overflow-hidden"
         >
           <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-100"
+            class="absolute inset-0 transition-opacity duration-1000"
+            class:opacity-100={currentSlide === 0}
+            class:opacity-0={currentSlide !== 0}
             style="
               background-image: url(https://readdy.ai/api/search-image?query=African%20black%20medical%20professionals%20in%20white%20coats%2C%20diverse%20healthcare%20team%2C%20modern%20hospital%20environment%2C%20professional%20medical%20staff%20with%20dark%20skin%2C%20contemporary%20medical%20facility%2C%20healthcare%20excellence%20and%20diversity&width=1200&height=600&seq=hero3&orientation=landscape);
               background-size: cover;
@@ -44,7 +68,9 @@ onMount(() => {
             <div class="absolute inset-0 bg-black/40"></div>
           </div>
           <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
+            class="absolute inset-0 transition-opacity duration-1000"
+            class:opacity-100={currentSlide === 1}
+            class:opacity-0={currentSlide !== 1}
             style="
               background-image: url(https://readdy.ai/api/search-image?query=Medical%20quality%20assurance%2C%20healthcare%20safety%20protocols%2C%20modern%20medical%20equipment%2C%20professional%20healthcare%20environment%2C%20medical%20standards%20and%20excellence%2C%20clean%20hospital%20setting&width=1200&height=600&seq=hero2&orientation=landscape);
               background-size: cover;
@@ -55,7 +81,9 @@ onMount(() => {
             <div class="absolute inset-0 bg-black/40"></div>
           </div>
           <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
+            class="absolute inset-0 transition-opacity duration-1000"
+            class:opacity-100={currentSlide === 2}
+            class:opacity-0={currentSlide !== 2}
             style="
               background-image: url(https://readdy.ai/api/search-image?query=African%20black%20medical%20professionals%20in%20white%20coats%2C%20diverse%20healthcare%20team%2C%20modern%20hospital%20environment%2C%20professional%20medical%20staff%20with%20dark%20skin%2C%20contemporary%20medical%20facility%2C%20healthcare%20excellence%20and%20diversity&width=1200&height=600&seq=hero3&orientation=landscape);
               background-size: cover;
@@ -66,7 +94,9 @@ onMount(() => {
             <div class="absolute inset-0 bg-black/40"></div>
           </div>
           <div
-            class="absolute inset-0 transition-opacity duration-1000 opacity-0"
+            class="absolute inset-0 transition-opacity duration-1000"
+            class:opacity-100={currentSlide === 3}
+            class:opacity-0={currentSlide !== 3}
             style="
               background-image: url(https://readdy.ai/api/search-image?query=Black%20African%20healthcare%20professionals%2C%20diverse%20medical%20team%20with%20dark%20skin%2C%20modern%20medical%20equipment%2C%20professional%20hospital%20setting%2C%20medical%20quality%20assurance%20with%20diverse%20staff%2C%20contemporary%20healthcare%20facility&width=1200&height=600&seq=hero4&orientation=landscape);
               background-size: cover;
@@ -101,21 +131,16 @@ onMount(() => {
           <div
             class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
           >
-            <button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button
-            ><button
-              class="w-3 h-3 rounded-full transition-colors cursor-pointer bg-white/50"
-            ></button>
+            {#each Array(totalSlides) as _, i}
+              <button
+                class="w-3 h-3 rounded-full transition-colors cursor-pointer {currentSlide === i ? 'bg-white' : 'bg-white/50'}"
+                onclick={() => { goToSlide(i); stopCarousel(); startCarousel(); }}
+              ></button>
+            {/each}
           </div>
           <button
             class="absolute right-8 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 transition-colors cursor-pointer"
+            onclick={() => { nextSlide(); stopCarousel(); startCarousel(); }}
           >
             <div class="w-6 h-6 flex items-center justify-center">
               <i class="ri-arrow-right-line text-xl"></i>
