@@ -50,11 +50,7 @@
 				true,
 				"/profession/update/" + data?.id,
 				"PUT",
-				{
-					code: devise.code,
-					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal,
-				},
+				devise,
 			);
 
 			if (res.ok) {
