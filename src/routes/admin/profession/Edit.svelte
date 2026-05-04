@@ -23,6 +23,7 @@
 		montantRenouvellement: "",
 		montantNouvelleDemande: "",
 		chronoMax: "",
+		codeGeneration: "",
 	};
 	let itemdata: any = [];
 
@@ -32,10 +33,11 @@
 		devise = {
 			code: data?.code || "",
 			libelle: data?.libelle || "",
-			typeProfession: data?.typeProfession.id || "",
+			typeProfession: data?.typeProfession?.id || "",
 			montantRenouvellement: data?.montantRenouvellement || "",
 			montantNouvelleDemande: data?.montantNouvelleDemande || "",
 			chronoMax: data?.chronoMax || "",
+			codeGeneration: data?.codeGeneration || "",
 		};
 	}
 
@@ -45,7 +47,6 @@
 		isLoad = true;
 
 		try {
-			// Example POST request (replace with your actual API call)
 			const res = await apiFetch(
 				true,
 				"/profession/update/" + data?.id,
@@ -53,12 +54,13 @@
 				devise,
 			);
 
-			if (res.ok) {
+			if (res) {
 				isLoad = false;
-				open = false; // Close the modal
+				open = false;
 			}
 		} catch (error) {
 			console.error("Error saving:", error);
+			isLoad = false;
 		}
 	}
 
