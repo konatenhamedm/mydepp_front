@@ -46,7 +46,7 @@
 			// Example POST request (replace with your actual API call)
 			const res = await apiFetch(
 				true,
-				"/devies/update/" + data?.id,
+				"/typeDocument/update/" + data?.id,
 				"PUT",
 				{
 					code: devise.code,
