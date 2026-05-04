@@ -19,7 +19,7 @@
 	let userdata: any = [];
 
 	// Initializing the user object with only email and status
-	let devise: any = {
+	let profession: any = {
 		code: "",
 		libelle: "",
 		codeGeneration: "",
@@ -37,19 +37,19 @@
 		isLoad = true;
 		try {
 			const res = await apiFetch(true, "/profession/create", "POST", {
-				code: devise.code,
-				libelle: devise.libelle,
-				codeGeneration: devise.codeGeneration,
-				typeProfession: devise.typeProfession,
-				montantRenouvellement: devise.montantRenouvellement,
-				montantNouvelleDemande: devise.montantNouvelleDemande,
-				chronoMax: devise.chronoMax,
+				code: profession.code,
+				libelle: profession.libelle,
+				codeGeneration: profession.codeGeneration,
+				typeProfession: profession.typeProfession,
+				montantRenouvellement: profession.montantRenouvellement,
+				montantNouvelleDemande: profession.montantNouvelleDemande,
+				chronoMax: profession.chronoMax,
 			});
 
 			if (res) {
 				isLoad = false;
 				open = false;
-				notificationMessage = "Devise créé avec succès!";
+				notificationMessage = "Profession créé avec succès!";
 				notificationType = "success";
 				showNotification = true;
 			}
@@ -61,7 +61,7 @@
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
+			profession.flag = input.files[0];
 		}
 	}
 
@@ -92,34 +92,34 @@
 	<div class="space-y-6">
 		<form action="#" use:init>
 			<div class="grid grid-cols-2 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
+				<!-- Champ pour le code du profession -->
 				<InputSimple
 					fieldName="code"
 					type="text"
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={profession.code}
+					placeholder="Entrez le code de la profession"
 				/>
 
 				<InputSimple
 					fieldName="libelle"
 					type="text"
 					label="Libelle"
-					bind:field={devise.libelle}
-					placeholder="Entrez le libelle du devise"
+					bind:field={profession.libelle}
+					placeholder="Entrez le libelle de la profession"
 				/>
 
 				<InputSimple
 					fieldName="codeGeneration"
 					type="text"
 					label="Code generation"
-					bind:field={devise.codeGeneration}
-					placeholder="Entrez le code generation du devise"
+					bind:field={profession.codeGeneration}
+					placeholder="Entrez le code generation de la profession"
 				/>
 
 			<InputSelect
 					label="Type profession"
-					bind:selectedId={devise.typeProfession}
+					bind:selectedId={profession.typeProfession}
 					datas={typeProfessions}
 					id="typeProfession"
 					required={true}
@@ -129,15 +129,15 @@
 					fieldName="montantRenouvellement"
 					type="text"
 					label="Montant renouvellement"
-					bind:field={devise.montantRenouvellement}
-					placeholder="Entrez le montant renouvellement du devise"
+					bind:field={profession.montantRenouvellement}
+					placeholder="Entrez le montant renouvellement de la profession"
 				/>
 
 				<InputSimple
 					fieldName="montantNouvelleDemande"
 					type="text"
 					label="Montant nouvelle demande"
-					bind:field={devise.montantNouvelleDemande}
+					bind:field={profession.montantNouvelleDemande}
 				/>
 
 				
@@ -147,11 +147,12 @@
 					fieldName="chronoMax"
 					type="number"
 					label="Chrono max"
-					bind:field={devise.chronoMax}
+					bind:field={profession.chronoMax}
 				/>
 			</div>
 		</form>
 	</div>
+
 
 	<!-- Card Footer -->
 	<div class="flex justify-end border-t border-gray-200 pt-4">

@@ -15,27 +15,29 @@
 	let notificationMessage = "";
 	let notificationType = "info";
 	let typeProfessions: any = [];
-	// Initializing the item object with only email and status
-	let devise: any = {
+	// Initializing the item object
+	let profession: any = {
 		code: "",
 		libelle: "",
 		typeProfession: "",
 		montantRenouvellement: "",
 		montantNouvelleDemande: "",
 		chronoMax: "",
+		codeGeneration: "",
 	};
 	let itemdata: any = [];
 
 	export let data: Record<string, string> = {};
 
 	function init(form: HTMLFormElement) {
-		devise = {
+		profession = {
 			code: data?.code || "",
 			libelle: data?.libelle || "",
 			typeProfession: data?.typeProfession.id || "",
 			montantRenouvellement: data?.montantRenouvellement || "",
 			montantNouvelleDemande: data?.montantNouvelleDemande || "",
 			chronoMax: data?.chronoMax || "",
+			codeGeneration: data?.codeGeneration || "",
 		};
 	}
 
@@ -51,9 +53,13 @@
 				"/profession/update/" + data?.id,
 				"PUT",
 				{
-					code: devise.code,
-					symbole: devise.symbole,
-					nb_decimal: devise.nb_decimal,
+					libelle: profession.libelle,
+					typeProfession: profession.typeProfession,
+					montantNouvelleDemande: profession.montantNouvelleDemande,
+					montantRenouvellement: profession.montantRenouvellement,
+					codeGeneration: profession.codeGeneration,
+					chronoMax: profession.chronoMax,
+					code: profession.code,
 				},
 			);
 
@@ -78,8 +84,8 @@
 	function handleImageUpload(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-			devise.flag = input.files[0];
-			imageUrl = URL.createObjectURL(devise.flag); // Créer une URL pour l'aperçu de l'image
+			profession.flag = input.files[0];
+			imageUrl = URL.createObjectURL(profession.flag); // Créer une URL pour l'aperçu de l'image
 		}
 	}
 	async function getTypeProfession() {
@@ -103,34 +109,34 @@
 	<div class="space-y-6">
 <form action="#" use:init>
 			<div class="grid grid-cols-2 gap-6 md:grid-cols-2">
-				<!-- Champ pour le code du devise -->
+				<!-- Champ pour le code du profession -->
 				<InputSimple
 					fieldName="code"
 					type="text"
 					label="Code"
-					bind:field={devise.code}
-					placeholder="Entrez le code du devise"
+					bind:field={profession.code}
+					placeholder="Entrez le code de la profession"
 				/>
 
 				<InputSimple
 					fieldName="libelle"
 					type="text"
 					label="Libelle"
-					bind:field={devise.libelle}
-					placeholder="Entrez le libelle du devise"
+					bind:field={profession.libelle}
+					placeholder="Entrez le libelle de la profession"
 				/>
 
 				<InputSimple
 					fieldName="codeGeneration"
 					type="text"
 					label="Code generation"
-					bind:field={devise.codeGeneration}
-					placeholder="Entrez le code generation du devise"
+					bind:field={profession.codeGeneration}
+					placeholder="Entrez le code generation de la profession"
 				/>
 
 			<InputSelect
 					label="Type profession"
-					bind:selectedId={devise.typeProfession}
+					bind:selectedId={profession.typeProfession}
 					datas={typeProfessions}
 					id="typeProfession"
 					required={true}
@@ -140,15 +146,15 @@
 					fieldName="montantRenouvellement"
 					type="text"
 					label="Montant renouvellement"
-					bind:field={devise.montantRenouvellement}
-					placeholder="Entrez le montant renouvellement du devise"
+					bind:field={profession.montantRenouvellement}
+					placeholder="Entrez le montant renouvellement de la profession"
 				/>
 
 				<InputSimple
 					fieldName="montantNouvelleDemande"
 					type="text"
 					label="Montant nouvelle demande"
-					bind:field={devise.montantNouvelleDemande}
+					bind:field={profession.montantNouvelleDemande}
 				/>
 
 				
@@ -158,11 +164,12 @@
 					fieldName="chronoMax"
 					type="number"
 					label="Chrono max"
-					bind:field={devise.chronoMax}
+					bind:field={profession.chronoMax}
 				/>
 			</div>
 		</form>
 	</div>
+
 
 	<!-- Card Footer -->
 	<div class="flex justify-end border-t border-gray-200 pt-4">
